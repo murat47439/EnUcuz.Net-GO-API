@@ -1,0 +1,39 @@
+APP_LOG: 2025/08/24 21:47:14 main.go:19: Application started successfully.
+APP_LOG: 2025/08/24 21:47:14 main.go:31: Server running on https://localhost:8080
+APP_LOG: 2025/08/24 22:02:01 main.go:19: Application started successfully.
+APP_LOG: 2025/08/24 22:02:01 main.go:31: Server running on https://localhost:8080
+APP_LOG: 2025/08/24 22:13:28 main.go:20: Application started successfully.
+APP_LOG: 2025/08/24 22:14:45 main.go:20: Application started successfully.
+APP_LOG: 2025/08/24 22:14:55 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/08/24 22:15:05 usersController.go:39: Failed to create user:  Some data is empty
+APP_LOG: 2025/08/24 22:26:54 main.go:20: Application started successfully.
+APP_LOG: 2025/08/24 22:27:08 usersController.go:39: Failed to create user:  Some data is empty
+APP_LOG: 2025/08/25 01:14:27 main.go:20: Application started successfully.
+APP_LOG: 2025/08/25 01:15:49 config.go:22: JWT Successfully : [115 117 112 101 114 108 111 110 103 114 97 110 100 111 109 115 101 99 114 101 116 107 101 121 49 50 51 52 53]
+APP_LOG: 2025/08/25 01:15:49 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 01:37:29 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 01:37:29 main.go:35: TEST JWT : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIlVzZXJSb2xlIjoxLCJleHAiOjE3NTYxNjE0NDksImlhdCI6MTc1NjA3NTA0OX0.rKW6mw9aJT8IOgRAmlqtZ0nBaARdPHJloWd03IeYlvQ 
+APP_LOG: 2025/08/25 01:57:30 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:01:00 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:02:07 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:04:56 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:07:55 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:12:03 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:13:50 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:14:53 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:20:00 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:20:12 usersController.go:38: Failed to create user:  Some data is empty
+APP_LOG: 2025/08/25 02:20:47 usersController.go:27: CreateUser decode error: json: cannot unmarshal string into Go struct field User.phone of type int
+APP_LOG: 2025/08/25 02:21:04 usersController.go:27: CreateUser decode error: json: cannot unmarshal string into Go struct field User.gender of type int
+APP_LOG: 2025/08/25 02:21:14 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 02:21:20 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 02:21:29 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 02:22:10 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 02:22:19 usersController.go:38: Failed to create user:  Some data is empty
+APP_LOG: 2025/08/25 02:26:25 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:26:44 usersController.go:38: Failed to create user:  CheckEmailExists error : Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'exists' at line 1
+APP_LOG: 2025/08/25 02:27:45 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:27:55 password.go:15: Succesfully HashPassword: $2a$10$i1p6QvFJdmpvOWPz8Cq6we1T9EVnOesQd3VATJL2XXvPOpYhXxu7.
+APP_LOG: 2025/08/25 02:27:55 usersController.go:38: Failed to create user:  Create User error: Error 1136 (21S01): Column count doesn't match value count at row 1
+APP_LOG: 2025/08/25 02:29:24 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 02:29:29 password.go:15: Succesfully HashPassword: $2a$10$AvHfvtE5mHiS02FIlJZAveFdvGn/7V4yQ7PrQOdSR1Y0lykOEHL.e
