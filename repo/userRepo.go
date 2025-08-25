@@ -89,9 +89,22 @@ func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
 	return exists, nil
 }
 
-func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
+func (ur *UserRepo) GetUser(where string, arg any) (*models.User, error) {
 	user := &models.User{}
-	err := ur.db.QueryRow("SELECT id, email, phone, name, surname, gender, role FROM users WHERE email = ?", email).Scan(&user.ID, &user.Email, &user.Phone, &user.Name, &user.Surname, &user.Gender, &user.Role)
+
+	allowedFields := map[string]string{
+		"email": "email",
+		"id":    "id",
+		"phone": "phone",
+	}
+	column, ok := allowedFields[where]
+	if !ok {
+		return nil, fmt.Errorf("Invalid fields : %s", where)
+	}
+
+	query := fmt.Sprintf("SELECT id, email, phone, name, surname, gender, role FROM users WHERE %s = ?", column)
+
+	err := ur.db.QueryRow(query, arg).Scan(&user.ID, &user.Email, &user.Phone, &user.Name, &user.Surname, &user.Gender, &user.Role)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -101,12 +114,33 @@ func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
 	}
 
 	return user, nil
+}
 
+func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
+	return ur.GetUser("email", email)
+}
+func (ur *UserRepo) GetUserDataByID(id int) (*models.User, error) {
+	return ur.GetUser("id", id)
+}
+
+func (ur *UserRepo) DecodeJWT(tokenstring models.Token) (models.JwtToken, error) {
+	jwttoken := &models.JwtToken{}
+
+	token, err := jwt.ParseWithClaims(tokenstring.Token, jwttoken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(config.JWTSecret), nil
+	})
+	if err != nil || !token.Valid {
+		return models.JwtToken{}, fmt.Errorf("User not found or Token not true")
+	}
+	return *jwttoken, nil
 }
 
 func (ur *UserRepo) GenerateJWT(userID int, role int) (string, error) {
 	exprationTime := time.Now().Add(24 * time.Hour)
-	claims := models.Claims{
+	claims := models.JwtToken{
 		UserID:   userID,
 		UserRole: role,
 		RegisteredClaims: jwt.RegisteredClaims{

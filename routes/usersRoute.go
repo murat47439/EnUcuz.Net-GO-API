@@ -18,7 +18,7 @@ func NewUserRoute(uc *controllers.UserController) *UserRoutes {
 func (ur *UserRoutes) SetupUsersRoute() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			ur.UserController.CreateUser(w, r)
@@ -27,16 +27,6 @@ func (ur *UserRoutes) SetupUsersRoute() *http.ServeMux {
 			return
 		}
 	})
-
-	mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-
-		default:
-			RespondWithError(w, 100, "Method Not Allowed")
-			return
-		}
-
-	})
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
@@ -44,6 +34,15 @@ func (ur *UserRoutes) SetupUsersRoute() *http.ServeMux {
 		default:
 			RespondWithError(w, http.StatusBadRequest, "Method not allowed")
 			return
+		}
+	})
+	mux.HandleFunc("/profile/{id}", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			ur.UserController.GetUserData(w, r)
+
+		default:
+			RespondWithError(w, http.StatusBadRequest, "Method not allowed")
 		}
 	})
 	return mux

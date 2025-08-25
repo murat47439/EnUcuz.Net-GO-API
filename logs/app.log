@@ -49,3 +49,22 @@ APP_LOG: 2025/08/25 14:22:59 password.go:22: Unsuccesful ChechPasswordHash
 APP_LOG: 2025/08/25 14:23:01 password.go:22: Unsuccesful ChechPasswordHash
 APP_LOG: 2025/08/25 14:23:02 password.go:22: Unsuccesful ChechPasswordHash
 APP_LOG: 2025/08/25 14:23:53 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 14:32:08 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 14:32:11 usersController.go:38: Failed to create user:  Some data is empty
+APP_LOG: 2025/08/25 14:32:49 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 14:32:51 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 23:38:04 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:39:09 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 23:42:27 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:49:05 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:53:22 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:54:56 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:55:23 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 23:56:01 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:09:05 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:24:58 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:25:53 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:26:41 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:31:40 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:33:06 main.go:24: Application started successfully.
+APP_LOG: 2025/08/26 01:35:48 main.go:24: Application started successfully.

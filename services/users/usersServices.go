@@ -60,3 +60,17 @@ func (s *UserService) Login(user models.User) (string, error) {
 	return jwttoken, nil
 
 }
+
+func (s *UserService) GetUserDataByID(token models.Token) (*models.User, error) {
+
+	claims, err := s.UserRepo.DecodeJWT(token)
+	if err != nil {
+		return nil, err
+	}
+	user, err := s.UserRepo.GetUserDataByID(claims.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+
+}

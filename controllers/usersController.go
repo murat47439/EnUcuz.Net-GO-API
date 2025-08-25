@@ -61,7 +61,7 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	jwttoken, err := uc.UserService.Login(user)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Login error")
+		RespondWithError(w, http.StatusBadRequest, "Login error"+err.Error())
 		return
 	}
 
@@ -69,4 +69,31 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		"token":   jwttoken,
 		"message": "Succesfully",
 	})
+}
+
+func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
+	var token models.Token
+
+	err := json.NewDecoder(r.Body).Decode(&token)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+	user, err := uc.UserService.GetUserDataByID(token)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Service Error : "+err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusAccepted, map[string]interface{}{
+		"message": "successfully",
+		"Name":    user.Name,
+		"Surname": user.Surname,
+		"Email":   user.Email,
+		"Phone":   user.Phone,
+		"Gender":  user.Gender,
+		"Role":    user.Role,
+	})
+
 }
