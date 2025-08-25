@@ -15,12 +15,12 @@ func HashPassword(password string) (string, error) {
 	return string(hash), err
 }
 
-func CheckPasswordHash(password, hash string) bool {
+func CheckPasswordHash(password, hash string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 
 	if err != nil {
 		config.Logger.Printf("Unsuccesful ChechPasswordHash")
-		return false
+		return err
 	}
-	return true
+	return nil
 }

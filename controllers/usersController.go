@@ -48,6 +48,25 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (uc *UserController) Login(w http.ResponseWriter, r http.Request) {
+func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
+	var user models.User
 
+	err := json.NewDecoder(r.Body).Decode(&user)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid Data")
+		return
+	}
+
+	jwttoken, err := uc.UserService.Login(user)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Login error")
+		return
+	}
+
+	RespondWithJSON(w, http.StatusAccepted, map[string]string{
+		"token":   jwttoken,
+		"message": "Succesfully",
+	})
 }

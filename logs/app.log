@@ -37,3 +37,15 @@ APP_LOG: 2025/08/25 02:27:55 password.go:15: Succesfully HashPassword: $2a$10$i1
 APP_LOG: 2025/08/25 02:27:55 usersController.go:38: Failed to create user:  Create User error: Error 1136 (21S01): Column count doesn't match value count at row 1
 APP_LOG: 2025/08/25 02:29:24 main.go:24: Application started successfully.
 APP_LOG: 2025/08/25 02:29:29 password.go:15: Succesfully HashPassword: $2a$10$AvHfvtE5mHiS02FIlJZAveFdvGn/7V4yQ7PrQOdSR1Y0lykOEHL.e
+APP_LOG: 2025/08/25 11:55:02 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 11:56:42 usersController.go:38: Failed to create user:  Email already exists
+APP_LOG: 2025/08/25 13:27:32 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 13:28:22 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 14:17:54 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 14:18:04 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/08/25 14:21:04 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/08/25 14:22:52 main.go:24: Application started successfully.
+APP_LOG: 2025/08/25 14:22:59 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/08/25 14:23:01 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/08/25 14:23:02 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/08/25 14:23:53 main.go:24: Application started successfully.

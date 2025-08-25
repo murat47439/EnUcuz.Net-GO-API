@@ -1,12 +1,12 @@
 package models
 
 type User struct {
-	ID       int    `json:"id"`
-	Email    string `json:"email"`
-	Phone    int    `json:"phone"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Gender   int    `json:"gender"`
-	Role     int    `json:"role"`
-	Password string `json:"password"`
+	ID       int    `db:"id"  json:"id"`
+	Email    string `db:"email" json:"email"`
+	Phone    int    `db:"phone" json:"phone"`
+	Name     string `db:"name" json:"name"`
+	Surname  string `db:"surname" json:"surname"`
+	Gender   int    `db:"gender" json:"gender"`
+	Role     int    `db:"role" json:"role"`
+	Password string `db:"password" json:"password"`
 }

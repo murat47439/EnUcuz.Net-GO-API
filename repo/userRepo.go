@@ -5,6 +5,7 @@ import (
 	"Store-Dio/models"
 	"Store-Dio/utils"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -44,6 +45,26 @@ func (ur *UserRepo) CreateUser(user models.User) (bool, error) {
 }
 
 func (ur *UserRepo) Login(email string, password string) (bool, error) {
+	if email == "" || password == "" {
+		return false, fmt.Errorf("Invalid data")
+	}
+
+	var hash string
+	err := ur.db.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hash)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, fmt.Errorf("User not found")
+		}
+		return false, err
+	}
+
+	err = utils.CheckPasswordHash(password, hash)
+
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
@@ -67,6 +88,22 @@ func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
 
 	return exists, nil
 }
+
+func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
+	user := &models.User{}
+	err := ur.db.QueryRow("SELECT id, email, phone, name, surname, gender, role FROM users WHERE email = ?", email).Scan(&user.ID, &user.Email, &user.Phone, &user.Name, &user.Surname, &user.Gender, &user.Role)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("User not found")
+		}
+		return nil, err
+	}
+
+	return user, nil
+
+}
+
 func (ur *UserRepo) GenerateJWT(userID int, role int) (string, error) {
 	exprationTime := time.Now().Add(24 * time.Hour)
 	claims := models.Claims{
