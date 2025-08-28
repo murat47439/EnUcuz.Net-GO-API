@@ -6,7 +6,11 @@ type User struct {
 	Phone    int    `db:"phone" json:"phone"`
 	Name     string `db:"name" json:"name"`
 	Surname  string `db:"surname" json:"surname"`
-	Gender   int    `db:"gender" json:"gender"`
-	Role     int    `db:"role" json:"role"`
+	Gender   int    `db:"gender" json:"gender,omitempty"`
+	Role     int    `db:"role" json:"role,omitempty"`
 	Password string `db:"password" json:"password"`
+}
+type UpdateUser struct {
+	Token Token `json:"token"`
+	User  User  `json:"user"`
 }

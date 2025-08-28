@@ -128,3 +128,5 @@ APP_LOG: 2025/08/28 13:27:26 userRepo.go:75: 1 435219f21632f3f3df68ebf1898d9a3e7
 APP_LOG: 2025/08/28 13:28:07 userRepo.go:75: 1 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
 APP_LOG: 2025/08/28 13:28:14 userRepo.go:75: 2 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
 APP_LOG: 2025/08/28 13:28:15 userRepo.go:75: 2 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
+APP_LOG: 2025/08/28 20:14:58 main.go:24: Application started successfully.
+APP_LOG: 2025/08/28 20:17:42 usersController.go:27: CreateUser decode error: invalid character '"' after object key:value pair
