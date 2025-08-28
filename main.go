@@ -33,7 +33,7 @@ func main() {
 
 	//Start server
 
-	log.Println("Server running on https://localhost:8080")
+	log.Println("Server running on http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", routes); err != nil {
 		config.Logger.Fatalf("Server Failed: %v", err)

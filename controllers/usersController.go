@@ -58,7 +58,7 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jwttoken, err := uc.UserService.Login(user)
+	accessToken, refreshToken, err := uc.UserService.Login(user)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Login error"+err.Error())
@@ -66,11 +66,30 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RespondWithJSON(w, http.StatusAccepted, map[string]string{
-		"token":   jwttoken,
-		"message": "Succesfully",
+		"token":         accessToken,
+		"refresh-token": refreshToken,
+		"message":       "Succesfully",
 	})
 }
+func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
+	var token models.RefreshToken
 
+	err := json.NewDecoder(r.Body).Decode(&token)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid token")
+		return
+	}
+	_, err = uc.UserService.Logout(token)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusAccepted, map[string]string{
+		"message": "Successfully",
+	})
+}
 func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
 	var token models.Token
 
@@ -94,6 +113,45 @@ func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
 		"Phone":   user.Phone,
 		"Gender":  user.Gender,
 		"Role":    user.Role,
+	})
+
+}
+func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
+	var claims models.UpdateUser
+	err := json.NewDecoder(r.Body).Decode(&claims)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+
+	if claims.User.ID != 0 || claims.Token.Token == "" {
+		RespondWithError(w, http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	token, err := uc.UserService.UserRepo.DecodeJWT(claims.Token)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	claims.User.ID = token.UserID
+
+	_, err = uc.UserService.Update(claims.User)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "Succesfully",
+		"name":    claims.User.Name,
+		"surname": claims.User.Surname,
+		"email":   claims.User.Email,
+		"phone":   claims.User.Phone,
+		"gender":  claims.User.Gender,
 	})
 
 }

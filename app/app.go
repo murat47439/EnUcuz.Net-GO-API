@@ -2,25 +2,29 @@ package app
 
 import (
 	"Store-Dio/controllers"
+	"Store-Dio/middleware"
 	"Store-Dio/repo"
 	"Store-Dio/routes"
 	"Store-Dio/services/users"
-	"database/sql"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type App struct {
-	DB             *sql.DB
+	DB             *sqlx.DB
 	UserRoute      *routes.UserRoutes
 	UserService    *users.UserService
 	UserController *controllers.UserController
 	UserRepo       *repo.UserRepo
+	UserMiddleware *middleware.UserMiddleware
 }
 
-func NewApp(db *sql.DB) *App {
+func NewApp(db *sqlx.DB) *App {
 	userRepo := repo.NewUserRepo(db)
+	userMiddleware := middleware.NewUserMiddleware(userRepo)
 	userService := users.NewUserService(userRepo)
 	userController := controllers.NewUserController(userService)
-	userRoute := routes.NewUserRoute(userController)
+	userRoute := routes.NewUserRoute(userController, userMiddleware)
 
 	return &App{
 		DB:             db,
@@ -28,5 +32,6 @@ func NewApp(db *sql.DB) *App {
 		UserService:    userService,
 		UserController: userController,
 		UserRepo:       userRepo,
+		UserMiddleware: userMiddleware,
 	}
 }

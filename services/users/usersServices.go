@@ -37,28 +37,48 @@ func (s *UserService) CreateUser(user models.User) (models.User, error) {
 
 	return user, nil
 }
-func (s *UserService) Login(user models.User) (string, error) {
+func (s *UserService) Login(user models.User) (string, string, error) {
 
 	_, err := s.UserRepo.Login(user.Email, user.Password)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	userdata := &models.User{}
 	userdata, err = s.UserRepo.GetUserDataByEmail(user.Email)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	jwttoken, err := s.UserRepo.GenerateJWT(userdata.ID, userdata.Role)
+	accessToken, refreshToken, err := s.UserRepo.NewTokens(userdata.ID, userdata.Role)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return jwttoken, nil
+	return accessToken, refreshToken, nil
 
+}
+func (s *UserService) Logout(token models.RefreshToken) (bool, error) {
+
+	_, err := s.UserRepo.Logout(token.UserID, token.Token)
+
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+func (s *UserService) Update(user models.User) (*models.User, error) {
+	if user.ID == 0 {
+		return nil, fmt.Errorf("User not found")
+	}
+	result, err := s.UserRepo.Update(user)
+
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 func (s *UserService) GetUserDataByID(token models.Token) (*models.User, error) {

@@ -1,19 +1,20 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/jmoiron/sqlx"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
-var DB *sql.DB
+var DB *sqlx.DB
 
-func ConnectDB() *sql.DB {
+func ConnectDB() *sqlx.DB {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("ENV file is not found")
@@ -30,7 +31,7 @@ func ConnectDB() *sql.DB {
 	}
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbuser, dbpass, dbhost, dbport, dbname)
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := sqlx.Open("mysql", dsn)
 
 	if err != nil {
 		log.Fatal("Database connection failed")

@@ -12,7 +12,7 @@ func HashPassword(password string) (string, error) {
 		config.Logger.Printf("Unsuccesful HashPassword")
 		return "", err
 	}
-	return string(hash), err
+	return string(hash), nil
 }
 
 func CheckPasswordHash(password, hash string) error {

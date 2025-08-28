@@ -1,6 +1,10 @@
 package models
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type JwtToken struct {
 	UserID   int `json:"id"`
@@ -10,4 +14,10 @@ type JwtToken struct {
 
 type Token struct {
 	Token string `json:"token"`
+}
+type RefreshToken struct {
+	ID        int
+	UserID    int    `json:"userID"`
+	Token     string `json:"token"`
+	ExpiresAt time.Time
 }
