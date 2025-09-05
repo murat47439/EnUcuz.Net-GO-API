@@ -5,6 +5,9 @@ import (
 	"Store-Dio/services/categories"
 	"encoding/json"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type CategoriesController struct {
@@ -16,36 +19,61 @@ func NewCategoriesController(categoriesService *categories.CategoriesService) *C
 		CategoriesService: categoriesService,
 	}
 }
-
-func (cc *CategoriesController) InsertCategoriesData(w http.ResponseWriter, r *http.Request) {
-	var cat models.Category
-	err := json.NewDecoder(r.Body).Decode(&cat)
+func (cc *CategoriesController) AddCategory(w http.ResponseWriter, r *http.Request) {
+	var category *models.Category
+	err := json.NewDecoder(r.Body).Decode(&category)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data %w"+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invlid data")
 		return
 	}
 
-	_, err = cc.CategoriesService.InsertCategoriesData(cat)
+	data, err := cc.CategoriesService.AddCategory(category)
 
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Action failed error : %w"+err.Error())
-		return
-	}
-
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Successfully",
-		"cat":     cat.Name,
-	})
-}
-func (cc *CategoriesController) GetAllCategoriesID(w http.ResponseWriter, r *http.Request) {
-	categories, err := cc.CategoriesService.GetAllCategoriesID()
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Successfully",
-		"result":  categories,
+		"Message":  "Successfully",
+		"Category": data,
+	})
+}
+func (cc *CategoriesController) UpdateCategory(w http.ResponseWriter, r *http.Request) {
+	var category *models.Category
+
+	err := json.NewDecoder(r.Body).Decode(&category)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+	err = cc.CategoriesService.UpdateCategory(category)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusOK, map[string]string{
+		"Message": "Successfully",
+	})
+}
+func (cc *CategoriesController) DeleteCategory(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+
+	err = cc.CategoriesService.DeleteCategory(id)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	RespondWithJSON(w, http.StatusOK, map[string]string{
+		"Message": "Successfully",
 	})
 }

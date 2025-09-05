@@ -4,14 +4,17 @@ import (
 	"Store-Dio/config"
 	"Store-Dio/models"
 	"Store-Dio/repo"
+	"context"
 	"net/http"
-	"strings"
 	"time"
 )
 
 type UserMiddleware struct {
 	UserRepo *repo.UserRepo
 }
+type contextKey string
+
+const UserIDKey contextKey = "userID"
 
 func NewUserMiddleware(ur *repo.UserRepo) *UserMiddleware {
 	return &UserMiddleware{
@@ -21,19 +24,17 @@ func NewUserMiddleware(ur *repo.UserRepo) *UserMiddleware {
 
 func (um *UserMiddleware) OnlyAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
+		cookie, err := r.Cookie("access_token")
 
-		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-			http.Error(w, "Missing or invalid Authorization Header ", http.StatusUnauthorized)
-			config.Logger.Printf("Missing or invalid Authorization Header")
+		if err != nil {
+			http.Error(w, "No data", http.StatusNotFound)
 			return
 		}
+		tokenString := cookie.Value
 
 		var token models.Token
 
-		getJWT := strings.TrimPrefix(authHeader, "Bearer ")
-
-		token.Token = getJWT
+		token.Token = tokenString
 
 		jwtToken, err := um.UserRepo.DecodeJWT(token)
 
@@ -61,13 +62,15 @@ func (um *UserMiddleware) OnlyAdmin(next http.Handler) http.Handler {
 func (um *UserMiddleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		{
-			tokenstring := r.Header.Get("Authorization")
-			if tokenstring == "" {
-				config.Logger.Printf("Auth middleware error")
-				http.Error(w, "Missing token", http.StatusUnauthorized)
+			cookie, err := r.Cookie("access_token")
+
+			if err != nil {
+				http.Error(w, "No data", http.StatusNotFound)
 				return
 			}
-			token, err := um.UserRepo.DecodeJWT(models.Token{Token: tokenstring})
+			tokenString := cookie.Value
+
+			token, err := um.UserRepo.DecodeJWT(models.Token{Token: tokenString})
 
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -77,7 +80,9 @@ func (um *UserMiddleware) AuthMiddleware(next http.Handler) http.Handler {
 				http.Error(w, "Token expired", http.StatusUnauthorized)
 				return
 			}
-			next.ServeHTTP(w, r)
+			ctx := context.WithValue(r.Context(), UserIDKey, token.UserID)
+
+			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})
 }

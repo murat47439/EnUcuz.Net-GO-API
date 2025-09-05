@@ -60,16 +60,17 @@ func (s *UserService) Login(user models.User) (string, string, error) {
 	return accessToken, refreshToken, nil
 
 }
-func (s *UserService) Logout(token models.RefreshToken) (bool, error) {
-
-	_, err := s.UserRepo.Logout(token.UserID, token.Token)
-
+func (s *UserService) Logout(token string, user_id int) (bool, error) {
+	if token == "" || user_id == 0 {
+		return false, fmt.Errorf("Invalid data")
+	}
+	_, err := s.UserRepo.Logout(user_id, token)
 	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
-func (s *UserService) Update(user models.User) (*models.User, error) {
+func (s *UserService) Update(user *models.User) (*models.User, error) {
 	if user.ID == 0 {
 		return nil, fmt.Errorf("User not found")
 	}
@@ -78,19 +79,17 @@ func (s *UserService) Update(user models.User) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+	return result, nil
 }
 
-func (s *UserService) GetUserDataByID(token models.Token) (*models.User, error) {
-
-	claims, err := s.UserRepo.DecodeJWT(token)
-	if err != nil {
-		return nil, err
+func (s *UserService) GetUserDataByID(id int) (*models.User, error) {
+	if id == 0 {
+		return nil, fmt.Errorf("Invalid")
 	}
-	user, err := s.UserRepo.GetUserDataByID(claims.UserID)
+	user, err := s.UserRepo.GetUserDataByID(id)
+
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
-
 }

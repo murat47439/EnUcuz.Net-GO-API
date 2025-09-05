@@ -1,9 +1,7 @@
 package user
 
 import (
-	"Store-Dio/models"
 	"Store-Dio/services/products"
-	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -33,26 +31,27 @@ func (pc *ProductController) GetProduct(w http.ResponseWriter, r *http.Request) 
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"id":          product.ID,
-		"name":        product.Name,
-		"description": product.Description,
-		"brand_id":    product.BrandID,
-		"stock":       product.Stock,
-		"category_id": product.CategoryID,
-		"store_id":    product.StoreID,
-		"image_url":   product.ImageUrl,
+		"Product": product,
 	})
 
 }
 
 func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request) {
-	var product models.Product
+	query := r.URL.Query()
+	page, err := strconv.Atoi(query.Get("page"))
+	if err != nil {
+		page = 1
+	}
+	search := query.Get("search")
 
-	err := json.NewDecoder(r.Body).Decode(&product)
+	products, err := pc.ProductService.GetProducts(page, search)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		RespondWithError(w, http.StatusBadRequest, "Error : %s"+err.Error())
 		return
 	}
-
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"Message":  "Successfully",
+		"Products": products,
+	})
 }

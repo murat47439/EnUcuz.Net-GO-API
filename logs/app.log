@@ -1,216 +1,51 @@
-APP_LOG: 2025/08/24 21:47:14 main.go:19: Application started successfully.
-APP_LOG: 2025/08/24 21:47:14 main.go:31: Server running on https://localhost:8080
-APP_LOG: 2025/08/24 22:02:01 main.go:19: Application started successfully.
-APP_LOG: 2025/08/24 22:02:01 main.go:31: Server running on https://localhost:8080
-APP_LOG: 2025/08/24 22:13:28 main.go:20: Application started successfully.
-APP_LOG: 2025/08/24 22:14:45 main.go:20: Application started successfully.
-APP_LOG: 2025/08/24 22:14:55 usersController.go:39: Failed to create user:  Email already exists
-APP_LOG: 2025/08/24 22:15:05 usersController.go:39: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/24 22:26:54 main.go:20: Application started successfully.
-APP_LOG: 2025/08/24 22:27:08 usersController.go:39: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/25 01:14:27 main.go:20: Application started successfully.
-APP_LOG: 2025/08/25 01:15:49 config.go:22: JWT Successfully : [115 117 112 101 114 108 111 110 103 114 97 110 100 111 109 115 101 99 114 101 116 107 101 121 49 50 51 52 53]
-APP_LOG: 2025/08/25 01:15:49 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 01:37:29 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 01:37:29 main.go:35: TEST JWT : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIlVzZXJSb2xlIjoxLCJleHAiOjE3NTYxNjE0NDksImlhdCI6MTc1NjA3NTA0OX0.rKW6mw9aJT8IOgRAmlqtZ0nBaARdPHJloWd03IeYlvQ 
-APP_LOG: 2025/08/25 01:57:30 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:01:00 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:02:07 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:04:56 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:07:55 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:12:03 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:13:50 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:14:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:20:00 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:20:12 usersController.go:38: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/25 02:20:47 usersController.go:27: CreateUser decode error: json: cannot unmarshal string into Go struct field User.phone of type int
-APP_LOG: 2025/08/25 02:21:04 usersController.go:27: CreateUser decode error: json: cannot unmarshal string into Go struct field User.gender of type int
-APP_LOG: 2025/08/25 02:21:14 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 02:21:20 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 02:21:29 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 02:22:10 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 02:22:19 usersController.go:38: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/25 02:26:25 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:26:44 usersController.go:38: Failed to create user:  CheckEmailExists error : Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'exists' at line 1
-APP_LOG: 2025/08/25 02:27:45 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:27:55 password.go:15: Succesfully HashPassword: $2a$10$i1p6QvFJdmpvOWPz8Cq6we1T9EVnOesQd3VATJL2XXvPOpYhXxu7.
-APP_LOG: 2025/08/25 02:27:55 usersController.go:38: Failed to create user:  Create User error: Error 1136 (21S01): Column count doesn't match value count at row 1
-APP_LOG: 2025/08/25 02:29:24 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 02:29:29 password.go:15: Succesfully HashPassword: $2a$10$AvHfvtE5mHiS02FIlJZAveFdvGn/7V4yQ7PrQOdSR1Y0lykOEHL.e
-APP_LOG: 2025/08/25 11:55:02 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 11:56:42 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 13:27:32 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 13:28:22 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 14:17:54 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 14:18:04 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/25 14:21:04 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/25 14:22:52 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 14:22:59 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/25 14:23:01 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/25 14:23:02 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/25 14:23:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 14:32:08 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 14:32:11 usersController.go:38: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/25 14:32:49 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 14:32:51 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 23:38:04 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:39:09 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/25 23:42:27 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:49:05 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:53:22 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:54:56 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:55:23 main.go:24: Application started successfully.
-APP_LOG: 2025/08/25 23:56:01 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:09:05 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:24:58 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:25:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:26:41 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:31:40 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:33:06 main.go:24: Application started successfully.
-APP_LOG: 2025/08/26 01:35:48 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 01:24:41 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 01:25:29 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 01:28:40 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 01:29:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 14:51:42 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 20:27:26 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 20:27:49 usersController.go:38: Failed to create user:  Some data is empty
-APP_LOG: 2025/08/27 20:30:51 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 20:31:58 usersController.go:27: CreateUser decode error: invalid character '"' after object key:value pair
-APP_LOG: 2025/08/27 20:32:07 usersController.go:27: CreateUser decode error: invalid character '}' looking for beginning of object key string
-APP_LOG: 2025/08/27 20:32:09 usersController.go:27: CreateUser decode error: invalid character '}' looking for beginning of object key string
-APP_LOG: 2025/08/27 20:32:10 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/27 20:33:00 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/27 20:35:36 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 20:35:42 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/27 20:35:44 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/27 20:35:44 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/27 20:35:46 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/27 20:47:46 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 21:25:42 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 21:26:11 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:13 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:14 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:15 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:16 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:17 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:17 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:26:33 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:34:33 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 21:54:34 main.go:24: Application started successfully.
-APP_LOG: 2025/08/27 21:54:48 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/27 21:54:49 auth.go:27: Missing or invalid Authorization Header
-APP_LOG: 2025/08/28 01:28:36 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 01:31:46 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 01:34:03 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 01:55:48 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 01:57:35 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:06:46 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:09:36 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:10:19 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:10:23 userRepo.go:223: 1cfa4ac4bc9713f88a8ac950c997e3b4f556d32eb085fc7948c03e2e7e4cad23b
-APP_LOG: 2025/08/28 03:10:24 userRepo.go:223: 1c37250b0859e96200beb30cb4bb40baa4dd9555ce51cbbf2765998ffec4dc59a
-APP_LOG: 2025/08/28 03:11:21 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:11:26 userRepo.go:223: 1 a880daf58955675b3edbbfcb58b814b3ef255fbcfb650c3915ec63aa439090c9
-APP_LOG: 2025/08/28 03:13:35 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:14:36 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 03:33:43 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:17:09 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:21:43 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:22:16 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:23:18 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:26:19 userRepo.go:75: 1 3b8f2f14dd35d67735a5a3111fef20144a724963a1a2a5cc4a3e2057174e088f
-APP_LOG: 2025/08/28 13:26:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 13:26:57 userRepo.go:75: 1 3b8f2f14dd35d67735a5a3111fef20144a724963a1a2a5cc4a3e2057174e088f
-APP_LOG: 2025/08/28 13:26:58 userRepo.go:75: 1 3b8f2f14dd35d67735a5a3111fef20144a724963a1a2a5cc4a3e2057174e088f
-APP_LOG: 2025/08/28 13:26:59 userRepo.go:75: 1 3b8f2f14dd35d67735a5a3111fef20144a724963a1a2a5cc4a3e2057174e088f
-APP_LOG: 2025/08/28 13:27:26 userRepo.go:75: 1 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
-APP_LOG: 2025/08/28 13:28:07 userRepo.go:75: 1 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
-APP_LOG: 2025/08/28 13:28:14 userRepo.go:75: 2 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
-APP_LOG: 2025/08/28 13:28:15 userRepo.go:75: 2 435219f21632f3f3df68ebf1898d9a3e7a9710b2487390d40cd00cfe60851152
-APP_LOG: 2025/08/28 20:14:58 main.go:24: Application started successfully.
-APP_LOG: 2025/08/28 20:17:42 usersController.go:27: CreateUser decode error: invalid character '"' after object key:value pair
-APP_LOG: 2025/08/30 00:57:30 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:04:19 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:08:07 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:09:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:09:53 usersRoute.go:16: Starting User Route
-APP_LOG: 2025/08/30 01:09:53 productRoute.go:16: Starting Product Route
-APP_LOG: 2025/08/30 01:49:25 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:49:48 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:50:22 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:50:36 auth.go:28: Missing or invalid Authorization Header
-APP_LOG: 2025/08/30 01:52:04 auth.go:28: Missing or invalid Authorization Header
-APP_LOG: 2025/08/30 01:52:39 auth.go:28: Missing or invalid Authorization Header
-APP_LOG: 2025/08/30 01:52:47 auth.go:28: Missing or invalid Authorization Header
-APP_LOG: 2025/08/30 01:55:23 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 01:59:42 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 02:00:10 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 02:03:11 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 02:03:34 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 02:04:21 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:06:12 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:09:02 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:20:57 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/30 13:21:04 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/30 13:21:09 password.go:22: Unsuccesful ChechPasswordHash
-APP_LOG: 2025/08/30 13:40:11 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:41:07 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:43:57 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:45:00 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:46:33 productController.go:52: Update Product
-APP_LOG: 2025/08/30 13:46:53 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:47:13 productRepo.go:56: Failed update product
-APP_LOG: 2025/08/30 13:48:09 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 13:51:28 productRepo.go:67: Failed update product
-APP_LOG: 2025/08/30 13:59:43 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:02:37 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:07:33 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:08:05 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:08:09 productRepo.go:19: Geldi
-APP_LOG: 2025/08/30 14:09:02 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:14:06 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:17:31 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:19:22 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:20:21 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:21:11 main.go:24: Application started successfully.
-APP_LOG: 2025/08/30 14:21:14 productRepo.go:31: Geldi true
-APP_LOG: 2025/08/30 14:21:21 productRepo.go:31: Geldi false
-APP_LOG: 2025/08/30 14:21:22 productRepo.go:31: Geldi false
-APP_LOG: 2025/08/31 02:20:22 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 02:25:06 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 12:22:47 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 12:33:02 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 13:00:34 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 13:01:21 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 13:03:27 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 13:09:43 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 13:10:22 usersController.go:38: Failed to create user:  Email already exists
-APP_LOG: 2025/08/31 13:14:14 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:00:32 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:01:41 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:05:00 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:05:04 productRepo.go:32: Geldi true
-APP_LOG: 2025/08/31 23:06:49 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:06:54 productRepo.go:32: Geldi true
-APP_LOG: 2025/08/31 23:07:39 productRepo.go:32: Geldi false
-APP_LOG: 2025/08/31 23:07:46 productRepo.go:32: Geldi true
-APP_LOG: 2025/08/31 23:08:14 productRepo.go:32: Geldi false
-APP_LOG: 2025/08/31 23:39:24 main.go:24: Application started successfully.
-APP_LOG: 2025/08/31 23:39:29 productRepo.go:32: Geldi false
-APP_LOG: 2025/08/31 23:39:33 productRepo.go:32: Geldi true
-APP_LOG: 2025/09/01 02:28:50 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 02:29:45 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 02:30:14 auth.go:28: Missing or invalid Authorization Header
-APP_LOG: 2025/09/01 02:35:42 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 02:39:18 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 02:40:05 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:08:32 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:09:28 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:11:14 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:12:59 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:13:48 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:14:06 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:21:50 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 21:25:21 main.go:24: Application started successfully.
-APP_LOG: 2025/09/01 22:17:52 main.go:24: Application started successfully.
+APP_LOG: 2025/09/03 23:37:47 main.go:24: Application started successfully.
+APP_LOG: 2025/09/03 23:37:51 productServices.go:54: Geldi
+APP_LOG: 2025/09/03 23:39:41 main.go:24: Application started successfully.
+APP_LOG: 2025/09/03 23:39:45 productServices.go:54: Geldi
+APP_LOG: 2025/09/03 23:40:02 main.go:24: Application started successfully.
+APP_LOG: 2025/09/03 23:40:05 productServices.go:54: Geldi
+APP_LOG: 2025/09/03 23:43:17 productRepo.go:32: Geldi false
+APP_LOG: 2025/09/03 23:43:21 productServices.go:54: Geldi
+APP_LOG: 2025/09/03 23:43:26 productRepo.go:32: Geldi true
+APP_LOG: 2025/09/04 01:58:34 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 01:59:49 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:20:09 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:21:45 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:22:45 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:23:24 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:23:44 main.go:24: Application started successfully.
+APP_LOG: 2025/09/04 13:24:03 auth.go:28: Missing or invalid Authorization Header
+APP_LOG: 2025/09/04 13:24:05 auth.go:28: Missing or invalid Authorization Header
+APP_LOG: 2025/09/04 13:24:07 auth.go:28: Missing or invalid Authorization Header
+APP_LOG: 2025/09/05 00:53:26 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 00:54:00 auth.go:28: Missing or invalid Authorization Header
+APP_LOG: 2025/09/05 00:54:54 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 00:56:34 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:00:37 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:01:50 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:04:07 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:14:02 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:17:31 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:18:35 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:19:55 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:20:52 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:22:23 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:28:37 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 02:35:30 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:21:27 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:27:46 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:38:38 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:39:38 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:44:55 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 22:51:50 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 23:41:47 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 23:42:00 main.go:24: Application started successfully.
+APP_LOG: 2025/09/05 23:42:16 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:02:37 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:04:07 userRepo.go:113: Failed to update user
+APP_LOG: 2025/09/06 01:04:38 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:07:00 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:08:47 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:10:23 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:12:11 main.go:24: Application started successfully.
+APP_LOG: 2025/09/06 01:32:36 main.go:24: Application started successfully.

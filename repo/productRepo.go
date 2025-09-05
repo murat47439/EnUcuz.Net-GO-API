@@ -22,7 +22,7 @@ func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
 	if prodid == 0 {
 		return false, fmt.Errorf("Invalid product id")
 	}
-	query := "SELECT EXISTS (SELECT 1 FROM products WHERE id = $1)"
+	query := "SELECT EXISTS (SELECT 1 FROM products WHERE id = $1 AND deleted_at IS NULL)"
 
 	err := pr.db.Get(&exists, query, prodid)
 
@@ -106,7 +106,7 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = pr.db.Get(&product, "SELECT * FROM products WHERE id = $1", prodid)
+	err = pr.db.Get(&product, "SELECT * FROM products WHERE id = $1 AND deleted_at IS NULL", prodid)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -116,4 +116,58 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 	}
 
 	return &product, nil
+}
+func (pr *ProductRepo) GetProducts(page int, search string) ([]*models.Product, error) {
+	var products []*models.Product
+	offset := (page - 1) * 50
+	limit := 50
+	query := `SELECT * FROM products WHERE name ILIKE $1 AND deleted_at IS NULL  LIMIT $2 OFFSET $3`
+
+	rows, err := pr.db.Queryx(query, "%"+search+"%", limit, offset) // DB: *sqlx.DB
+
+	if err != nil {
+		return nil, fmt.Errorf("Database error : %s" + err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var p models.Product
+
+		if err := rows.StructScan(&p); err != nil {
+			return nil, fmt.Errorf("Scan error : %s", err.Error())
+		}
+		products = append(products, &p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("Rows error : %s", err.Error())
+	}
+
+	return products, nil
+}
+func (pr *ProductRepo) DeleteProduct(data *models.Product) error {
+	tx, err := pr.db.Beginx()
+
+	if err != nil {
+		return fmt.Errorf("TX Error :%s", err.Error())
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	query := `UPDATE products SET deleted_at = NOW() WHERE id = $1`
+
+	_, err = tx.Exec(query, data.ID)
+
+	if err != nil {
+		return fmt.Errorf("Database error : ", err.Error())
+	}
+	return nil
 }

@@ -24,6 +24,23 @@ func NewUserRepo(db *sqlx.DB) *UserRepo {
 // USER
 
 func (ur *UserRepo) CreateUser(user models.User) (bool, error) {
+	tx, err := ur.db.Beginx()
+
+	if err != nil {
+		return false, fmt.Errorf("TX Error : %s", err.Error())
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+
+	}()
 
 	password, err := utils.HashPassword(user.Password)
 	if err != nil {
@@ -31,20 +48,14 @@ func (ur *UserRepo) CreateUser(user models.User) (bool, error) {
 		return false, err
 	}
 	user.Password = password
-	stmt, err := ur.db.Prepare("INSERT INTO users (email, phone, name, surname, gender, role, password) VALUES($1, $2, $3, $4, $5, $6, $7)")
+
+	query := `INSERT INTO users(email, phone, name, surname, gender, role, password) VALUES($1, $2, $3, $4, $5, $6, $7)`
+
+	_, err = tx.Exec(query, user.Email, user.Phone, user.Name, user.Surname, user.Gender, user.Role, user.Password)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Database error : %s", err.Error())
 	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(user.Email, user.Phone, user.Name, user.Surname, user.Gender, user.Role, user.Password)
-
-	if err != nil {
-		return false, err
-	}
-
 	return true, nil
 }
 
@@ -54,7 +65,7 @@ func (ur *UserRepo) Login(email string, password string) (bool, error) {
 	}
 
 	var hash string
-	err := ur.db.QueryRow("SELECT password FROM users WHERE email = $1", email).Scan(&hash)
+	err := ur.db.QueryRow("SELECT password FROM users WHERE email = $1 AND deleted_at IS NULL", email).Scan(&hash)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -90,24 +101,24 @@ func (ur *UserRepo) Logout(userID int, refreshToken string) (bool, error) {
 	return true, nil
 
 }
-func (ur *UserRepo) Update(user models.User) (models.User, error) {
+func (ur *UserRepo) Update(user *models.User) (*models.User, error) {
 	if user.Email == "" || user.Name == "" || user.Surname == "" || user.ID == 0 {
-		return models.User{}, fmt.Errorf("Invalid data")
+		return nil, fmt.Errorf("Invalid data")
 	}
-	query := "UPDATE USERS SET name=$> ,surname = $2 ,email = $3 ,phone = $4 ,gender = $5 WHERE id=$6"
+	query := "UPDATE USERS SET name=$1 ,surname = $2 ,email = $3 ,phone = $4 ,gender = $5 WHERE id=$6"
 
 	_, err := ur.db.Exec(query, user.Name, user.Surname, user.Email, user.Phone, user.Gender, user.ID)
 
 	if err != nil {
 		config.Logger.Printf("Failed to update user")
-		return models.User{}, fmt.Errorf("Failed to update user")
+		return nil, fmt.Errorf("Failed to update user")
 	}
 	return user, nil
 }
 func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
 	var exists bool
 
-	query := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)"
+	query := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 AND deleted_at IS NULL)"
 	err := ur.db.Get(&exists, query, email)
 
 	if err != nil {
@@ -120,20 +131,19 @@ func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
 	return exists, nil
 }
 
-func (ur *UserRepo) GetUser(where string, arg any) (*models.User, error) {
+func (ur *UserRepo) getUser(where string, arg any) (*models.User, error) {
 	user := &models.User{}
 
 	allowedFields := map[string]string{
 		"email": "email",
 		"id":    "id",
-		"phone": "phone",
 	}
 	column, ok := allowedFields[where]
 	if !ok {
 		return nil, fmt.Errorf("Invalid fields : %s", where)
 	}
 
-	query := fmt.Sprintf("SELECT id, email, phone, name, surname, gender, role FROM users WHERE %s = $1", column)
+	query := fmt.Sprintf("SELECT id, email, phone, name, surname, gender, role FROM users WHERE %s = $1 AND deleted_at IS NULL", column)
 
 	err := ur.db.Get(user, query, arg)
 
@@ -148,10 +158,10 @@ func (ur *UserRepo) GetUser(where string, arg any) (*models.User, error) {
 }
 
 func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
-	return ur.GetUser("email", email)
+	return ur.getUser("email", email)
 }
 func (ur *UserRepo) GetUserDataByID(id int) (*models.User, error) {
-	return ur.GetUser("id", id)
+	return ur.getUser("id", id)
 }
 
 // JWT
@@ -200,7 +210,7 @@ func (ur *UserRepo) GenerateJWT(userID int, role int) (string, error) {
 func (ur *UserRepo) RefreshToken(userID int, refreshToken string) (string, error) {
 	var refresh models.RefreshToken
 
-	err := ur.db.Get(&refresh, "SELECT * FROM tokens WHERE user_id = $1 AND token = $2", userID, refreshToken)
+	err := ur.db.Get(&refresh, "SELECT * FROM tokens WHERE user_id = $1 AND token = $2 ", userID, refreshToken)
 
 	if err != nil {
 		return "", fmt.Errorf("Invalid refresh token")
@@ -264,7 +274,7 @@ func (ur *UserRepo) DecodeJWT(tokenstring models.Token) (models.JwtToken, error)
 //ADMİN CONTROL
 
 func (ur *UserRepo) OnlyAdmin(userID int) (bool, error) {
-	stmt, err := ur.db.Prepare("SELECT 1 FROM users WHERE role=1 AND id = $1")
+	stmt, err := ur.db.Prepare("SELECT 1 FROM users WHERE role=1 AND id = $1 AND deleted_at IS NULL")
 
 	if err != nil {
 

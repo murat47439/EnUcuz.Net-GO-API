@@ -1,20 +1,46 @@
 package repo
 
 import (
-	"encoding/json"
-	"net/http"
+	"database/sql"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func RespondWithError(w http.ResponseWriter, code int, message string) {
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": message,
-	})
+type Repo struct {
+	db             *sqlx.DB
+	AttributeRepo  *AttributeRepo
+	BrandsRepo     *BrandsRepo
+	CategoriesRepo *CategoriesRepo
+	ProductRepo    *ProductRepo
+	UserRepo       *UserRepo
+	FavoriesRepo   *FavoriesRepo
 }
 
-func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(payload)
+func NewRepo(db *sqlx.DB) *Repo {
+
+	attributeRepo := NewAttributeRepo(db)
+	brandRepo := NewBrandsRepo(db)
+	categoriesRepo := NewCategoriesRepo(db)
+	productRepo := NewProductRepo(db)
+	userRepo := NewUserRepo(db)
+	favoriesRepo := NewFavoriesRepo(db)
+
+	return &Repo{
+		db:             db,
+		AttributeRepo:  attributeRepo,
+		BrandsRepo:     brandRepo,
+		CategoriesRepo: categoriesRepo,
+		ProductRepo:    productRepo,
+		UserRepo:       userRepo,
+		FavoriesRepo:   favoriesRepo,
+	}
+}
+func (r *Repo) SafeQueryRow(query string, args ...any) *sqlx.Row {
+	return r.db.QueryRowx(query, args...)
+}
+func (r *Repo) SafeQuery(query string, args ...any) (*sqlx.Rows, error) {
+	return r.db.Queryx(query, args...)
+}
+func (r *Repo) SafeExec(query string, args ...any) (sql.Result, error) {
+	return r.db.Exec(query, args...)
 }

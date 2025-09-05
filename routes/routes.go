@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"Store-Dio/controllers/admin"
-	"Store-Dio/controllers/user"
+	"Store-Dio/controllers"
 
 	userMiddleware "Store-Dio/middleware"
 	"net/http"
@@ -12,11 +11,7 @@ import (
 )
 
 func SetupRoutes(
-	userController *user.UserController,
-	productControllerUser *user.ProductController,
-	productControllerAdmin *admin.ProductController,
-	brandsController *admin.BrandsController,
-	categoriesController *admin.CategoriesController,
+	controller *controllers.Controller,
 	um *userMiddleware.UserMiddleware,
 ) *chi.Mux {
 	r := chi.NewRouter()
@@ -24,41 +19,62 @@ func SetupRoutes(
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Route("/users", func(user chi.Router) {
-		user.Post("/register", userController.CreateUser)
-		user.Post("/login", userController.Login)
+	r.Route("/api", func(r chi.Router) {
+		r.Post("/register", controller.UserController.CreateUser)
+		r.Post("/login", controller.UserController.Login)
 
-		user.Group(func(auth chi.Router) {
+		r.Group(func(auth chi.Router) {
 			auth.Use(um.AuthMiddleware)
-			auth.Get("/profile", userController.GetUserData)
-			auth.Put("/update", userController.Update)
-			auth.Post("/logout", userController.Logout)
+			auth.Get("/profile", controller.UserController.GetUserData)
+			auth.Put("/update", controller.UserController.Update)
+		})
+		r.Route("/refresh", func(ref chi.Router) {
+			ref.Use(um.AuthMiddleware)
+			ref.Post("/logout", controller.UserController.Logout)
+		})
+		r.Route("/products", func(product chi.Router) {
+			product.Get("/", controller.UserProductController.GetProducts)
+			product.Get("/{id}", controller.UserProductController.GetProduct)
+			product.Group(func(prod chi.Router) {
+				prod.Use(um.OnlyAdmin)
+				prod.Post("/add", controller.AdminProductController.AddProduct)
+				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
+				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
+			})
+		})
+		r.Route("/brands", func(brand chi.Router) {
+			brand.Get("/", controller.UserBrandsController.GetBrands)
+			brand.Get("/{id}", controller.UserBrandsController.GetBrand)
+			brand.Group(func(brand chi.Router) {
+				brand.Use(um.OnlyAdmin)
+				brand.Post("/", controller.AdminbrandsController.AddBrand)
+				brand.Put("/{id}", controller.AdminbrandsController.UpdateBrand)
+				brand.Delete("/{id}", controller.AdminbrandsController.DeleteBrand)
+			})
+		})
+		r.Route("/categories", func(cat chi.Router) {
+			cat.Get("/", controller.UserCategoriesController.GetCategories)
+			cat.Get("/{id}", controller.UserCategoriesController.GetCategory)
+			cat.Group(func(cat chi.Router) {
+				cat.Use(um.OnlyAdmin)
+				cat.Post("/", controller.AdminCategoriesController.AddCategory)
+				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
+				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
+			})
 		})
 
-		user.Group(func(admin chi.Router) {
-			admin.Use(um.OnlyAdmin)
-			admin.Get("/admin", userController.GetUserData)
+		r.Route("/favourites", func(fav chi.Router) {
+			fav.Group(func(fav chi.Router) {
+				fav.Use(um.AuthMiddleware)
+				fav.Get("/", controller.UserFavoriesControllr.GetFavourites)
+				fav.Post("/", controller.UserFavoriesControllr.AddFavori)
+				fav.Delete("/{id}", controller.UserFavoriesControllr.RemoveFavori)
+			})
+
 		})
+
 	})
 
-	r.Route("/products", func(product chi.Router) {
-		product.Get("/", productControllerUser.GetProducts)
-		product.Get("/{id}", productControllerUser.GetProduct)
-		product.Group(func(prod chi.Router) {
-			prod.Use(um.OnlyAdmin)
-			prod.Post("/add", productControllerAdmin.AddProduct)
-			prod.Put("/update", productControllerAdmin.UpdateProduct)
-		})
-	})
-
-	r.Route("/admin", func(admin chi.Router) {
-		admin.Group(func(ad chi.Router) {
-			ad.Use(um.OnlyAdmin)
-			ad.Post("/import-categories", categoriesController.InsertCategoriesData)
-			ad.Post("/import-brands", brandsController.InsertBrandData)
-			ad.Get("/get-categories-id", categoriesController.GetAllCategoriesID)
-		})
-	})
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Endpoint not allowed", http.StatusNotFound)
 	})

@@ -2,6 +2,7 @@ package repo
 
 import (
 	"Store-Dio/models"
+	"database/sql"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -16,37 +17,14 @@ func NewCategoriesRepo(db *sqlx.DB) *CategoriesRepo {
 		db: db,
 	}
 }
-
-func (cr *CategoriesRepo) InsertCategory(tx *sqlx.Tx, cat models.Category) error {
-	query := `
-		INSERT INTO categories (id, name, parent_id, created_at) VALUES($1, $2, $3, NOW())
-		ON CONFLICT (id) DO UPDATE SET
-		name = EXCLUDED.name,
-		parent_id = EXCLUDED.parent_id
-	`
-	_, err := tx.Exec(query, cat.ID, cat.Name, cat.ParentID)
-	if err != nil {
-		return fmt.Errorf("InsertCategoriesData Error")
+func (cr *CategoriesRepo) AddCategory(data *models.Category) (*models.Category, error) {
+	if data.Name == "" {
+		return nil, fmt.Errorf("Invalid data")
 	}
-	return nil
-}
-func (cr *CategoriesRepo) InsertCategoryDataRecursive(tx *sqlx.Tx, cat models.Category) error {
-	if err := cr.InsertCategory(tx, cat); err != nil {
-		return err
-	}
-
-	for _, sub := range cat.SubCategory {
-		if err := cr.InsertCategoryDataRecursive(tx, sub); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (cr *CategoriesRepo) InsertCategoriesRecursive(cat models.Category) (err error) {
 	tx, err := cr.db.Beginx()
+
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("TX ERROR : %s", err.Error())
 	}
 
 	defer func() {
@@ -60,21 +38,146 @@ func (cr *CategoriesRepo) InsertCategoriesRecursive(cat models.Category) (err er
 		}
 	}()
 
-	err = cr.InsertCategoryDataRecursive(tx, cat)
+	exists, err := cr.CheckCategory(data.Name, tx)
+
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
-}
-func (cr *CategoriesRepo) GetAllCategoriesID() (models.Categories, error) {
-	var categories models.Categories
-	query := `SELECT id FROM categories`
+	if exists {
+		return nil, fmt.Errorf("Category does exists")
+	}
 
-	err := cr.db.Select(&categories, query)
+	query := `INSERT INTO category(name) VALUES ($1) RETURNING id`
+	var id int
+	err = tx.QueryRow(query, data.Name).Scan(&id)
+
+	data.ID = id
+
+	return data, nil
+
+}
+func (cr *CategoriesRepo) CheckCategory(name string, tx *sqlx.Tx) (bool, error) {
+	if name == "" {
+		return false, fmt.Errorf("Invalid data")
+	}
+	query := `SELECT EXISTS(SELECT 1 FROM categories WHERE name = $1 AND deleted_at IS NULL)`
+
+	var exists bool
+
+	err := tx.QueryRow(query, name).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("EXISTS ERROR : %s", err.Error())
+	}
+
+	return exists, nil
+}
+func (cr *CategoriesRepo) UpdateCategory(data *models.Category) (bool, error) {
+
+	tx, err := cr.db.Beginx()
 
 	if err != nil {
-		return nil, fmt.Errorf("Categories not found. Error : ", err.Error())
+		return false, fmt.Errorf("TX error : %s", err.Error())
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	exists, err := cr.CheckCategory(data.Name, tx)
+
+	if !exists {
+		return false, fmt.Errorf("Category Not Found")
+	}
+
+	query := `UPDATE categories SET name = $1, parent_id = $2 WHERE id = $3`
+
+	_, err = tx.Exec(query, data.Name, data.ParentID, data.ID)
+
+	if err != nil {
+		return false, fmt.Errorf("Database error : %s", err.Error())
+	}
+	return true, nil
+}
+func (cr *CategoriesRepo) DeleteCategory(data *models.Category) error {
+	tx, err := cr.db.Beginx()
+	if err != nil {
+		return fmt.Errorf("TX Error : %s", err.Error())
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	exists, err := cr.CheckCategory(data.Name, tx)
+
+	if !exists {
+		return fmt.Errorf("Category not found")
+	}
+
+	query := "UPDATE category SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL"
+
+	_, err = tx.Exec(query, data.ID)
+
+	if err != nil {
+		return fmt.Errorf("Database error : %s", err.Error())
+	}
+	return nil
+}
+func (cr *CategoriesRepo) GetCategory(id int) (*models.Category, error) {
+	query := `SELECT * FROM categories WHERE id = $1 AND deleted_at IS NULL`
+
+	var category models.Category
+
+	err := cr.db.Get(&category, query, id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("Category not found")
+		}
+		return nil, fmt.Errorf("Database error : %s", err.Error())
+	}
+	return &category, nil
+}
+func (cr *CategoriesRepo) GetCategories(page int, search string) ([]*models.Category, error) {
+	limit := 50
+	query := `SELECT * FROM categories WHERE name ILIKE $1 AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+	offset := (page - 1) * 50
+	var categories []*models.Category
+
+	rows, err := cr.db.Queryx(query, "%"+search+"%", limit, offset)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("Categories not found")
+		}
+		return nil, fmt.Errorf("Database error", err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var c models.Category
+
+		if err := rows.StructScan(&c); err != nil {
+			return nil, fmt.Errorf("Scan error : %s", err.Error())
+		}
+
+		categories = append(categories, &c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("Rows error : %s", err.Error())
 	}
 	return categories, nil
 }

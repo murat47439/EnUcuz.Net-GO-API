@@ -6,6 +6,7 @@ import (
 	"Store-Dio/services/users"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 type UserController struct {
@@ -17,7 +18,6 @@ func NewUserController(us *users.UserService) *UserController {
 		UserService: us,
 	}
 }
-
 func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
@@ -64,94 +64,130 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Login error"+err.Error())
 		return
 	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		Path:     "/api",
+		Expires:  time.Now().Add(15 * time.Minute),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Path:     "/api/refresh",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
 
 	RespondWithJSON(w, http.StatusAccepted, map[string]string{
-		"token":         accessToken,
-		"refresh-token": refreshToken,
-		"message":       "Succesfully",
+		"message": "Succesfully",
 	})
 }
 func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
-	var token models.RefreshToken
 
-	err := json.NewDecoder(r.Body).Decode(&token)
+	userID, ok := GetUserIDFromContext(r)
 
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid token")
+	if !ok {
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
 		return
 	}
-	_, err = uc.UserService.Logout(token)
+
+	cookie, err := r.Cookie("refresh_token")
+	if err != nil {
+		http.Error(w, "Missing refresh token", http.StatusUnauthorized)
+		return
+	}
+	token := cookie.Value
+
+	_, err = uc.UserService.Logout(token, userID)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	RespondWithJSON(w, http.StatusAccepted, map[string]string{
-		"message": "Successfully",
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		Path:     "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		Path:     "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	RespondWithJSON(w, http.StatusOK, map[string]string{
+		"message": "Succesfully",
+	})
+
 }
 func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
-	var token models.Token
+	userID, ok := GetUserIDFromContext(r)
 
-	err := json.NewDecoder(r.Body).Decode(&token)
-
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
-		return
-	}
-	user, err := uc.UserService.GetUserDataByID(token)
-
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Service Error : "+err.Error())
-		return
-	}
-	RespondWithJSON(w, http.StatusAccepted, map[string]interface{}{
-		"message": "successfully",
-		"Name":    user.Name,
-		"Surname": user.Surname,
-		"Email":   user.Email,
-		"Phone":   user.Phone,
-		"Gender":  user.Gender,
-		"Role":    user.Role,
-	})
-
-}
-func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	var claims models.UpdateUser
-	err := json.NewDecoder(r.Body).Decode(&claims)
-
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+	if !ok {
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
 		return
 	}
 
-	if claims.User.ID != 0 || claims.Token.Token == "" {
-		RespondWithError(w, http.StatusBadRequest, "Invalid request")
-		return
-	}
-
-	token, err := uc.UserService.UserRepo.DecodeJWT(claims.Token)
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid request")
-		return
-	}
-
-	claims.User.ID = token.UserID
-
-	_, err = uc.UserService.Update(claims.User)
+	user, err := uc.UserService.GetUserDataByID(userID)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Succesfully",
-		"name":    claims.User.Name,
-		"surname": claims.User.Surname,
-		"email":   claims.User.Email,
-		"phone":   claims.User.Phone,
-		"gender":  claims.User.Gender,
+		"Message": "Successfully",
+		"User":    user,
 	})
+}
+func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
+	userID, ok := GetUserIDFromContext(r)
 
+	if !ok {
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		return
+	}
+	var data *models.User
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+
+	if userID != data.ID {
+		RespondWithError(w, http.StatusBadRequest, "Error")
+		return
+	}
+
+	user, err := uc.UserService.Update(data)
+
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"Message": "Successfully",
+		"User": map[string]interface{}{
+			"id":      user.ID,
+			"name":    user.Name,
+			"surname": user.Surname,
+			"email":   user.Email,
+			"phone":   user.Phone,
+		},
+	})
 }
