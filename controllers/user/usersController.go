@@ -154,7 +154,7 @@ func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
 	})
 }
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	userID, _, ok := GetUserIDFromContext(r)
+	userID, role, ok := GetUserIDFromContext(r)
 
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
@@ -168,10 +168,11 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
-
-	if userID != data.ID {
-		RespondWithError(w, http.StatusBadRequest, "Error")
-		return
+	if role != 1 {
+		if userID != data.ID {
+			RespondWithError(w, http.StatusBadRequest, "Error")
+			return
+		}
 	}
 
 	user, err := uc.UserService.Update(data)
