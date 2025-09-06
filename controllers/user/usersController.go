@@ -54,7 +54,7 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
-		RespondWithError(w, http.StatusNotFound, "Invalid Data")
+		RespondWithError(w, http.StatusBadRequest, "Invalid Data")
 		return
 	}
 
