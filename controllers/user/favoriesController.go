@@ -20,12 +20,14 @@ func NewFavoriesController(service *favories.FavoriesService) *FavoriesControlle
 		FavoriesServices: service,
 	}
 }
-func GetUserIDFromContext(r *http.Request) (int, bool) {
+func GetUserIDFromContext(r *http.Request) (int, int, bool) {
 	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
-	return userID, ok
+	userRole, ok := r.Context().Value(middleware.UserRole).(int)
+
+	return userID, userRole, ok
 }
 func (fc *FavoriesController) AddFavori(w http.ResponseWriter, r *http.Request) {
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -49,7 +51,7 @@ func (fc *FavoriesController) AddFavori(w http.ResponseWriter, r *http.Request) 
 
 }
 func (fc *FavoriesController) RemoveFavori(w http.ResponseWriter, r *http.Request) {
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
@@ -77,7 +79,7 @@ func (fc *FavoriesController) RemoveFavori(w http.ResponseWriter, r *http.Reques
 func (fc *FavoriesController) GetFavourites(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 		return

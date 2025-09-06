@@ -89,7 +89,7 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 }
 func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
 
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
@@ -134,7 +134,7 @@ func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
 
 }
 func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
@@ -154,7 +154,7 @@ func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
 	})
 }
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	userID, ok := GetUserIDFromContext(r)
+	userID, _, ok := GetUserIDFromContext(r)
 
 	if !ok {
 		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")

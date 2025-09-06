@@ -27,6 +27,7 @@ func SetupRoutes(
 			auth.Use(um.AuthMiddleware)
 			auth.Get("/profile", controller.UserController.GetUserData)
 			auth.Put("/update", controller.UserController.Update)
+			auth.Get("/reviews", controller.UserReviewController.GetUserReviews)
 		})
 		r.Route("/refresh", func(ref chi.Router) {
 			ref.Use(um.AuthMiddleware)
@@ -34,12 +35,29 @@ func SetupRoutes(
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
-			product.Get("/{id}", controller.UserProductController.GetProduct)
+			product.Group(func(r chi.Router) {
+				r.Get("/{id}", controller.UserProductController.GetProduct)
+				r.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
+			})
+
 			product.Group(func(prod chi.Router) {
 				prod.Use(um.OnlyAdmin)
-				prod.Post("/add", controller.AdminProductController.AddProduct)
+				prod.Post("/", controller.AdminProductController.AddProduct)
 				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
 				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
+			})
+		})
+		r.Route("/reviews", func(review chi.Router) {
+			review.Group(func(r chi.Router) {
+				r.Use(um.AuthMiddleware)
+				r.Post("/", controller.UserReviewController.AddReview)
+				r.Put("/", controller.UserReviewController.UpdateReview)
+				r.Get("/{id}", controller.UserReviewController.GetReview)
+				r.Delete("/{id}", controller.UserReviewController.RemoveReview)
+			})
+			review.Group(func(re chi.Router) {
+				re.Use(um.OnlyAdmin)
+				r.Put("/admin", controller.AdminReviewController.ReviewStatusUpdate)
 			})
 		})
 		r.Route("/brands", func(brand chi.Router) {

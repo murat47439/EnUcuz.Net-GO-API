@@ -14,6 +14,7 @@ type Repo struct {
 	ProductRepo    *ProductRepo
 	UserRepo       *UserRepo
 	FavoriesRepo   *FavoriesRepo
+	ReviewsRepo    *ReviewsRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
@@ -24,6 +25,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 	productRepo := NewProductRepo(db)
 	userRepo := NewUserRepo(db)
 	favoriesRepo := NewFavoriesRepo(db)
+	reviewsRepo := NewReviewRepo(db)
 
 	return &Repo{
 		db:             db,
@@ -33,6 +35,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 		ProductRepo:    productRepo,
 		UserRepo:       userRepo,
 		FavoriesRepo:   favoriesRepo,
+		ReviewsRepo:    reviewsRepo,
 	}
 }
 func (r *Repo) SafeQueryRow(query string, args ...any) *sqlx.Row {

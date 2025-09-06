@@ -15,6 +15,7 @@ type UserMiddleware struct {
 type contextKey string
 
 const UserIDKey contextKey = "userID"
+const UserRole contextKey = "userRole"
 
 func NewUserMiddleware(ur *repo.UserRepo) *UserMiddleware {
 	return &UserMiddleware{
@@ -81,6 +82,7 @@ func (um *UserMiddleware) AuthMiddleware(next http.Handler) http.Handler {
 				return
 			}
 			ctx := context.WithValue(r.Context(), UserIDKey, token.UserID)
+			ctx = context.WithValue(ctx, UserRole, token.UserRole)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
