@@ -20,8 +20,3 @@ type Product struct {
 	UpdatedAt   time.Time     `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt   *sql.NullTime `json:"-" db:"deleted_at"`
 }
-type FilterProd struct {
-	ID       int
-	ImageUrl string
-	Name     string
-}
