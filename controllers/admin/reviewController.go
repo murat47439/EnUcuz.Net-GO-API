@@ -38,6 +38,6 @@ func (rc *ReviewController) ReviewStatusUpdate(w http.ResponseWriter, r *http.Re
 
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }

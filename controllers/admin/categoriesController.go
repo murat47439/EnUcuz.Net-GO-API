@@ -36,7 +36,7 @@ func (cc *CategoriesController) AddCategory(w http.ResponseWriter, r *http.Reque
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message":  "Successfully",
+		"message":  "Successfully",
 		"Category": data,
 	})
 }
@@ -56,7 +56,7 @@ func (cc *CategoriesController) UpdateCategory(w http.ResponseWriter, r *http.Re
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }
 func (cc *CategoriesController) DeleteCategory(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +74,6 @@ func (cc *CategoriesController) DeleteCategory(w http.ResponseWriter, r *http.Re
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }

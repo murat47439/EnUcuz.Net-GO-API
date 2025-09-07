@@ -149,7 +149,7 @@ func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"User":    user,
 	})
 }
@@ -182,7 +182,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"User": map[string]interface{}{
 			"id":      user.ID,
 			"name":    user.Name,

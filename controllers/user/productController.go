@@ -51,7 +51,7 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message":  "Successfully",
+		"message":  "Successfully",
 		"Products": products,
 	})
 }

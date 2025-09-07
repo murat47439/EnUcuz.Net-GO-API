@@ -43,7 +43,7 @@ func (rc *ReviewController) AddReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }
 func (rc *ReviewController) UpdateReview(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,7 @@ func (rc *ReviewController) UpdateReview(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }
 func (rc *ReviewController) RemoveReview(w http.ResponseWriter, r *http.Request) {
@@ -95,7 +95,7 @@ func (rc *ReviewController) RemoveReview(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }
 func (rc *ReviewController) GetReview(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +118,7 @@ func (rc *ReviewController) GetReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"Review":  review,
 	})
 }
@@ -140,7 +140,7 @@ func (rc *ReviewController) GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"Reviews": reviews,
 	})
 
@@ -162,7 +162,7 @@ func (rc *ReviewController) GetUserReviews(w http.ResponseWriter, r *http.Reques
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"Reviews": reviews,
 	})
 }

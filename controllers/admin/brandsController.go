@@ -38,7 +38,7 @@ func (bc *BrandsController) AddBrand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message": "Successfully",
+		"message": "Successfully",
 		"Brand":   brand,
 	})
 }
@@ -58,7 +58,7 @@ func (bc *BrandsController) UpdateBrand(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }
 func (bc *BrandsController) DeleteBrand(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +76,6 @@ func (bc *BrandsController) DeleteBrand(w http.ResponseWriter, r *http.Request) 
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 }

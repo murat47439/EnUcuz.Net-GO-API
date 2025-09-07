@@ -46,7 +46,7 @@ func (fc *FavoriesController) AddFavori(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 
 }
@@ -72,7 +72,7 @@ func (fc *FavoriesController) RemoveFavori(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"Message": "Successfully",
+		"message": "Successfully",
 	})
 
 }
@@ -97,7 +97,7 @@ func (fc *FavoriesController) GetFavourites(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Message":    "Successfully",
+		"message":    "Successfully",
 		"Favourites": data,
 	})
 
