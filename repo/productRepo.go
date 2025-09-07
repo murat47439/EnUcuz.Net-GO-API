@@ -16,16 +16,24 @@ type ProductRepo struct {
 func NewProductRepo(db *sqlx.DB) *ProductRepo {
 	return &ProductRepo{db: db}
 }
-func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
+func (pr *ProductRepo) CheckProduct(data *models.FilterProd) (bool, error) {
 
 	var exists bool
-	if prodid == 0 {
+	if data.ID == 0 {
 		return false, fmt.Errorf("Invalid product id")
 	}
 	query := "SELECT EXISTS (SELECT 1 FROM products WHERE id = $1 AND deleted_at IS NULL)"
+	params := []interface{}{data.ID}
 
-	err := pr.db.Get(&exists, query, prodid)
+	if data.ImageUrl != "" && data.Name != "" {
+		query = "SELECT EXISTS (SELECT 1 FROM products WHERE id = $1 AND deleted_at IS NULL AND name = $2 AND image_url = $3)"
+		params = append(params, data.Name, data.ImageUrl)
+	}
 
+	err := pr.db.Get(&exists, query, params...)
+	if err != nil {
+		return false, err
+	}
 	if err != nil {
 		return false, err
 	}
@@ -59,7 +67,7 @@ func (pr *ProductRepo) UpdateProduct(product *models.Product) (bool, error) {
 		return false, fmt.Errorf("Invalid data")
 	}
 
-	exists, err := pr.CheckProduct(product.ID)
+	exists, err := pr.CheckProduct(&models.FilterProd{ID: product.ID})
 
 	if err != nil {
 		return false, err
@@ -102,7 +110,7 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
-	_, err := pr.CheckProduct(prodid)
+	_, err := pr.CheckProduct(&models.FilterProd{ID: product.ID})
 	if err != nil {
 		return nil, err
 	}
