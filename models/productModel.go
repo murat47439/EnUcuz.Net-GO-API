@@ -16,7 +16,7 @@ type Product struct {
 	Category    *Category     `json:"category,omitempty"`
 	StoreID     int           `json:"store_id" db:"store_id"`
 	Store       *Store        `json:"store,omitempty"`
-	CreatedAt   time.Time     `json:"crated_at,omitempty" db:"created_at"`
+	CreatedAt   time.Time     `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt   *sql.NullTime `json:"-" db:"deleted_at"`
 }
