@@ -26,7 +26,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 	var product models.Product
 
 	err = json.NewDecoder(r.Body).Decode(&product)
-	if err != nil || id == product.ID {
+	if err != nil || id != product.ID {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
