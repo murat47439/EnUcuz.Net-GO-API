@@ -50,9 +50,13 @@ func (rr *ReviewsRepo) UpdateReview(data *models.Review) error {
 
 	query := `UPDATE reviews SET content = $1, rating = $2 ,status = $3 ,updated_at = NOW() WHERE id = $4 AND user_id = $5 AND deleted_at IS NULL`
 
-	_, err = rr.db.Exec(query, data.Content, data.Rating, data.Status, data.ID, data.UserID)
+	res, err := rr.db.Exec(query, data.Content, data.Rating, data.Status, data.ID, data.UserID)
 	if err != nil {
 		return fmt.Errorf("Database error : %s", err.Error())
+	}
+	rows, _ := res.RowsAffected()
+	if rows == 0 {
+		return fmt.Errorf("No review updated")
 	}
 	return nil
 }
