@@ -212,12 +212,12 @@ func (ur *UserRepo) StoreRefreshToken(userID int, refresh string) error {
 	}
 	return nil
 }
-func (ur *UserRepo) HashRefreshToken(token string, secret string) string {
+func (ur *UserRepo) HashRefreshToken(token string, secret []byte) string {
 	mac := hmac.New(sha256.New, []byte(secret))
 	mac.Write([]byte(token))
 	return hex.EncodeToString(mac.Sum(nil))
 }
-func (ur *UserRepo) CheckRefreshToken(token string, hash string, secret string) bool {
+func (ur *UserRepo) CheckRefreshToken(token string, hash string, secret []byte) bool {
 	return ur.HashRefreshToken(token, secret) == hash
 }
 func (ur *UserRepo) VerifyAccessToken(tokenStr string) (*models.AccessToken, error) {
