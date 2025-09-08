@@ -88,11 +88,11 @@ func (rs *ReviewService) GetUserReviews(user_id int) ([]*models.Review, error) {
 	}
 	return reviews, nil
 }
-func (rs *ReviewService) ReviewStatusUpdate(id, status int) error {
-	if id == 0 || status < 0 || status > 3 {
+func (rs *ReviewService) ReviewStatusUpdate(review *models.Review) error {
+	if review.ID == 0 || review.Status < 0 || review.Status > 3 {
 		return fmt.Errorf("Invalid data")
 	}
-	err := rs.ReviewStatusUpdate(id, status)
+	err := rs.ReviewRepo.ReviewStatusUpdate(review.ID, review.Status)
 	if err != nil {
 		return err
 	}

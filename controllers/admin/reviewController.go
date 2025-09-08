@@ -5,9 +5,6 @@ import (
 	"Store-Dio/services/reviews"
 	"encoding/json"
 	"net/http"
-	"strconv"
-
-	"github.com/go-chi/chi/v5"
 )
 
 type ReviewController struct {
@@ -20,19 +17,15 @@ func NewReviewController(service *reviews.ReviewService) *ReviewController {
 	}
 }
 func (rc *ReviewController) ReviewStatusUpdate(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
-		return
-	}
+
 	var review *models.Review
-	err = json.NewDecoder(r.Body).Decode(&review)
+	err := json.NewDecoder(r.Body).Decode(&review)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
-	err = rc.ReviewService.ReviewStatusUpdate(id, review.Status)
+	err = rc.ReviewService.ReviewStatusUpdate(review)
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
 
