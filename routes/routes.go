@@ -44,18 +44,32 @@ func SetupRoutes(
 			})
 
 		})
+		r.Route("/admin", func(admin chi.Router) {
+			admin.Use(um.OnlyAdmin)
+			admin.Route("/products", func(prod chi.Router) {
+				prod.Post("/", controller.AdminProductController.AddProduct)
+				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
+				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
+			})
+			admin.Route("/reviews", func(rev chi.Router) {
+				rev.Put("/", controller.AdminReviewController.ReviewStatusUpdate)
+			})
+			admin.Route("/brands", func(brand chi.Router) {
+				brand.Post("/", controller.AdminbrandsController.AddBrand)
+				brand.Put("/{id}", controller.AdminbrandsController.UpdateBrand)
+				brand.Delete("/{id}", controller.AdminbrandsController.DeleteBrand)
+			})
+			admin.Route("/categories", func(cat chi.Router) {
+				cat.Post("/", controller.AdminCategoriesController.AddCategory)
+				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
+				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
+			})
+		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
 			product.Group(func(r chi.Router) {
 				r.Get("/{id}", controller.UserProductController.GetProduct)
 				r.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
-			})
-
-			product.Group(func(prod chi.Router) {
-				prod.Use(um.OnlyAdmin)
-				prod.Post("/", controller.AdminProductController.AddProduct)
-				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
-				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
 			})
 		})
 		r.Route("/reviews", func(review chi.Router) {
@@ -66,30 +80,15 @@ func SetupRoutes(
 				r.Get("/{id}", controller.UserReviewController.GetReview)
 				r.Delete("/{id}", controller.UserReviewController.RemoveReview)
 			})
-			review.Group(func(re chi.Router) {
-				re.Use(um.OnlyAdmin)
-				r.Put("/admin", controller.AdminReviewController.ReviewStatusUpdate)
-			})
 		})
 		r.Route("/brands", func(brand chi.Router) {
 			brand.Get("/", controller.UserBrandsController.GetBrands)
 			brand.Get("/{id}", controller.UserBrandsController.GetBrand)
-			brand.Group(func(brand chi.Router) {
-				brand.Use(um.OnlyAdmin)
-				brand.Post("/", controller.AdminbrandsController.AddBrand)
-				brand.Put("/{id}", controller.AdminbrandsController.UpdateBrand)
-				brand.Delete("/{id}", controller.AdminbrandsController.DeleteBrand)
-			})
 		})
 		r.Route("/categories", func(cat chi.Router) {
 			cat.Get("/", controller.UserCategoriesController.GetCategories)
 			cat.Get("/{id}", controller.UserCategoriesController.GetCategory)
-			cat.Group(func(cat chi.Router) {
-				cat.Use(um.OnlyAdmin)
-				cat.Post("/", controller.AdminCategoriesController.AddCategory)
-				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
-				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
-			})
+
 		})
 
 		r.Route("/favourites", func(fav chi.Router) {
