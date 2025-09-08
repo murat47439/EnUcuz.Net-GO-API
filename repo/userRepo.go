@@ -4,13 +4,15 @@ import (
 	"Store-Dio/config"
 	"Store-Dio/models"
 	"Store-Dio/utils"
+	"crypto/hmac"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepo struct {
@@ -88,9 +90,11 @@ func (ur *UserRepo) Logout(userID int, refreshToken string) (bool, error) {
 	if userID == 0 || refreshToken == "" {
 		return false, fmt.Errorf("Invalid data")
 	}
+	refreshTokenHash := ur.HashRefreshToken(refreshToken, config.REFRESH_TOKEN_SECRET)
+
 	query := "DELETE FROM tokens WHERE token = $1 AND user_id = $2"
 
-	result, err := ur.db.Exec(query, refreshToken, userID)
+	result, err := ur.db.Exec(query, refreshTokenHash, userID)
 
 	if err != nil {
 		return false, fmt.Errorf("Log out unsuccessfully")
@@ -186,7 +190,7 @@ func (ur *UserRepo) GenerateAccessToken(userID, userRole int) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenstring, err := token.SignedString(config.JWTSecret)
+	tokenstring, err := token.SignedString(config.JWT_SECRET)
 	if err != nil {
 		return "", err
 	}
@@ -199,27 +203,22 @@ func (ur *UserRepo) StoreRefreshToken(userID int, refresh string) error {
 	}
 	expiresAt := time.Now().Add(7 * 24 * time.Hour)
 
-	hashToken, err := ur.HashRefreshToken(refresh)
-	if err != nil {
-		return err
-	}
+	hashToken := ur.HashRefreshToken(refresh, config.REFRESH_TOKEN_SECRET)
+
 	query := `INSERT INTO tokens (user_id,token, expires_at) VALUES($1, $2, $3)`
-	_, err = ur.db.Exec(query, userID, hashToken, expiresAt)
+	_, err := ur.db.Exec(query, userID, hashToken, expiresAt)
 	if err != nil {
 		return fmt.Errorf("Database error : %s", err.Error())
 	}
 	return nil
 }
-func (ur *UserRepo) HashRefreshToken(token string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hash), nil
+func (ur *UserRepo) HashRefreshToken(token string, secret string) string {
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte(token))
+	return hex.EncodeToString(mac.Sum(nil))
 }
-func (ur *UserRepo) CheckRefreshToken(token string, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(token))
-	return err == nil
+func (ur *UserRepo) CheckRefreshToken(token string, hash string, secret string) bool {
+	return ur.HashRefreshToken(token, secret) == hash
 }
 func (ur *UserRepo) VerifyAccessToken(tokenStr string) (*models.AccessToken, error) {
 	accessToken := &models.AccessToken{}
@@ -228,7 +227,7 @@ func (ur *UserRepo) VerifyAccessToken(tokenStr string) (*models.AccessToken, err
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method")
 		}
-		return []byte(config.JWTSecret), nil
+		return []byte(config.JWT_SECRET), nil
 	})
 
 	if err != nil {
@@ -242,17 +241,12 @@ func (ur *UserRepo) VerifyAccessToken(tokenStr string) (*models.AccessToken, err
 	return accessToken, nil
 }
 func (ur *UserRepo) RestoreRefreshToken(token string) (int, int, string, error) {
-	refreshHash, err := ur.HashRefreshToken(token)
-
-	if err != nil {
-		return 0, 0, "", err
-	}
-
+	refreshHash := ur.HashRefreshToken(token, config.REFRESH_TOKEN_SECRET)
 	newRefresh, err := utils.GenerateRandomToken(32)
 	if err != nil {
 		return 0, 0, "", err
 	}
-	newRefreshHash, err := ur.HashRefreshToken(newRefresh)
+	newRefreshHash := ur.HashRefreshToken(newRefresh, config.REFRESH_TOKEN_SECRET)
 	if err != nil {
 		return 0, 0, "", err
 	}
