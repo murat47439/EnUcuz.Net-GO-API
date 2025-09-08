@@ -122,7 +122,7 @@ func (rr *ReviewsRepo) GetUserReviews(user_id int) ([]*models.Review, error) {
 		return nil, fmt.Errorf("Invalid data")
 	}
 	var reviews []*models.Review
-	query := `SELECT user_id, product_id, content, rating, status, created_at FROM reviews WHERE user_id = $1 AND deleted_at IS NULL`
+	query := `SELECT id,user_id, product_id, content, rating, status, created_at FROM reviews WHERE user_id = $1 AND deleted_at IS NULL`
 
 	rows, err := rr.db.Queryx(query, user_id)
 
