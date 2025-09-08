@@ -3,17 +3,19 @@ package config
 import "os"
 
 var (
-	JWT_SECRET           string
-	REFRESH_TOKEN_SECRET string
+	JWT_SECRET           []byte
+	REFRESH_TOKEN_SECRET []byte
 )
 
 func LoadConfig() {
-	JWT_SECRET = os.Getenv("JWT_SECRET")
-	if JWT_SECRET == "" {
+	jwt_secret := os.Getenv("JWT_SECRET")
+	if jwt_secret == "" {
 		Logger.Printf("JWT_SECRET not set in environment")
 	}
-	REFRESH_TOKEN_SECRET = os.Getenv("REFRESH_TOKEN_SECRET")
-	if REFRESH_TOKEN_SECRET == "" {
+	JWT_SECRET = []byte(jwt_secret)
+	refresh_token_secret := os.Getenv("REFRESH_TOKEN_SECRET")
+	if refresh_token_secret == "" {
 		Logger.Printf("REFRESH_TOKEN_SECRET not set in environment")
 	}
+	REFRESH_TOKEN_SECRET = []byte(refresh_token_secret)
 }
