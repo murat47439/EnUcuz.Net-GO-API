@@ -48,9 +48,9 @@ func (cr *CategoriesRepo) AddCategory(data *models.Category) (*models.Category, 
 		return nil, fmt.Errorf("Category does exists")
 	}
 
-	query := `INSERT INTO categories(name,created_at) VALUES ($1, NOW()) RETURNING id`
+	query := `INSERT INTO categories(name,parent_id,created_at) VALUES ($1, $2 ,NOW()) RETURNING id`
 	var id int
-	err = tx.QueryRow(query, data.Name).Scan(&id)
+	err = tx.QueryRow(query, data.ParentID, data.Name).Scan(&id)
 
 	data.ID = id
 
