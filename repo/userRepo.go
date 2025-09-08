@@ -203,10 +203,10 @@ func (ur *UserRepo) StoreRefreshToken(userID int, refresh string) error {
 	if err != nil {
 		return err
 	}
-	query := `INSERT INTO tokens user_id,token, expires_at VALUES($1, $2, $3)`
+	query := `INSERT INTO tokens (user_id,token, expires_at) VALUES($1, $2, $3)`
 	_, err = ur.db.Exec(query, userID, hashToken, expiresAt)
 	if err != nil {
-		fmt.Errorf("Database error : %s", err.Error())
+		return fmt.Errorf("Database error : %s", err.Error())
 	}
 	return nil
 }

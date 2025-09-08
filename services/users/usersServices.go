@@ -102,5 +102,8 @@ func (s *UserService) RefreshAccessToken(token string) (string, string, error) {
 	}
 	accessToken, err := s.UserRepo.GenerateAccessToken(userID, role)
 
+	if err != nil {
+		return "", "", err
+	}
 	return accessToken, refreshToken, nil
 }
