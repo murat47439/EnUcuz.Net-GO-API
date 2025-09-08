@@ -161,7 +161,9 @@ func (rr *ReviewsRepo) ExistsReview(userID int, prodID int) (bool, error) {
 		return false, fmt.Errorf("Product not found")
 	}
 
-	query = `SELECT COUNT(1) FROM reviews WHERE product_id=$1 AND user_id=$2 AND deleted_at IS NULL`
+	query = `SELECT EXISTS(
+    SELECT 1 FROM reviews 
+    WHERE product_id=$1 AND user_id=$2 AND deleted_at IS NULL)`
 
 	var exists bool
 
