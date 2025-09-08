@@ -29,11 +29,12 @@ func SetupRoutes(
 		r.Post("/register", controller.UserController.CreateUser)
 		r.Post("/login", controller.UserController.Login)
 
-		r.Group(func(auth chi.Router) {
+		r.Route("/profile", func(auth chi.Router) {
 			auth.Use(um.AuthMiddleware)
-			auth.Get("/profile", controller.UserController.GetUserData)
+			auth.Get("/", controller.UserController.GetUserData)
 			auth.Put("/update", controller.UserController.Update)
 			auth.Get("/reviews", controller.UserReviewController.GetUserReviews)
+
 		})
 		r.Route("/refresh", func(ref chi.Router) {
 			ref.Post("/", controller.UserController.GetAccess)
