@@ -158,7 +158,7 @@ func (ur *UserRepo) GetUserDataByID(id int) (*models.User, error) {
 // REFRESH AND ACCESS
 
 func (ur *UserRepo) NewTokens(userId, userRole int) (string, string, error) {
-	if userId == 0 || userRole == 0 {
+	if userId == 0 {
 		return "", "", fmt.Errorf("Invalid data")
 	}
 	accessToken, err := ur.GenerateAccessToken(userId, userRole)

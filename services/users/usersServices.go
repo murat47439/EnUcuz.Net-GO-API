@@ -44,11 +44,6 @@ func (s *UserService) Login(user models.User) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-
-	if err != nil {
-		return "", "", err
-	}
-
 	accessToken, refreshToken, err := s.UserRepo.NewTokens(userdata.ID, userdata.Role)
 
 	if err != nil {
