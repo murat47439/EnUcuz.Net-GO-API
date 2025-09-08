@@ -6,13 +6,13 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type JwtToken struct {
+type AccessToken struct {
 	UserID   int `json:"id"`
 	UserRole int `json:"role"`
 	jwt.RegisteredClaims
 }
 
-type Token struct {
+type token struct {
 	Token string `json:"token"`
 }
 type RefreshToken struct {

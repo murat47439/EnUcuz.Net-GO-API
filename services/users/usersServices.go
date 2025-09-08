@@ -39,13 +39,11 @@ func (s *UserService) CreateUser(user models.User) (models.User, error) {
 }
 func (s *UserService) Login(user models.User) (string, string, error) {
 
-	_, err := s.UserRepo.Login(user.Email, user.Password)
+	userdata, err := s.UserRepo.Login(user.Email, user.Password)
 
 	if err != nil {
 		return "", "", err
 	}
-	userdata := &models.User{}
-	userdata, err = s.UserRepo.GetUserDataByEmail(user.Email)
 
 	if err != nil {
 		return "", "", err
@@ -92,4 +90,17 @@ func (s *UserService) GetUserDataByID(id int) (*models.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+func (s *UserService) RefreshAccessToken(token string) (string, string, error) {
+	if token == "" {
+		return "", "", fmt.Errorf("Invalid token")
+	}
+	userID, role, refreshToken, err := s.UserRepo.RestoreRefreshToken(token)
+
+	if err != nil {
+		return "", "", err
+	}
+	accessToken, err := s.UserRepo.GenerateAccessToken(userID, role)
+
+	return accessToken, refreshToken, nil
 }

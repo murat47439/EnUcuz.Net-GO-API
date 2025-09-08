@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"Store-Dio/config"
-	"Store-Dio/models"
 	"Store-Dio/repo"
 	"context"
 	"net/http"
@@ -31,13 +30,9 @@ func (um *UserMiddleware) OnlyAdmin(next http.Handler) http.Handler {
 			http.Error(w, "No data", http.StatusNotFound)
 			return
 		}
-		tokenString := cookie.Value
+		token := cookie.Value
 
-		var token models.Token
-
-		token.Token = tokenString
-
-		jwtToken, err := um.UserRepo.DecodeJWT(token)
+		jwtToken, err := um.UserRepo.VerifyAccessToken(token)
 
 		if err != nil {
 			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
@@ -71,7 +66,7 @@ func (um *UserMiddleware) AuthMiddleware(next http.Handler) http.Handler {
 			}
 			tokenString := cookie.Value
 
-			token, err := um.UserRepo.DecodeJWT(models.Token{Token: tokenString})
+			token, err := um.UserRepo.VerifyAccessToken(tokenString)
 
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusUnauthorized)

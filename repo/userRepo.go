@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jmoiron/sqlx"
-
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/jmoiron/sqlx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepo struct {
@@ -59,28 +59,30 @@ func (ur *UserRepo) CreateUser(user models.User) (bool, error) {
 	return true, nil
 }
 
-func (ur *UserRepo) Login(email string, password string) (bool, error) {
+func (ur *UserRepo) Login(email string, password string) (*models.User, error) {
 	if email == "" || password == "" {
-		return false, fmt.Errorf("Invalid data")
+		return nil, fmt.Errorf("Invalid data")
 	}
+	user := &models.User{}
 
-	var hash string
-	err := ur.db.QueryRow("SELECT password FROM users WHERE email = $1 AND deleted_at IS NULL", email).Scan(&hash)
+	query := `SELECT id,email, phone, name, surname, gender, role, password FROM users WHERE email = $1 AND deleted_at IS NULL`
+	err := ur.db.Get(user, query, email)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return false, fmt.Errorf("User not found")
+			return nil, fmt.Errorf("User not found")
 		}
-		return false, err
+		return nil, err
 	}
 
-	err = utils.CheckPasswordHash(password, hash)
+	err = utils.CheckPasswordHash(password, user.Password)
 
 	if err != nil {
-		return false, fmt.Errorf("Password not correct")
+		return nil, fmt.Errorf("Password not correct")
 	}
+	user.Password = ""
 
-	return true, nil
+	return user, nil
 }
 func (ur *UserRepo) Logout(userID int, refreshToken string) (bool, error) {
 	if userID == 0 || refreshToken == "" {
@@ -131,21 +133,14 @@ func (ur *UserRepo) CheckEmailExists(email string) (bool, error) {
 	return exists, nil
 }
 
-func (ur *UserRepo) getUser(where string, arg any) (*models.User, error) {
-	user := &models.User{}
-
-	allowedFields := map[string]string{
-		"email": "email",
-		"id":    "id",
+func (ur *UserRepo) GetUserDataByID(id int) (*models.User, error) {
+	if id == 0 {
+		return nil, fmt.Errorf("Invalid data")
 	}
-	column, ok := allowedFields[where]
-	if !ok {
-		return nil, fmt.Errorf("Invalid fields : %s", where)
-	}
+	var user models.User
+	query := `SELECT id,email,phone,name,surname,gender,role FROM users WHERE id = $1 AND deleted_at IS NULL`
 
-	query := fmt.Sprintf("SELECT id, email, phone, name, surname, gender, role FROM users WHERE %s = $1 AND deleted_at IS NULL", column)
-
-	err := ur.db.Get(user, query, arg)
+	err := ur.db.Get(&user, query, id)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -153,48 +148,39 @@ func (ur *UserRepo) getUser(where string, arg any) (*models.User, error) {
 		}
 		return nil, err
 	}
-
-	return user, nil
+	return &user, nil
 }
 
-func (ur *UserRepo) GetUserDataByEmail(email string) (*models.User, error) {
-	return ur.getUser("email", email)
-}
-func (ur *UserRepo) GetUserDataByID(id int) (*models.User, error) {
-	return ur.getUser("id", id)
-}
+// REFRESH AND ACCESS
 
-// JWT
-func (ur *UserRepo) NewTokens(userID int, role int) (string, string, error) {
-	_, err := ur.GetUserDataByID(userID)
-	if err != nil {
-		return "", "", fmt.Errorf("User not found")
+func (ur *UserRepo) NewTokens(userId, userRole int) (string, string, error) {
+	if userId == 0 || userRole == 0 {
+		return "", "", fmt.Errorf("Invalid data")
 	}
-	accessToken, err := ur.GenerateJWT(userID, role)
-
+	accessToken, err := ur.GenerateAccessToken(userId, userRole)
 	if err != nil {
 		return "", "", err
 	}
 	refreshToken, err := utils.GenerateRandomToken(32)
+	if err != nil {
+		return "", "", err
+	}
+	err = ur.StoreRefreshToken(userId, refreshToken)
 
 	if err != nil {
 		return "", "", err
 	}
-	err = ur.StoreRefreshToken(userID, refreshToken)
-	if err != nil {
-		return "", "", err
-	}
-
 	return accessToken, refreshToken, nil
-}
 
-func (ur *UserRepo) GenerateJWT(userID int, role int) (string, error) {
-	exprationTime := time.Now().Add(15 * time.Minute)
-	claims := models.JwtToken{
+}
+func (ur *UserRepo) GenerateAccessToken(userID, userRole int) (string, error) {
+	expirationTime := time.Now().Add(15 * time.Minute)
+
+	claims := models.AccessToken{
 		UserID:   userID,
-		UserRole: role,
+		UserRole: userRole,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(exprationTime),
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
@@ -202,73 +188,88 @@ func (ur *UserRepo) GenerateJWT(userID int, role int) (string, error) {
 
 	tokenstring, err := token.SignedString(config.JWTSecret)
 	if err != nil {
-		config.Logger.Println("Could not create token: %v", err)
 		return "", err
 	}
 	return tokenstring, nil
+
 }
-func (ur *UserRepo) RefreshToken(userID int, refreshToken string) (string, error) {
-	var refresh models.RefreshToken
-
-	err := ur.db.Get(&refresh, "SELECT * FROM tokens WHERE user_id = $1 AND token = $2 ", userID, refreshToken)
-
-	if err != nil {
-		return "", fmt.Errorf("Invalid refresh token")
-	}
-
-	if time.Now().After(refresh.ExpiresAt) {
-		_, err := ur.Logout(userID, refreshToken)
-		if err != nil {
-			config.Logger.Printf("Logout function error")
-		}
-		return "", fmt.Errorf("Refresh token expired")
-	}
-
-	user, err := ur.GetUserDataByID(userID)
-
-	if err != nil {
-		return "", fmt.Errorf("User not found")
-	}
-
-	newAccessToken, err := ur.GenerateJWT(user.ID, user.Role)
-
-	if err != nil {
-		return "", fmt.Errorf("Could not generate new access token")
-	}
-
-	return newAccessToken, nil
-}
-func (ur *UserRepo) StoreRefreshToken(userID int, refreshToken string) error {
-	if userID == 0 || refreshToken == "" {
-		return fmt.Errorf("Store Refresh Token Error")
+func (ur *UserRepo) StoreRefreshToken(userID int, refresh string) error {
+	if userID == 0 || refresh == "" {
+		return fmt.Errorf("Invalid data.")
 	}
 	expiresAt := time.Now().Add(7 * 24 * time.Hour)
 
-	query := "INSERT INTO tokens (user_id, token, expires_at) VALUES (:user_id, :token, :expires_at)"
-
-	_, err := ur.db.NamedExec(query, map[string]interface{}{
-		"user_id":    userID,
-		"token":      refreshToken,
-		"expires_at": expiresAt,
-	})
+	hashToken, err := ur.HashRefreshToken(refresh)
 	if err != nil {
 		return err
 	}
+	query := `INSERT INTO tokens user_id,token, expires_at VALUES($1, $2, $3)`
+	_, err = ur.db.Exec(query, userID, hashToken, expiresAt)
+	if err != nil {
+		fmt.Errorf("Database error : %s", err.Error())
+	}
 	return nil
 }
-func (ur *UserRepo) DecodeJWT(tokenstring models.Token) (models.JwtToken, error) {
-	jwttoken := &models.JwtToken{}
+func (ur *UserRepo) HashRefreshToken(token string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
+}
+func (ur *UserRepo) CheckRefreshToken(token string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(token))
+	return err == nil
+}
+func (ur *UserRepo) VerifyAccessToken(tokenStr string) (*models.AccessToken, error) {
+	accessToken := &models.AccessToken{}
 
-	token, err := jwt.ParseWithClaims(tokenstring.Token, jwttoken, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, accessToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("Unexpected signing method")
 		}
 		return []byte(config.JWTSecret), nil
 	})
-	if err != nil || !token.Valid {
-		return models.JwtToken{}, fmt.Errorf("User not found or Token not true")
+
+	if err != nil {
+		return nil, err
 	}
-	return *jwttoken, nil
+
+	if !token.Valid {
+		return nil, fmt.Errorf("Token is not valid")
+	}
+
+	return accessToken, nil
+}
+func (ur *UserRepo) RestoreRefreshToken(token string) (int, int, string, error) {
+	refreshHash, err := ur.HashRefreshToken(token)
+
+	if err != nil {
+		return 0, 0, "", err
+	}
+
+	newRefresh, err := utils.GenerateRandomToken(32)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	newRefreshHash, err := ur.HashRefreshToken(newRefresh)
+	if err != nil {
+		return 0, 0, "", err
+	}
+	var userID, role int
+	query := `
+    UPDATE tokens t
+    SET token = $1
+    FROM users u
+    WHERE t.token = $2 AND t.expires_at > NOW() AND u.id = t.user_id
+    RETURNING t.user_id, u.role
+`
+	err = ur.db.QueryRow(query, newRefreshHash, refreshHash).Scan(&userID, &role)
+
+	if err != nil {
+		return 0, 0, "", err
+	}
+	return userID, role, newRefresh, nil
 }
 
 //ADMİN CONTROL

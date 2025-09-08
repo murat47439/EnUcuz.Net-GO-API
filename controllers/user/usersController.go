@@ -192,3 +192,39 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 }
+func (uc *UserController) GetAccess(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("refresh_token")
+	if err != nil {
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		return
+	}
+	refreshToken := cookie.Value
+	accessToken, refreshToken, err := uc.UserService.RefreshAccessToken(refreshToken)
+	if err != nil {
+		RespondWithError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		Path:     "/api",
+		Expires:  time.Now().Add(15 * time.Minute),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Path:     "/api/refresh",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	RespondWithJSON(w, http.StatusOK, map[string]string{
+		"message": "Successfully",
+	})
+}

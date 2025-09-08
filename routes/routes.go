@@ -36,8 +36,12 @@ func SetupRoutes(
 			auth.Get("/reviews", controller.UserReviewController.GetUserReviews)
 		})
 		r.Route("/refresh", func(ref chi.Router) {
-			ref.Use(um.AuthMiddleware)
-			ref.Post("/logout", controller.UserController.Logout)
+			r.Post("/", controller.UserController.GetAccess)
+			ref.Group(func(logout chi.Router) {
+				logout.Use(um.AuthMiddleware)
+				logout.Post("/logout", controller.UserController.Logout)
+			})
+
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
