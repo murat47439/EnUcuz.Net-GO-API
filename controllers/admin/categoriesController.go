@@ -24,7 +24,7 @@ func (cc *CategoriesController) AddCategory(w http.ResponseWriter, r *http.Reque
 	err := json.NewDecoder(r.Body).Decode(&category)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invlid data")
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
 
