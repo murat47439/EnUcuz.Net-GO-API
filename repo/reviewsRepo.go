@@ -149,23 +149,21 @@ func (rr *ReviewsRepo) ExistsReview(userID int, prodID int) (bool, error) {
 	if prodID == 0 || userID == 0 {
 		return false, fmt.Errorf("Invalid data")
 	}
-	var count int
-	query := `SELECT COUNT(1) FROM products WHERE id=$1 AND deleted_at IS NULL`
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM products WHERE id=$1 AND deleted_at IS NULL)`
 
-	err := rr.db.Get(&count, query, prodID)
+	err := rr.db.Get(&exists, query, prodID)
 
 	if err != nil {
 		return false, fmt.Errorf("Database error : %s", err.Error())
 	}
-	if count == 0 {
+	if !exists {
 		return false, fmt.Errorf("Product not found")
 	}
 
 	query = `SELECT EXISTS(
     SELECT 1 FROM reviews 
     WHERE product_id=$1 AND user_id=$2 AND deleted_at IS NULL)`
-
-	var exists bool
 
 	err = rr.db.Get(&exists, query, prodID, userID)
 	if err != nil {
