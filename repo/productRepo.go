@@ -351,7 +351,7 @@ LEFT JOIN launch_specs ls ON ls.product_id = p.id
 LEFT JOIN memory_specs ms ON ms.product_id = p.id
 LEFT JOIN sound_specs ss ON ss.product_id = p.id
 LEFT JOIN comms_specs cs ON cs.product_id = p.id
-LEFT JOIN features_specs fs ON fs.product_id = p.id
+LEFT JOIN feature_specs fs ON fs.product_id = p.id
 LEFT JOIN (
     SELECT product_id, json_agg(DISTINCT color) AS colors
     FROM product_colors

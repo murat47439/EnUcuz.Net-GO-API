@@ -18,7 +18,7 @@ type Product struct {
 	Memory    Memory       `json:"memory" db:"memory_specs"`
 	Sound     Sound        `json:"sound" db:"sound_specs"`
 	Comms     Comms        `json:"comms" db:"comms_specs"`
-	Features  Features     `json:"features" db:"features_specs"`
+	Features  Features     `json:"features" db:"feature_specs"`
 	Colors    []string     `json:"colors" db:"colors"`
 	Models    []string     `json:"models" db:"models"`
 	Cameras   Cameras      `json:"cameras" db:"cameras"`
