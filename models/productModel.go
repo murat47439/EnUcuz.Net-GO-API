@@ -19,8 +19,8 @@ type Product struct {
 	Sound     Sound        `json:"sound" db:"sound_specs"`
 	Comms     Comms        `json:"comms" db:"comms_specs"`
 	Features  Features     `json:"features" db:"features_specs"`
-	Colors    []string     `json:"colors" db:"product_colors"`
-	Models    []string     `json:"models" db:"product_models"`
+	Colors    []string     `json:"colors" db:"colors"`
+	Models    []string     `json:"models" db:"models"`
 	Cameras   Cameras      `json:"cameras" db:"cameras"`
 	CreatedAt sql.NullTime `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
