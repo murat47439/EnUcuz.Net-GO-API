@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Store-Dio/controllers/admin"
+	"Store-Dio/controllers/testc"
 	"Store-Dio/controllers/user"
 	"Store-Dio/services"
 )
@@ -19,6 +20,8 @@ type Controller struct {
 	UserCategoriesController *user.UCategoriesController
 	UserFavoriesControllr    *user.FavoriesController
 	UserReviewController     *user.ReviewController
+
+	TestController *testc.TestController
 }
 
 func NewController(service *services.Service) *Controller {
@@ -35,6 +38,8 @@ func NewController(service *services.Service) *Controller {
 	userFavoritesController := user.NewFavoriesController(service.FavoriesService)
 	userReviewController := user.NewReviewController(service.ReviewsService)
 
+	testController := testc.NewTestController(service.TestService)
+
 	return &Controller{
 		AdminAttributeController:  adminAttributeController,
 		AdminbrandsController:     adminBrandsController,
@@ -48,5 +53,7 @@ func NewController(service *services.Service) *Controller {
 		UserCategoriesController: userCategoriesController,
 		UserFavoriesControllr:    userFavoritesController,
 		UserReviewController:     userReviewController,
+
+		TestController: testController,
 	}
 }

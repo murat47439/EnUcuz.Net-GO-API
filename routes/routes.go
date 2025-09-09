@@ -64,6 +64,9 @@ func SetupRoutes(
 				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
 				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
 			})
+			admin.Route("/insert-date", func(r chi.Router) {
+				r.Post("/", controller.TestController.InsertData)
+			})
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)

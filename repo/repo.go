@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"Store-Dio/repo/test"
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
@@ -15,6 +16,8 @@ type Repo struct {
 	UserRepo       *UserRepo
 	FavoriesRepo   *FavoriesRepo
 	ReviewsRepo    *ReviewsRepo
+
+	TestRepo *test.DataRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
@@ -26,6 +29,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 	userRepo := NewUserRepo(db)
 	favoriesRepo := NewFavoriesRepo(db)
 	reviewsRepo := NewReviewRepo(db)
+	testRepo := test.NewDataRepo(db)
 
 	return &Repo{
 		db:             db,
@@ -36,6 +40,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 		UserRepo:       userRepo,
 		FavoriesRepo:   favoriesRepo,
 		ReviewsRepo:    reviewsRepo,
+		TestRepo:       testRepo,
 	}
 }
 func (r *Repo) SafeQueryRow(query string, args ...any) *sqlx.Row {
