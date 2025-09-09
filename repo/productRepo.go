@@ -263,7 +263,7 @@ func (pr *ProductRepo) InsertBattery(data models.Battery, id int, tx *sqlx.Tx) e
 	}
 	return nil
 }
-func (pr *ProductRepo) InsertBrands(data models.Brand, tx *sqlx.Tx) error {
+func (pr *ProductRepo) InsertBrands(data *models.Brand, tx *sqlx.Tx) error {
 	exists, err := pr.ExistsData(data.ID, tx)
 
 	if err != nil {
@@ -318,7 +318,7 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 
 	return &product, nil
 }
-func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
+func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, error) {
 	var product models.Product
 
 	if prodid == 0 {
@@ -331,7 +331,12 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
-	return &product, nil
+	var psr ProductSpecsRepo
+	productDetail, err := psr.GetProductDetail(&product)
+	if err != nil {
+		return nil, err
+	}
+	return productDetail, nil
 }
 func (pr *ProductRepo) GetProducts(page int, search string) ([]*models.Product, error) {
 	var products []*models.Product

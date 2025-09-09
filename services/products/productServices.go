@@ -45,7 +45,7 @@ func (ps *ProductService) DeleteProduct(id int) error {
 	}
 	return nil
 }
-func (ps *ProductService) GetProduct(id int) (*models.Product, error) {
+func (ps *ProductService) GetProduct(id int) (*models.ProductDetail, error) {
 	if id == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
