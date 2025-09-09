@@ -50,6 +50,12 @@ func (dr *DataRepo) InsertProducts(data testm.Product, tx *sqlx.Tx) error {
 	if err != nil {
 		return err
 	}
+	query := `INSERT INTO products(id,name,category_id,brand_id) VALUES($1,$2,$3, $4)`
+
+	_, err = tx.Exec(query, data.ID, data.Name, 3719, data.Brand.ID)
+	if err != nil {
+		return err
+	}
 	err = dr.InsertBattery(data.Battery, data.ID, tx)
 	if err != nil {
 		return err
@@ -106,12 +112,7 @@ func (dr *DataRepo) InsertProducts(data testm.Product, tx *sqlx.Tx) error {
 	if err != nil {
 		return err
 	}
-	query := `INSERT INTO products(id,name,category_id,brand_id) VALUES($1,$2,$3, $4)`
 
-	_, err = tx.Exec(query, data.ID, data.Name, 3719, data.Brand.ID)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 func (dr *DataRepo) InsertColor(data []string, id int, tx *sqlx.Tx) error {
