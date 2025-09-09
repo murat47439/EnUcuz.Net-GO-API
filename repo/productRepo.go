@@ -323,7 +323,7 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 }
 func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, error) {
 	var product models.Product
-
+	config.Logger.Printf("GET PRODUCT DETAİL REPO GELDİ")
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
