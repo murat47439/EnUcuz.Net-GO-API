@@ -364,22 +364,15 @@ LEFT JOIN (
 ) pm ON pm.product_id = p.id
 LEFT JOIN (
     SELECT product_id, json_agg(
-        json_build_object(
-            'mainCamera', json_build_object(
-                'type', main_type,
-                'cameraSpecs', main_camera_specs,
-                'features', main_features,
-                'video', main_video
-            ),
-            'selfieCamera', json_build_object(
-                'type', selfie_type,
-                'cameraSpecs', selfie_camera_specs,
-                'features', selfie_features,
-                'video', selfie_video
-            )
-        )
-    ) AS cameras
-    FROM cameras
+    json_build_object(
+        'type', camera_type,
+        'cameraSpecs', camera_specs,
+        'features', features,
+        'video', video,
+        'role', camera_role
+    )
+) AS cameras
+FROM cameras
     GROUP BY product_id
 ) c ON c.product_id = p.id
 WHERE p.id = $1;
