@@ -24,8 +24,7 @@ func NewProductSpecsRepo(db *sqlx.DB, brand *BrandsRepo, category *CategoriesRep
 	}
 }
 func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.ProductDetail, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL PSR REPO GELDİ")
-
+	config.Logger.Printf("GET PRODUCT DETAİL GELDİ")
 	if data.ID == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
@@ -147,12 +146,11 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 	productDetail.Cameras = cameras
 	productDetail.CreatedAt = data.CreatedAt
 	productDetail.UpdatedAt = data.UpdatedAt
+	config.Logger.Printf("GET PRODUCT DETAİL DÖNDÜ")
 
 	return &productDetail, nil
 }
 func (psr *ProductSpecsRepo) getBattery(prodid int) (models.Battery, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL Battery GELDİ")
-
 	var battery models.Battery
 	if prodid == 0 {
 		return models.Battery{}, fmt.Errorf("Invalid data")
@@ -166,8 +164,6 @@ func (psr *ProductSpecsRepo) getBattery(prodid int) (models.Battery, error) {
 	return battery, nil
 }
 func (psr *ProductSpecsRepo) getPlatform(prodid int) (models.Platform, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL platform GELDİ")
-
 	var platform models.Platform
 	if prodid == 0 {
 		return models.Platform{}, fmt.Errorf("Invalid data")
@@ -182,8 +178,6 @@ func (psr *ProductSpecsRepo) getPlatform(prodid int) (models.Platform, error) {
 	return platform, nil
 }
 func (psr *ProductSpecsRepo) getNetwork(prodid int) (models.Network, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL NETWORK GELDİ")
-
 	var network models.Network
 	if prodid == 0 {
 		return models.Network{}, fmt.Errorf("Invalid data")
@@ -198,8 +192,6 @@ func (psr *ProductSpecsRepo) getNetwork(prodid int) (models.Network, error) {
 	return network, nil
 }
 func (psr *ProductSpecsRepo) getDisplay(prodid int) (models.Display, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL DİSPLAY GELDİ")
-
 	var display models.Display
 	if prodid == 0 {
 		return models.Display{}, fmt.Errorf("Invalid data")
@@ -214,8 +206,6 @@ func (psr *ProductSpecsRepo) getDisplay(prodid int) (models.Display, error) {
 	return display, nil
 }
 func (psr *ProductSpecsRepo) getLaunch(prodid int) (models.Launch, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL LAUNCH GELDİ")
-
 	var launch models.Launch
 	if prodid == 0 {
 		return models.Launch{}, fmt.Errorf("Invalid data")
@@ -230,8 +220,6 @@ func (psr *ProductSpecsRepo) getLaunch(prodid int) (models.Launch, error) {
 	return launch, nil
 }
 func (psr *ProductSpecsRepo) getBody(prodid int) (models.Body, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL BODY GELDİ")
-
 	var body models.Body
 	if prodid == 0 {
 		return models.Body{}, fmt.Errorf("Invalid data")
@@ -246,8 +234,6 @@ func (psr *ProductSpecsRepo) getBody(prodid int) (models.Body, error) {
 	return body, nil
 }
 func (psr *ProductSpecsRepo) getMemory(prodid int) (models.Memory, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL MEMORY GELDİ")
-
 	var memory models.Memory
 	if prodid == 0 {
 		return models.Memory{}, fmt.Errorf("Invalid data")
@@ -262,8 +248,6 @@ func (psr *ProductSpecsRepo) getMemory(prodid int) (models.Memory, error) {
 	return memory, nil
 }
 func (psr *ProductSpecsRepo) getSound(prodid int) (models.Sound, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL SOUND GELDİ")
-
 	var sound models.Sound
 	if prodid == 0 {
 		return models.Sound{}, fmt.Errorf("Invalid data")
@@ -278,8 +262,6 @@ func (psr *ProductSpecsRepo) getSound(prodid int) (models.Sound, error) {
 	return sound, nil
 }
 func (psr *ProductSpecsRepo) getComms(prodid int) (models.Comms, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL COMMS GELDİ")
-
 	var comms models.Comms
 	if prodid == 0 {
 		return models.Comms{}, fmt.Errorf("Invalid data")
@@ -294,8 +276,6 @@ func (psr *ProductSpecsRepo) getComms(prodid int) (models.Comms, error) {
 	return comms, nil
 }
 func (psr *ProductSpecsRepo) getFeatures(prodid int) (models.Features, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL Features GELDİ")
-
 	var features models.Features
 	if prodid == 0 {
 		return models.Features{}, fmt.Errorf("Invalid data")
@@ -310,8 +290,6 @@ func (psr *ProductSpecsRepo) getFeatures(prodid int) (models.Features, error) {
 	return features, nil
 }
 func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL Cameras GELDİ")
-
 	var cameras models.Cameras
 	if prodid == 0 {
 		return cameras, fmt.Errorf("Invalid data")
@@ -377,8 +355,6 @@ func (psr *ProductSpecsRepo) getColors(prodid int) ([]string, error) {
 	return colors, nil
 }
 func (psr *ProductSpecsRepo) getModels(prodid int) ([]string, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL MODELS GELDİ")
-
 	var models []string
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
@@ -404,7 +380,6 @@ func (psr *ProductSpecsRepo) getModels(prodid int) ([]string, error) {
 		}
 		models = append(models, model)
 	}
-	config.Logger.Printf("GET PRODUCT DETAİL DÖNDÜ")
 
 	return models, nil
 }

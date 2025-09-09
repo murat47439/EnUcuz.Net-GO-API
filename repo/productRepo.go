@@ -335,6 +335,8 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
 	productDetail, err := pr.psr.GetProductDetail(&product)
+	config.Logger.Printf("GET PRODUCT REPO SONUCU DA ALDI")
+
 	if err != nil {
 		return nil, err
 	}

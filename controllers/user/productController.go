@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/services/products"
 	"net/http"
 	"os"
@@ -63,6 +64,8 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 		RespondWithError(w, http.StatusBadRequest, "Error : %s"+err.Error())
 		return
 	}
+	config.Logger.Printf("GET PRODUCT CONTROLLER SONUCU ALDI")
+
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message":  "Successfully",
 		"Products": products,
