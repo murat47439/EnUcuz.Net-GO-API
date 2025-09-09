@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 )
 
 type ProductRepo struct {
@@ -51,67 +52,250 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 	return exists, nil
 
 }
-func (pr *ProductRepo) AddProduct(product *models.Product) (bool, error) {
-	if product.Name == "" || product.Description == "" || product.BrandID == 0 || product.Stock == 0 || product.ImageUrl == "" || product.CategoryID == 0 || product.StoreID == 0 {
-		return false, fmt.Errorf("Invalid data")
-	}
-	query := "INSERT INTO products (store_id, name, description, brand_id, stock, image_url, category_id) VALUES (:store_id, :name, :description, :brand_id, :stock, :image_url, :category_id)"
 
-	_, err := pr.db.NamedExec(query, map[string]interface{}{
-		"store_id":    product.StoreID,
-		"name":        product.Name,
-		"description": product.Description,
-		"brand_id":    product.BrandID,
-		"stock":       product.Stock,
-		"image_url":   product.ImageUrl,
-		"category_id": product.CategoryID,
-	})
+func (pr *ProductRepo) AddProduct(data models.Product) error {
+
+	tx, err := pr.db.Beginx()
 	if err != nil {
-		return false, fmt.Errorf("Failed to add product to database.")
+		return err
 	}
-	return true, nil
-}
-func (pr *ProductRepo) UpdateProduct(product *models.Product) (bool, error) {
-	if product.ID == 0 || product.Name == "" || product.Description == "" || product.BrandID == 0 || product.Stock == 0 || product.ImageUrl == "" || product.CategoryID == 0 || product.StoreID == 0 {
-		return false, fmt.Errorf("Invalid data")
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	err = pr.InsertBrands(data.Brand, tx)
+	if err != nil {
+		return err
+	}
+	query := `INSERT INTO products(id,name,category_id,brand_id) VALUES($1,$2,$3, $4)`
+
+	_, err = tx.Exec(query, data.ID, data.Name, 3719, data.Brand.ID)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertBattery(data.Battery, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertPlatform(data.Platform, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertNetwork(data.Network, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertDisplay(data.Display, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertLaunch(data.Launch, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertBody(data.Body, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertMemory(data.Memory, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertSound(data.Sound, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertComms(data.Comms, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertFeatures(data.Features, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertCamera(data.Cameras.MainCamera, data.ID, "MainCamera", tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertCamera(data.Cameras.SelfieCamera, data.ID, "SelfieCamera", tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertColor(data.Colors, data.ID, tx)
+	if err != nil {
+		return err
+	}
+	err = pr.InsertModels(data.Models, data.ID, tx)
+	if err != nil {
+		return err
 	}
 
-	exists, err := pr.CheckProduct(product.ID)
+	return nil
+}
+func (pr *ProductRepo) InsertColor(data []string, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO product_colors(product_id, color) VALUES($1, $2)`
+
+	for _, color := range data {
+		_, err := tx.Exec(query, id, color)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+func (pr *ProductRepo) InsertModels(data []string, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO product_models(product_id, model) VALUES($1, $2)`
+
+	for _, model := range data {
+		_, err := tx.Exec(query, id, model)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx *sqlx.Tx) error {
+	query := `INSERT INTO cameras(product_id, camera_type, camera_specs, features, video, camera_role) VALUES($1,$2,$3,$4,$5, $6)`
+
+	_, err := tx.Exec(query, id, data.Type, pq.Array(data.CameraSpecs), pq.Array(data.Features), pq.Array(data.Video), role)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertFeatures(data models.Features, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO feature_specs(product_id,sensors) VALUES($1,$2)`
+
+	_, err := tx.Exec(query, id, data.Sensors)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertComms(data models.Comms, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO comms_specs(product_id,wlan,bluetooth,positioning,nfc,radio,usb) VALUES($1,$2,$3,$4,$5,$6,$7)`
+
+	_, err := tx.Exec(query, id, data.WLAN, data.Bluetooth, data.Positioning, data.NFC, data.Radio, data.USB)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertSound(data models.Sound, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO sound_specs(product_id,loudspeaker) VALUES($1,$2)`
+
+	_, err := tx.Exec(query, id, data.Loudspeaker)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO memory_specs(product_id,card_slot,internal) VALUES($1, $2,$3)`
+
+	_, err := tx.Exec(query, id, data.CardSlot, data.Internal)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertBody(data models.Body, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO body_specs(product_id, dimensions, weight,build,sim) VALUES($1,$2,$3,$4,$5)`
+
+	_, err := tx.Exec(query, id, data.Dimensions, data.Weight, data.Build, data.SIM)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertLaunch(data models.Launch, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO launch_specs(product_id,announced,released,status) VALUES($1, $2,$3,$4)`
+
+	_, err := tx.Exec(query, id, data.Announced, data.Released, data.Status)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertDisplay(data models.Display, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO display_specs(product_id,type,size,resolution,protection) VALUES($1,$2,$3,$4,$5)`
+
+	_, err := tx.Exec(query, id, data.Type, data.Size, data.Resolution, data.Protection)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertNetwork(data models.Network, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO network_specs(product_id, technology, speed, g2 , g3, g4 , g5) VALUES($1,$2,$3,$4,$5,$6,$7)`
+
+	_, err := tx.Exec(query, id, data.Technology, data.Speed, data.G2, data.G3, data.G4, data.G5)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertPlatform(data models.Platform, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO platform_specs(product_id,os,chipset,cpu,gpu) VALUES($1,$2,$3,$4,$5) `
+
+	_, err := tx.Exec(query, id, data.OS, data.Chipset, data.CPU, data.GPU)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertBattery(data models.Battery, id int, tx *sqlx.Tx) error {
+	query := `INSERT INTO battery_specs(product_id, type, charging) VALUES($1,$2,$3)`
+
+	_, err := tx.Exec(query, id, data.Type, pq.Array(data.Charging))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *ProductRepo) InsertBrands(data models.Brand, tx *sqlx.Tx) error {
+	exists, err := pr.ExistsData(data.ID, tx)
+
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
+	query := `INSERT INTO brands (id,name,created_at) VALUES ($1, $2, NOW())`
+
+	_, err = tx.Exec(query, data.ID, data.Name)
+
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+func (pr *ProductRepo) ExistsData(id int, tx *sqlx.Tx) (bool, error) {
+	if id == 0 {
+		return false, fmt.Errorf("Invalid data")
+	}
+	query := `SELECT EXISTS(SELECT 1 FROM brands WHERE id = $1)`
+	var exists bool
+	err := tx.QueryRow(query, id).Scan(&exists)
 
 	if err != nil {
 		return false, err
 	}
-	if !exists {
-		return false, fmt.Errorf("Product not found")
-	}
-
-	query := `
-			UPDATE products 
-			SET name = :name,
-				description = :description,
-				brand_id = :brand_id,
-				stock = :stock,
-				image_url = :image_url,
-				category_id = :category_id,
-				store_id = :store_id
-			WHERE id = :id
-			`
-
-	_, err = pr.db.NamedExec(query, map[string]interface{}{
-		"id":          product.ID,
-		"name":        product.Name,
-		"description": product.Description,
-		"brand_id":    product.BrandID,
-		"stock":       product.Stock,
-		"image_url":   product.ImageUrl,
-		"category_id": product.CategoryID,
-		"store_id":    product.StoreID,
-	})
-
-	if err != nil {
-		config.Logger.Printf("Failed update product")
-		return false, fmt.Errorf("Failed update product ")
-	}
+	return exists, nil
+}
+func (pr *ProductRepo) UpdateProduct(product *models.Product) (bool, error) {
 	return true, nil
 }
 func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {

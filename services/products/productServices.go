@@ -14,34 +14,18 @@ func NewProductService(repo *repo.ProductRepo) *ProductService {
 	return &ProductService{ProductRepo: repo}
 }
 func (ps *ProductService) AddProduct(product models.Product) (bool, error) {
-	if product.Name == "" || product.Description == "" || product.BrandID == 0 || product.Stock == 0 || product.ImageUrl == "" || product.CategoryID == 0 || product.StoreID == 0 {
+	if product.Name == "" || product.Models == nil {
 		return false, fmt.Errorf("Invalid data")
 	}
-	exists, err := ps.ProductRepo.CheckProductByName(product.Name, product.ImageUrl)
-	if err != nil {
-		return false, err
-	}
-	if exists {
-		return false, fmt.Errorf("Product already exists")
-	}
-	_, err = ps.ProductRepo.AddProduct(&product)
+	err := ps.ProductRepo.AddProduct(product)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error : %w", err.Error())
 	}
 	return true, nil
 }
 func (ps *ProductService) UpdateProduct(product models.Product) (*models.Product, error) {
-	if product.ID == 0 || product.Name == "" || product.Description == "" || product.BrandID == 0 || product.ImageUrl == "" || product.CategoryID == 0 || product.StoreID == 0 {
-		return nil, fmt.Errorf("Invalid data")
-	}
-	_, err := ps.ProductRepo.UpdateProduct(&product)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &product, nil
+	return nil, fmt.Errorf("The service is unavailable")
 
 }
 func (ps *ProductService) DeleteProduct(id int) error {

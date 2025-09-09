@@ -2,21 +2,102 @@ package models
 
 import (
 	"database/sql"
-	"time"
 )
 
 type Product struct {
-	ID          int           `json:"id" db:"id"`
-	Name        string        `json:"name" db:"name"`
-	Description string        `json:"description,omitempty" db:"description"`
-	Stock       int           `json:"stock,omitempty" db:"stock"`
-	ImageUrl    string        `json:"image_url" db:"image_url"`
-	BrandID     int           `json:"brand_id" db:"brand_id"`
-	CategoryID  int           `json:"category_id" db:"category_id"`
-	Category    *Category     `json:"category,omitempty"`
-	StoreID     int           `json:"store_id" db:"store_id"`
-	Store       *Store        `json:"store,omitempty"`
-	CreatedAt   time.Time     `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt   *sql.NullTime `json:"-" db:"deleted_at"`
+	ID        int          `json:"id" db:"id"`
+	Name      string       `json:"name" db:"name"`
+	Brand     Brand        `json:"brand" db:"brand"`
+	Category  Category     `json:"category_id" db:"category_id"`
+	Battery   Battery      `json:"battery" db:"battery"`
+	Platform  Platform     `json:"platform" db:"platform"`
+	Network   Network      `json:"network" db:"network"`
+	Display   Display      `json:"display" db:"display"`
+	Launch    Launch       `json:"launch" db:"launch"`
+	Body      Body         `json:"body" db:"body"`
+	Memory    Memory       `json:"memory" db:"memory"`
+	Sound     Sound        `json:"sound" db:"sound"`
+	Comms     Comms        `json:"comms" db:"comms"`
+	Features  Features     `json:"features" db:"features"`
+	Colors    []string     `json:"colors" db:"colors"`
+	Models    []string     `json:"models" db:"models"`
+	Cameras   Cameras      `json:"cameras" db:"cameras"`
+	CreatedAt sql.NullTime `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
+}
+
+type Battery struct {
+	Type     string   `json:"type" db:"type"`
+	Charging []string `json:"charging" db:"charging"`
+}
+
+type Platform struct {
+	OS      string `json:"os" db:"os"`
+	Chipset string `json:"chipset" db:"chipset"`
+	CPU     string `json:"cpu" db:"cpu"`
+	GPU     string `json:"gpu" db:"gpu"`
+}
+
+type Network struct {
+	Technology string `json:"technology" db:"technology"`
+	Speed      string `json:"speed" db:"speed"`
+	G2         string `json:"2g" db:"g2"`
+	G3         string `json:"3g" db:"g3"`
+	G4         string `json:"4g" db:"g4"`
+	G5         string `json:"5g" db:"g5"`
+}
+
+type Display struct {
+	Type       string `json:"type" db:"type"`
+	Size       string `json:"size" db:"size"`
+	Resolution string `json:"resolution" db:"resolution"`
+	Protection string `json:"protection" db:"protection"`
+}
+
+type Launch struct {
+	Announced sql.NullTime `json:"announced" db:"announced"`
+	Released  sql.NullTime `json:"released" db:"released"`
+	Status    string       `json:"status" db:"status"`
+}
+
+type Body struct {
+	Dimensions string `json:"dimensions" db:"dimensions"`
+	Weight     string `json:"weight" db:"weight"`
+	Build      string `json:"build" db:"build"`
+	SIM        string `json:"sim" db:"sim"`
+}
+
+type Memory struct {
+	CardSlot string `json:"cardSlot" db:"card_slot"`
+	Internal string `json:"internal" db:"internal"`
+}
+
+type Sound struct {
+	Loudspeaker string `json:"loudspeaker" db:"loudspeaker"`
+}
+
+type Comms struct {
+	WLAN        string `json:"wlan" db:"wlan"`
+	Bluetooth   string `json:"bluetooth" db:"bluetooth"`
+	Positioning string `json:"positioning" db:"positioning"`
+	NFC         string `json:"nfc" db:"nfc"`
+	Radio       string `json:"radio" db:"radio"`
+	USB         string `json:"usb" db:"usb"`
+}
+
+type Features struct {
+	Sensors string `json:"sensors" db:"sensors"`
+}
+
+type Cameras struct {
+	MainCamera   Camera `json:"mainCamera" db:"main_camera"`
+	SelfieCamera Camera `json:"selfieCamera" db:"selfie_camera"`
+}
+
+type Camera struct {
+	Type        string   `json:"type" db:"type"`
+	CameraSpecs []string `json:"cameraSpecs" db:"camera_specs"`
+	Features    []string `json:"features" db:"features"`
+	Video       []string `json:"video" db:"video"`
 }
