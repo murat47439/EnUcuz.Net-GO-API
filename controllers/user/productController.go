@@ -3,6 +3,7 @@ package user
 import (
 	"Store-Dio/services/products"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -34,6 +35,14 @@ func (pc *ProductController) GetProduct(w http.ResponseWriter, r *http.Request) 
 		"Product": product,
 	})
 
+}
+func (pc *ProductController) GetLogs(w http.ResponseWriter, r *http.Request) {
+	data, err := os.ReadFile("../../logs/app.log")
+	if err != nil {
+		http.Error(w, "Cannot read log", http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
 }
 
 func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request) {

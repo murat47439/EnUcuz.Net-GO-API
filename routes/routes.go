@@ -71,6 +71,9 @@ func SetupRoutes(
 			product.Get("/{id}", controller.UserProductController.GetProduct)
 			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
 		})
+		r.Route("/logs", func(log chi.Router) {
+			log.Get("/", controller.UserProductController.GetLogs)
+		})
 		r.Route("/reviews", func(review chi.Router) {
 			review.Group(func(r chi.Router) {
 				r.Use(um.AuthMiddleware)
