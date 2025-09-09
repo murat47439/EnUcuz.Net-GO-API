@@ -331,7 +331,7 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
-	var psr ProductSpecsRepo
+	psr := NewProductSpecsRepo(pr.db)
 	productDetail, err := psr.GetProductDetail(&product)
 	if err != nil {
 		return nil, err

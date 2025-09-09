@@ -39,17 +39,17 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 		return nil, fmt.Errorf("Invalid data")
 	}
 
-	var brepo BrandsRepo
+	brepo := NewBrandsRepo(psr.db)
 
-	brand, err := (&brepo).GetBrand(data.Brand)
+	brand, err := brepo.GetBrand(data.Brand)
 
 	if err != nil {
 		return nil, fmt.Errorf("Brand error : %w", err)
 	}
 
-	var crepo CategoriesRepo
+	crepo := NewCategoriesRepo(psr.db)
 
-	category, err := (&crepo).GetCategory(data.CategoryId)
+	category, err := crepo.GetCategory(data.CategoryId)
 
 	if err != nil {
 		return nil, fmt.Errorf("Category error : %w", err)
