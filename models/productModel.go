@@ -8,19 +8,19 @@ type Product struct {
 	ID        int          `json:"id" db:"id"`
 	Name      string       `json:"name" db:"name"`
 	Brand     Brand        `json:"brand" db:"brand"`
-	Category  Category     `json:"category_id" db:"category_id"`
-	Battery   Battery      `json:"battery" db:"battery"`
-	Platform  Platform     `json:"platform" db:"platform"`
-	Network   Network      `json:"network" db:"network"`
-	Display   Display      `json:"display" db:"display"`
-	Launch    Launch       `json:"launch" db:"launch"`
-	Body      Body         `json:"body" db:"body"`
-	Memory    Memory       `json:"memory" db:"memory"`
-	Sound     Sound        `json:"sound" db:"sound"`
-	Comms     Comms        `json:"comms" db:"comms"`
-	Features  Features     `json:"features" db:"features"`
-	Colors    []string     `json:"colors" db:"colors"`
-	Models    []string     `json:"models" db:"models"`
+	Category  Category     `json:"category_id" db:"categories"`
+	Battery   Battery      `json:"battery" db:"battery_specs"`
+	Platform  Platform     `json:"platform" db:"platform_specs"`
+	Network   Network      `json:"network" db:"network_specs"`
+	Display   Display      `json:"display" db:"display_specs"`
+	Launch    Launch       `json:"launch" db:"launch_specs"`
+	Body      Body         `json:"body" db:"body_specs"`
+	Memory    Memory       `json:"memory" db:"memory_specs"`
+	Sound     Sound        `json:"sound" db:"sound_specs"`
+	Comms     Comms        `json:"comms" db:"comms_specs"`
+	Features  Features     `json:"features" db:"features_specs"`
+	Colors    []string     `json:"colors" db:"product_colors"`
+	Models    []string     `json:"models" db:"product_models"`
 	Cameras   Cameras      `json:"cameras" db:"cameras"`
 	CreatedAt sql.NullTime `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
