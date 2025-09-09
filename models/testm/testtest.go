@@ -1,7 +1,5 @@
 package testm
 
-import "database/sql"
-
 // En üst kapsayıcı struct
 type Items struct {
 	Products []Product `json:"items" db:"items"`
@@ -60,9 +58,9 @@ type Display struct {
 }
 
 type Launch struct {
-	Announced sql.NullTime `json:"announced" db:"announced"`
-	Released  sql.NullTime `json:"released" db:"released"`
-	Status    string       `json:"status" db:"status"`
+	Announced string `json:"announced" db:"announced"`
+	Released  string `json:"released" db:"released"`
+	Status    string `json:"status" db:"status"`
 }
 
 type Body struct {
