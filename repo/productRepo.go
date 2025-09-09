@@ -337,7 +337,7 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
     row_to_json(ms) AS memory_specs,
     row_to_json(ss) AS sound_specs,
     row_to_json(cs) AS comms_specs,
-    row_to_json(fs) AS features_specs,
+    row_to_json(fs) AS feature_specs,
     COALESCE(pc.colors, '[]'::json) AS colors,
     COALESCE(pm.models, '[]'::json) AS models,
     COALESCE(c.cameras, '[]'::json) AS cameras
