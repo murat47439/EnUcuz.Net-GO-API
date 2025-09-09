@@ -4,6 +4,7 @@ import (
 	"Store-Dio/services/products"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -37,7 +38,10 @@ func (pc *ProductController) GetProduct(w http.ResponseWriter, r *http.Request) 
 
 }
 func (pc *ProductController) GetLogs(w http.ResponseWriter, r *http.Request) {
-	data, err := os.ReadFile("../../logs/app.log")
+	cwd, _ := os.Getwd()
+	logPath := filepath.Join(cwd, "logs", "app.log")
+
+	data, err := os.ReadFile(logPath)
 	if err != nil {
 		http.Error(w, "Cannot read log", http.StatusInternalServerError)
 		return
