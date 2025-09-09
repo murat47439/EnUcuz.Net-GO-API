@@ -325,8 +325,6 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
 		return nil, fmt.Errorf("Invalid data")
 	}
 	query := `
-		SELECT json_agg(product_data) AS products_json
-FROM (
     SELECT 
         p.id,
         p.name,
@@ -364,7 +362,7 @@ FROM (
         GROUP BY product_id
     ) c ON c.product_id = p.id
 	WHERE p.id = $1
-) product_data;
+;
 	`
 
 	err := pr.db.Get(&product, query, prodid)
