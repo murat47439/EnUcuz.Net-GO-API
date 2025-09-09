@@ -53,7 +53,7 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 
 }
 
-func (pr *ProductRepo) AddProduct(data models.Product) error {
+func (pr *ProductRepo) AddProduct(data models.ProductDetail) error {
 
 	tx, err := pr.db.Beginx()
 	if err != nil {
@@ -324,60 +324,7 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
-	query := `
-    SELECT
-    p.id,
-    p.name,
-    row_to_json(bs) AS body_specs,
-    row_to_json(bds) AS battery_specs,
-    row_to_json(ns) AS network_specs,
-    row_to_json(ps) AS platform_specs,
-    row_to_json(ds) AS display_specs,
-    row_to_json(ls) AS launch_specs,
-    row_to_json(ms) AS memory_specs,
-    row_to_json(ss) AS sound_specs,
-    row_to_json(cs) AS comms_specs,
-    row_to_json(fs) AS feature_specs,
-    COALESCE(pc.colors, '[]'::json) AS colors,
-    COALESCE(pm.models, '[]'::json) AS models,
-    COALESCE(c.cameras, '[]'::json) AS cameras
-FROM products p
-LEFT JOIN body_specs bs ON bs.product_id = p.id
-LEFT JOIN battery_specs bds ON bds.product_id = p.id
-LEFT JOIN network_specs ns ON ns.product_id = p.id
-LEFT JOIN platform_specs ps ON ps.product_id = p.id
-LEFT JOIN display_specs ds ON ds.product_id = p.id
-LEFT JOIN launch_specs ls ON ls.product_id = p.id
-LEFT JOIN memory_specs ms ON ms.product_id = p.id
-LEFT JOIN sound_specs ss ON ss.product_id = p.id
-LEFT JOIN comms_specs cs ON cs.product_id = p.id
-LEFT JOIN feature_specs fs ON fs.product_id = p.id
-LEFT JOIN (
-    SELECT product_id, json_agg(DISTINCT color) AS colors
-    FROM product_colors
-    GROUP BY product_id
-) pc ON pc.product_id = p.id
-LEFT JOIN (
-    SELECT product_id, json_agg(DISTINCT model) AS models
-    FROM product_models
-    GROUP BY product_id
-) pm ON pm.product_id = p.id
-LEFT JOIN (
-    SELECT product_id, json_agg(
-    json_build_object(
-        'type', camera_type,
-        'cameraSpecs', camera_specs,
-        'features', features,
-        'video', video,
-        'role', camera_role
-    )
-) AS cameras
-FROM cameras
-    GROUP BY product_id
-) c ON c.product_id = p.id
-WHERE p.id = $1;
-;
-	`
+	query := `SELECT name,image_url,category_id,brand_id AS FROM products WHERE id = $1; `
 
 	err := pr.db.Get(&product, query, prodid)
 

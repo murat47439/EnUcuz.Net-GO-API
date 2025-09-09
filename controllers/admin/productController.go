@@ -43,7 +43,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 	})
 }
 func (pc *ProductController) AddProduct(w http.ResponseWriter, r *http.Request) {
-	var product models.Product
+	var product models.ProductDetail
 
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
