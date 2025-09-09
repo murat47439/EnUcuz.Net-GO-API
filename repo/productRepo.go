@@ -318,6 +318,62 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 
 	return &product, nil
 }
+func (pr *ProductRepo) GetProductDetail(prodid int) (*models.Product, error) {
+	var product models.Product
+
+	if prodid == 0 {
+		return nil, fmt.Errorf("Invalid data")
+	}
+	query := `
+		SELECT json_agg(product_data) AS products_json
+FROM (
+    SELECT 
+        p.id,
+        p.name,
+        row_to_json(bs) AS body_specs,
+        row_to_json(bds) AS battery_specs,
+        row_to_json(ns) AS network_specs,
+        pc.colors,
+        pm.models,
+        c.cameras
+    FROM products p
+    LEFT JOIN body_specs bs ON bs.product_id = p.id
+    LEFT JOIN battery_specs bds ON bds.product_id = p.id
+    LEFT JOIN network_specs ns ON ns.product_id = p.id
+    LEFT JOIN (
+        SELECT product_id, json_agg(DISTINCT color) AS colors
+        FROM product_colors
+        GROUP BY product_id
+    ) pc ON pc.product_id = p.id
+    LEFT JOIN (
+        SELECT product_id, json_agg(DISTINCT model) AS models
+        FROM product_models
+        GROUP BY product_id
+    ) pm ON pm.product_id = p.id
+    LEFT JOIN (
+        SELECT product_id, json_agg(
+            json_build_object(
+                'type', camera_type,
+                'specs', camera_specs,
+                'features', features,
+                'video', video,
+                'role', camera_role
+            )
+        ) AS cameras
+        FROM cameras
+        GROUP BY product_id
+    ) c ON c.product_id = p.id
+	WHERE p.id = $1
+) product_data;
+	`
+
+	err := pr.db.Get(&product, query, prodid)
+
+	if err != nil {
+		return nil, fmt.Errorf("Database error : %w", err)
+	}
+	return &product, nil
+}
 func (pr *ProductRepo) GetProducts(page int, search string) ([]*models.Product, error) {
 	var products []*models.Product
 	offset := (page - 1) * 50

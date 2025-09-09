@@ -49,7 +49,7 @@ func (ps *ProductService) GetProduct(id int) (*models.Product, error) {
 	if id == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
-	product, err := ps.ProductRepo.GetProduct(id)
+	product, err := ps.ProductRepo.GetProductDetail(id)
 
 	if err != nil {
 		return nil, err
