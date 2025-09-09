@@ -159,7 +159,7 @@ func (dr *DataRepo) InsertFeatures(data testm.Features, id int, tx *sqlx.Tx) err
 	return nil
 }
 func (dr *DataRepo) InsertComms(data testm.Comms, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO comms_specs(product_id,wlan,bluetooth,positioning,nfc,radio,usb)`
+	query := `INSERT INTO comms_specs(product_id,wlan,bluetooth,positioning,nfc,radio,usb) VALUES($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err := tx.Exec(query, id, data.WLAN, data.Bluetooth, data.Positioning, data.NFC, data.Radio, data.USB)
 	if err != nil {
