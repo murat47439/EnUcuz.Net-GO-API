@@ -68,10 +68,8 @@ func SetupRoutes(
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
-			product.Group(func(r chi.Router) {
-				r.Get("/{id}", controller.UserProductController.GetProduct)
-				r.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
-			})
+			product.Get("/{id}", controller.UserProductController.GetProduct)
+			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
 		})
 		r.Route("/reviews", func(review chi.Router) {
 			review.Group(func(r chi.Router) {

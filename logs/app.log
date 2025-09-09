@@ -65,3 +65,5 @@ APP_LOG: 2025/09/06 15:06:48 main.go:24: Application started successfully.
 APP_LOG: 2025/09/06 15:07:21 main.go:24: Application started successfully.
 APP_LOG: 2025/09/09 13:35:07 config.go:13: JWT_SECRET not set in environment
 APP_LOG: 2025/09/09 13:35:07 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/10 02:37:47 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/10 02:37:47 config.go:18: REFRESH_TOKEN_SECRET not set in environment
