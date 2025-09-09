@@ -324,7 +324,7 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT name,image_url,category_id,brand_id AS FROM products WHERE id = $1; `
+	query := `SELECT name,image_url,category_id,brand_id FROM products WHERE id = $1; `
 
 	err := pr.db.Get(&product, query, prodid)
 

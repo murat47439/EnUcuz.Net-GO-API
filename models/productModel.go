@@ -8,7 +8,7 @@ type Product struct {
 	ID         int          `json:"id" db:"id"`
 	Name       string       `json:"name" db:"name"`
 	Brand      int          `json:"brand_id" db:"brand_id"`
-	ImageUrl   string       `json:"image_url" db:"image_url"`
+	ImageUrl   *string      `json:"image_url" db:"image_url"`
 	CategoryId int          `json:"category_id" db:"category_id"`
 	CreatedAt  sql.NullTime `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
@@ -19,7 +19,7 @@ type ProductDetail struct {
 	ID        int          `json:"id" db:"id"`
 	Name      string       `json:"name" db:"name"`
 	Brand     *Brand       `json:"brand" db:"brand"`
-	ImageUrl  string       `json:"image_url" db:"image_url"`
+	ImageUrl  *string      `json:"image_url" db:"image_url"`
 	Category  *Category    `json:"category_id" db:"categories"`
 	Battery   Battery      `json:"battery" db:"battery_specs"`
 	Platform  Platform     `json:"platform" db:"platform_specs"`
