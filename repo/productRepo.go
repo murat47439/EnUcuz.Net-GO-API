@@ -11,11 +11,14 @@ import (
 )
 
 type ProductRepo struct {
-	db *sqlx.DB
+	db  *sqlx.DB
+	psr *ProductSpecsRepo
 }
 
-func NewProductRepo(db *sqlx.DB) *ProductRepo {
-	return &ProductRepo{db: db}
+func NewProductRepo(db *sqlx.DB, psr *ProductSpecsRepo) *ProductRepo {
+	return &ProductRepo{
+		db:  db,
+		psr: psr}
 }
 func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
 
@@ -331,8 +334,7 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
-	psr := NewProductSpecsRepo(pr.db)
-	productDetail, err := psr.GetProductDetail(&product)
+	productDetail, err := pr.psr.GetProductDetail(&product)
 	if err != nil {
 		return nil, err
 	}

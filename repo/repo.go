@@ -7,22 +7,21 @@ import (
 )
 
 type Repo struct {
-	db               *sqlx.DB
-	BrandsRepo       *BrandsRepo
-	CategoriesRepo   *CategoriesRepo
-	ProductRepo      *ProductRepo
-	ProductSpecsRepo *ProductSpecsRepo
-	UserRepo         *UserRepo
-	FavoriesRepo     *FavoriesRepo
-	ReviewsRepo      *ReviewsRepo
+	db             *sqlx.DB
+	BrandsRepo     *BrandsRepo
+	CategoriesRepo *CategoriesRepo
+	ProductRepo    *ProductRepo
+	UserRepo       *UserRepo
+	FavoriesRepo   *FavoriesRepo
+	ReviewsRepo    *ReviewsRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
 
 	brandRepo := NewBrandsRepo(db)
 	categoriesRepo := NewCategoriesRepo(db)
-	productRepo := NewProductRepo(db)
-	productSpecsRepo := NewProductSpecsRepo(db)
+	productSpecsRepo := NewProductSpecsRepo(db, brandRepo, categoriesRepo)
+	productRepo := NewProductRepo(db, productSpecsRepo)
 	userRepo := NewUserRepo(db)
 	favoriesRepo := NewFavoriesRepo(db)
 	reviewsRepo := NewReviewRepo(db)
@@ -30,13 +29,12 @@ func NewRepo(db *sqlx.DB) *Repo {
 	return &Repo{
 		db: db,
 
-		BrandsRepo:       brandRepo,
-		CategoriesRepo:   categoriesRepo,
-		ProductRepo:      productRepo,
-		ProductSpecsRepo: productSpecsRepo,
-		UserRepo:         userRepo,
-		FavoriesRepo:     favoriesRepo,
-		ReviewsRepo:      reviewsRepo,
+		BrandsRepo:     brandRepo,
+		CategoriesRepo: categoriesRepo,
+		ProductRepo:    productRepo,
+		UserRepo:       userRepo,
+		FavoriesRepo:   favoriesRepo,
+		ReviewsRepo:    reviewsRepo,
 	}
 }
 func (r *Repo) SafeQueryRow(query string, args ...any) *sqlx.Row {

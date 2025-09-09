@@ -10,12 +10,16 @@ import (
 )
 
 type ProductSpecsRepo struct {
-	db *sqlx.DB
+	db       *sqlx.DB
+	brand    *BrandsRepo
+	category *CategoriesRepo
 }
 
-func NewProductSpecsRepo(db *sqlx.DB) *ProductSpecsRepo {
+func NewProductSpecsRepo(db *sqlx.DB, brand *BrandsRepo, category *CategoriesRepo) *ProductSpecsRepo {
 	return &ProductSpecsRepo{
-		db: db,
+		db:       db,
+		brand:    brand,
+		category: category,
 	}
 }
 func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.ProductDetail, error) {
@@ -24,17 +28,13 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 		return nil, fmt.Errorf("Invalid data")
 	}
 
-	brepo := NewBrandsRepo(psr.db)
-
-	brand, err := brepo.GetBrand(data.Brand)
+	brand, err := psr.brand.GetBrand(data.Brand)
 
 	if err != nil {
 		return nil, fmt.Errorf("Brand error : %w", err)
 	}
 
-	crepo := NewCategoriesRepo(psr.db)
-
-	category, err := crepo.GetCategory(data.CategoryId)
+	category, err := psr.category.GetCategory(data.CategoryId)
 
 	if err != nil {
 		return nil, fmt.Errorf("Category error : %w", err)
