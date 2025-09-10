@@ -45,6 +45,9 @@ func (uc *UBrandController) GetBrands(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 	search := query.Get("search")
+	if search == "undefined" {
+		search = ""
+	}
 	brands, err := uc.BrandsService.GetBrands(page, search)
 
 	if err != nil {

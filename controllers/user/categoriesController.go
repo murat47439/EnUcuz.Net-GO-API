@@ -42,7 +42,9 @@ func (uc *UCategoriesController) GetCategories(w http.ResponseWriter, r *http.Re
 		page = 1
 	}
 	search := query.Get("search")
-
+	if search == "undefined" {
+		search = ""
+	}
 	categories, err := uc.CategoriesService.GetCategories(page, search)
 
 	if err != nil {
