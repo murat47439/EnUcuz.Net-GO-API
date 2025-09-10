@@ -64,15 +64,15 @@ func SetupRoutes(
 				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
 				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
 			})
+			r.Route("/logs", func(log chi.Router) {
+				log.Get("/", controller.AdminProductController.GetLogs)
+			})
 
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
 			product.Get("/{id}", controller.UserProductController.GetProduct)
 			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
-		})
-		r.Route("/logs", func(log chi.Router) {
-			log.Get("/", controller.UserProductController.GetLogs)
 		})
 		r.Route("/reviews", func(review chi.Router) {
 			review.Group(func(r chi.Router) {

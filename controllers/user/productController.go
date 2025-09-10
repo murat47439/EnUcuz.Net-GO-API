@@ -1,11 +1,8 @@
 package user
 
 import (
-	"Store-Dio/config"
 	"Store-Dio/services/products"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -38,17 +35,6 @@ func (pc *ProductController) GetProduct(w http.ResponseWriter, r *http.Request) 
 	})
 
 }
-func (pc *ProductController) GetLogs(w http.ResponseWriter, r *http.Request) {
-	cwd, _ := os.Getwd()
-	logPath := filepath.Join(cwd, "logs", "app.log")
-
-	data, err := os.ReadFile(logPath)
-	if err != nil {
-		http.Error(w, "Cannot read log", http.StatusInternalServerError)
-		return
-	}
-	w.Write(data)
-}
 
 func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
@@ -64,7 +50,6 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 		RespondWithError(w, http.StatusBadRequest, "Error : %s"+err.Error())
 		return
 	}
-	config.Logger.Printf("GET PRODUCT CONTROLLER SONUCU ALDI")
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message":  "Successfully",

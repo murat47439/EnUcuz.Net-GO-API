@@ -24,7 +24,6 @@ func NewProductSpecsRepo(db *sqlx.DB, brand *BrandsRepo, category *CategoriesRep
 	}
 }
 func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.ProductDetail, error) {
-	config.Logger.Printf("GET PRODUCT DETAİL GELDİ")
 	if data.ID == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}

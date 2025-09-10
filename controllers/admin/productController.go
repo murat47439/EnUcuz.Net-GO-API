@@ -5,6 +5,8 @@ import (
 	"Store-Dio/services/products"
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -76,4 +78,15 @@ func (pc *ProductController) DeleteProduct(w http.ResponseWriter, r *http.Reques
 	RespondWithJSON(w, http.StatusOK, map[string]string{
 		"message": "Successfully",
 	})
+}
+func (pc *ProductController) GetLogs(w http.ResponseWriter, r *http.Request) {
+	cwd, _ := os.Getwd()
+	logPath := filepath.Join(cwd, "logs", "app.log")
+
+	data, err := os.ReadFile(logPath)
+	if err != nil {
+		http.Error(w, "Cannot read log", http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
 }

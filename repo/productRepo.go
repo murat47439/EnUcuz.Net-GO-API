@@ -323,7 +323,6 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 }
 func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, error) {
 	var product models.Product
-	config.Logger.Printf("GET PRODUCT DETAİL REPO GELDİ")
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
@@ -335,7 +334,6 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
 	productDetail, err := pr.psr.GetProductDetail(&product)
-	config.Logger.Printf("GET PRODUCT REPO SONUCU DA ALDI")
 
 	if err != nil {
 		return nil, err
