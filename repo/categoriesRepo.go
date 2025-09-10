@@ -91,19 +91,21 @@ func (cr *CategoriesRepo) UpdateCategory(data *models.Category) (bool, error) {
 		}
 	}()
 
-	exists, err := cr.CheckCategory(data.Name, tx)
-
-	if !exists {
-		return false, fmt.Errorf("Category Not Found")
-	}
-
 	query := `UPDATE categories SET name = $1, parent_id = $2 WHERE id = $3`
 
-	_, err = tx.Exec(query, data.Name, data.ParentID, data.ID)
+	res, err := tx.Exec(query, data.Name, data.ParentID, data.ID)
 
 	if err != nil {
 		return false, fmt.Errorf("Database error : %s", err.Error())
 	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("RowsAffected error : %s", err.Error())
+	}
+	if rows == 0 {
+		return false, fmt.Errorf("Category not found")
+	}
+
 	return true, nil
 }
 func (cr *CategoriesRepo) DeleteCategory(data *models.Category) error {
