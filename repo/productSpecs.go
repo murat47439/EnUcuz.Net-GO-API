@@ -45,7 +45,7 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 	var wg sync.WaitGroup
 
 	// WaitGroup sayısı: 14 alan
-	wg.Add(14)
+	wg.Add(13)
 
 	// Değişkenler ve hata tutucular
 	var battery models.Battery
