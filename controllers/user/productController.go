@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/services/products"
 	"net/http"
 	"strconv"
@@ -43,7 +44,7 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 		page = 1
 	}
 	search := query.Get("search")
-
+	config.Logger.Printf(search)
 	products, err := pc.ProductService.GetProducts(page, search)
 
 	if err != nil {
