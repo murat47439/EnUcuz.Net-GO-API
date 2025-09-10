@@ -5,6 +5,7 @@ import (
 	"Store-Dio/models"
 	"database/sql"
 	"fmt"
+	"sync"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
@@ -393,4 +394,25 @@ func (pr *ProductRepo) DeleteProduct(data *models.Product) error {
 		return fmt.Errorf("Database error : ", err.Error())
 	}
 	return nil
+}
+func (pr *ProductRepo) CompareProduct(prodid1, prodid2 int) ([]models.ProductDetail, error) {
+	if prodid1 == 0 || prodid2 == 0 {
+		return nil, fmt.Errorf("Invalid data")
+	}
+	var prods []models.ProductDetail
+	var wg sync.WaitGroup
+	var prod1, prod2 *models.ProductDetail
+	var err1, err2 error
+
+	wg.Add(2)
+	go func() { defer wg.Done(); prod1, err1 = pr.GetProductDetail(prodid1) }()
+	go func() { defer wg.Done(); prod2, err2 = pr.GetProductDetail(prodid2) }()
+	wg.Wait()
+
+	if err1 != nil || err2 != nil {
+		return nil, fmt.Errorf("Hata1: %v, Hata2: %v", err1, err2)
+	}
+
+	prods = append(prods, *prod1, *prod2)
+	return prods, nil
 }

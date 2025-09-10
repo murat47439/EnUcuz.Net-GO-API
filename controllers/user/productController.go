@@ -58,3 +58,23 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 		"Products": products,
 	})
 }
+func (pc *ProductController) CompareProducts(w http.ResponseWriter, r *http.Request) {
+	id1, err := strconv.Atoi(chi.URLParam(r, "one"))
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+	id2, err := strconv.Atoi(chi.URLParam(r, "two"))
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		return
+	}
+	result, err := pc.ProductService.CompareProducts(id1, id2)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"Products": result,
+	})
+}

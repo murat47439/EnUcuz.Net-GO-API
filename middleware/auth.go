@@ -27,7 +27,7 @@ func (um *UserMiddleware) OnlyAdmin(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("access_token")
 
 		if err != nil {
-			http.Error(w, "No data", http.StatusNotFound)
+			http.Error(w, "No data", http.StatusUnauthorized)
 			return
 		}
 		token := cookie.Value
@@ -43,7 +43,7 @@ func (um *UserMiddleware) OnlyAdmin(next http.Handler) http.Handler {
 
 		if err != nil {
 			config.Logger.Printf("DB error checking admin role: %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			http.Error(w, "Internal Server Error", http.StatusUnauthorized)
 			return
 		}
 

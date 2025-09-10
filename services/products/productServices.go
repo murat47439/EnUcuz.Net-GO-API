@@ -70,3 +70,13 @@ func (ps *ProductService) GetProducts(page int, search string) ([]*models.Produc
 
 	return products, nil
 }
+func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.ProductDetail, error) {
+	if id1 == 0 || id2 == 0 {
+		return []models.ProductDetail{}, fmt.Errorf("Invalid data")
+	}
+	result, err := ps.ProductRepo.CompareProduct(id1, id2)
+	if err != nil {
+		return []models.ProductDetail{}, nil
+	}
+	return result, nil
+}
