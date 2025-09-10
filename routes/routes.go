@@ -64,7 +64,7 @@ func SetupRoutes(
 				cat.Put("/{id}", controller.AdminCategoriesController.UpdateCategory)
 				cat.Delete("/{id}", controller.AdminCategoriesController.DeleteCategory)
 			})
-			r.Route("/logs", func(log chi.Router) {
+			admin.Route("/logs", func(log chi.Router) {
 				log.Get("/", controller.AdminProductController.GetLogs)
 			})
 
