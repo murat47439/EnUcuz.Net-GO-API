@@ -18,10 +18,33 @@ func NewFavoriesRepo(db *sqlx.DB) *FavoriesRepo {
 	}
 }
 
+func (fr *FavoriesRepo) CheckFavoriAdd(userID, prodid int) (bool, error) {
+	if prodid == 0 || userID == 0 {
+		return false, fmt.Errorf("Invalid CHECK")
+	}
+	query := `SELECT EXISTS(SELECT 1 FROM wishlist WHERE user_id = $1 AND product_id = $2 AND deleted_at IS NULL)`
+	var exists bool
+
+	err := fr.db.Get(&exists, query, userID, prodid)
+	if err != nil {
+		return false, fmt.Errorf("Database error")
+	}
+	return exists, nil
+}
+
 func (fr *FavoriesRepo) AddFavori(prod *models.Product, user_id int) error {
+
+	exists, err := fr.CheckFavoriAdd(user_id, prod.ID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return fmt.Errorf("Ürün zaten favorilere eklendi.")
+	}
+
 	query := `INSERT INTO wishlist(user_id,product_id,created_at) VALUES($1, $2, NOW())`
 
-	_, err := fr.db.Exec(query, user_id, prod.ID)
+	_, err = fr.db.Exec(query, user_id, prod.ID)
 
 	if err != nil {
 		return fmt.Errorf("Database error : %s", err.Error())
