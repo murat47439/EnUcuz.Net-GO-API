@@ -130,7 +130,7 @@ func (cr *CategoriesRepo) DeleteCategory(data *models.Category) error {
 		return fmt.Errorf("Category not found")
 	}
 
-	query := "UPDATE category SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL"
+	query := "UPDATE categories SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL"
 
 	_, err = tx.Exec(query, data.ID)
 
