@@ -90,3 +90,19 @@ func (pc *ProductController) GetLogs(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(data)
 }
+func (pc *ProductController) GetAllProductID(w http.ResponseWriter, r *http.Request) {
+	ids, err := pc.ProductService.GetAllProductID()
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Error")
+		return
+	}
+
+	// []int -> []map[string]int
+	var response []map[string]int
+	for _, id := range ids {
+		response = append(response, map[string]int{"id": id})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}

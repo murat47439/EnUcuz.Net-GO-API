@@ -71,6 +71,7 @@ func SetupRoutes(
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
+			product.Get("/id", controller.AdminProductController.GetAllProductID)
 			product.Get("/{id}", controller.UserProductController.GetProduct)
 			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
 			product.Get("/compare/{one}/{two}", controller.UserProductController.CompareProducts)

@@ -416,3 +416,35 @@ func (pr *ProductRepo) CompareProduct(prodid1, prodid2 int) ([]models.ProductDet
 	prods = append(prods, *prod1, *prod2)
 	return prods, nil
 }
+func (pr *ProductRepo) GetAllProductID() ([]int, error) {
+	var wg sync.WaitGroup
+
+	ch := make(chan int)
+
+	for i := 0; i < 13; i++ {
+		wg.Add(1)
+		go func(start, end int) {
+			defer wg.Done()
+			rows, _ := pr.db.Query(fmt.Sprintf("SELECT id FROM products WHERE id BETWEEN %d AND %d", start, end))
+			defer rows.Close()
+			for rows.Next() {
+				var id int
+				rows.Scan(&id)
+				ch <- id
+			}
+		}(i*1000+1, (i+1)*1000)
+	}
+
+	// Kanalı kapatmak için ayrı goroutine
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	var appendid []int
+	for id := range ch {
+		appendid = append(appendid, id)
+	}
+
+	return appendid, nil
+}

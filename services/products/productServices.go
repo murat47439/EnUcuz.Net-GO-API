@@ -80,3 +80,10 @@ func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.ProductDetail,
 	}
 	return result, nil
 }
+func (ps *ProductService) GetAllProductID() ([]int, error) {
+	id, err := ps.ProductRepo.GetAllProductID()
+	if err != nil {
+		return nil, err
+	}
+	return id, nil
+}
