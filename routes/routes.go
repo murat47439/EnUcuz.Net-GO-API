@@ -17,7 +17,7 @@ func SetupRoutes(
 ) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://myproductionfrontend.com"},
+		AllowedOrigins:   []string{"http://localhost:3000", "https://enucuz-net.onrender.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
@@ -71,7 +71,6 @@ func SetupRoutes(
 		})
 		r.Route("/products", func(product chi.Router) {
 			product.Get("/", controller.UserProductController.GetProducts)
-			product.Get("/id", controller.AdminProductController.GetAllProductID)
 			product.Get("/{id}", controller.UserProductController.GetProduct)
 			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
 			product.Get("/compare/{one}/{two}", controller.UserProductController.CompareProducts)
