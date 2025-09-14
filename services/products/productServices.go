@@ -17,11 +17,7 @@ func (ps *ProductService) AddProduct(product models.ProductDetail) (bool, error)
 	if product.Name == "" || product.Models == nil {
 		return false, fmt.Errorf("Invalid data")
 	}
-	err := ps.ProductRepo.AddProduct(product)
 
-	if err != nil {
-		return false, fmt.Errorf("Error : %w", err.Error())
-	}
 	return true, nil
 }
 func (ps *ProductService) UpdateProduct(product models.Product) (*models.Product, error) {
