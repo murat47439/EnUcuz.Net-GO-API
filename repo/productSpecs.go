@@ -214,7 +214,7 @@ func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
 
 		// Video
 		err = psr.db.Select(&cam.Video, `
-		SELECT video_spec as video FROM camera_video WHERE camera_id=$1`, c.ID)
+		SELECT video_spec FROM camera_video WHERE camera_id=$1`, c.ID)
 		if err != nil {
 			return cams, err
 		}
