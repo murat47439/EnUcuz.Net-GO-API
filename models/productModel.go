@@ -16,27 +16,27 @@ type Product struct {
 }
 
 type ProductDetail struct {
-	ID        int          `json:"id" db:"id"`
-	Name      string       `json:"name" db:"name"`
-	Brand     *Brand       `json:"brand" db:"brand"`
-	ImageUrl  *string      `json:"image_url" db:"image_url"`
-	Category  *Category    `json:"category_id" db:"categories"`
-	Battery   Battery      `json:"battery" db:"battery_specs"`
-	Platform  Platform     `json:"platform" db:"platform_specs"`
-	Network   Network      `json:"network" db:"network_specs"`
-	Display   Display      `json:"display" db:"display_specs"`
-	Launch    Launch       `json:"launch" db:"launch_specs"`
-	Body      Body         `json:"body" db:"body_specs"`
-	Memory    Memory       `json:"memory" db:"memory_specs"`
-	Sound     Sound        `json:"sound" db:"sound_specs"`
-	Comms     Comms        `json:"comms" db:"comms_specs"`
-	Features  Features     `json:"features" db:"feature_specs"`
-	Colors    []string     `json:"colors_tr" db:"colors"`
-	Models    []string     `json:"models" db:"models"`
-	Cameras   Cameras      `json:"cameras" db:"cameras"`
-	CreatedAt sql.NullTime `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt sql.NullTime `json:"-" db:"deleted_at"`
+	ID        int           `json:"id" db:"id"`
+	Name      string        `json:"name" db:"name"`
+	Brand     *Brand        `json:"brand" db:"brand"`
+	ImageUrl  *string       `json:"image_url" db:"image_url"`
+	Category  *Category     `json:"category_id" db:"categories"`
+	Battery   Battery       `json:"battery" db:"battery_specs"`
+	Platform  Platform      `json:"platform" db:"platform_specs"`
+	Network   Network       `json:"network" db:"network_specs"`
+	Display   Display       `json:"display" db:"display_specs"`
+	Launch    Launch        `json:"launch" db:"launch_specs"`
+	Body      Body          `json:"body" db:"body_specs"`
+	Memory    Memory        `json:"memory" db:"memory_specs"`
+	Sound     Sound         `json:"sound" db:"sound_specs"`
+	Comms     Comms         `json:"comms" db:"comms_specs"`
+	Features  Features      `json:"features" db:"feature_specs"`
+	Colors    []string      `json:"colors_tr" db:"colors"`
+	Models    []string      `json:"models" db:"models"`
+	Cameras   Cameras       `json:"cameras" db:"cameras"`
+	CreatedAt *sql.NullTime `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt *sql.NullTime `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt *sql.NullTime `json:"-" db:"deleted_at"`
 }
 
 type Battery struct {
@@ -84,9 +84,9 @@ type Brightness struct {
 }
 
 type Launch struct {
-	Announced sql.NullTime `json:"announced" db:"announced"`
-	Released  sql.NullTime `json:"released" db:"released"`
-	Status    string       `json:"status" db:"status"`
+	Announced *sql.NullTime `json:"announced" db:"announced"`
+	Released  *sql.NullTime `json:"released" db:"released"`
+	Status    string        `json:"status" db:"status"`
 }
 
 type Body struct {
