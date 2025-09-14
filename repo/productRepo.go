@@ -191,9 +191,12 @@ func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx 
 	var cid int
 
 	err := tx.QueryRowx(query, id, role).Scan(&cid)
+	if err != nil {
+		return err
+	}
 	query = `INSERT INTO camera_lenses(camera_id, megapixels,aperture,focal_length, sensor_size, type, pixel_size,other_features,zoom) VALUES($1,$2,$3,$4,$5,$6, $7, $8, $9)`
 	for _, dat := range data.Lenses {
-		_, err = tx.Exec(query, cid, dat.Megapixels, dat.Aperture, dat.FocalLength, dat.SensorSize, dat.Type, dat.PixelSize, dat.OtherFeatures, dat.Zoom)
+		_, err = tx.Exec(query, cid, dat.Megapixels, dat.Aperture, dat.FocalLength, dat.SensorSize, dat.Type, dat.PixelSize, pq.Array(dat.OtherFeatures), dat.Zoom)
 		if err != nil {
 			return err
 		}
@@ -245,7 +248,7 @@ func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) err
 func (pr *ProductRepo) InsertDisplay(data models.Display, id int, tx *sqlx.Tx) error {
 	query := `INSERT INTO display_specs(product_id,type,size,resolution,protection,aspect_ratio,hdr,refresh_rate, brightness_typical,brightness_hbm,other_features) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
 
-	_, err := tx.Exec(query, id, data.PanelType, data.SizeInches, data.ResolutionPixels, data.Protection, data.AspectRatio, data.HDR, data.RefreshRate, data.Brightness.Typical, data.Brightness.Hbm, data.OtherFeatures)
+	_, err := tx.Exec(query, id, data.PanelType, data.SizeInches, data.ResolutionPixels, data.Protection, data.AspectRatio, pq.Array(data.HDR), data.RefreshRate, data.Brightness.Typical, data.Brightness.Hbm, pq.Array(data.OtherFeatures))
 	if err != nil {
 		return err
 	}
