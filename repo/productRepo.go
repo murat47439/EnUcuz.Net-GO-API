@@ -423,6 +423,7 @@ func (pr *ProductRepo) InsertData(data []models.ProductDetail) error {
 		return fmt.Errorf("Invalid data")
 	}
 	for _, dat := range data {
+		config.Logger.Printf("GELDİS")
 		if err := pr.AddProduct(dat); err != nil {
 			return fmt.Errorf("failed to insert product %d: %w", dat.ID, err)
 		}

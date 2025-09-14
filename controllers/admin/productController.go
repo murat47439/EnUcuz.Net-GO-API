@@ -94,11 +94,16 @@ func (pc *ProductController) InsertData(w http.ResponseWriter, r *http.Request) 
 	var data []models.ProductDetail
 
 	err := json.NewDecoder(r.Body).Decode(&data)
-
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	err = pc.ProductService.InsertData(data)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	RespondWithJSON(w, http.StatusOK, map[string]string{
 		"message": "Successfully",
 	})
