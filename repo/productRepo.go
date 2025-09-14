@@ -218,7 +218,7 @@ func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx 
 	return nil
 }
 func (pr *ProductRepo) InsertFeatures(data models.Features, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO feature_specs(product_id,sensors) VALUES($1,$2)`
+	query := `INSERT INTO sensors(product_id,sensors) VALUES($1,$2)`
 
 	_, err := tx.Exec(query, id, pq.Array(data.Sensors))
 	if err != nil {
@@ -236,7 +236,7 @@ func (pr *ProductRepo) InsertSound(data models.Sound, id int, tx *sqlx.Tx) error
 	return nil
 }
 func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO memory_specs(product_id,storage,ram) VALUES($1, $2,$3)`
+	query := `INSERT INTO memory_options(product_id,storage,ram) VALUES($1, $2,$3)`
 	for _, dat := range data.InternalOptions {
 		_, err := tx.Exec(query, id, dat.Storage, dat.RAM)
 		if err != nil {
@@ -246,7 +246,7 @@ func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) err
 	return nil
 }
 func (pr *ProductRepo) InsertDisplay(data models.Display, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO display_specs(product_id,type,size,resolution,protection,aspect_ratio,hdr,refresh_rate, brightness_typical,brightness_hbm,other_features) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
+	query := `INSERT INTO display(product_id,type,size,resolution,protection,aspect_ratio,hdr,refresh_rate, brightness_typical,brightness_hbm,other_features) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
 
 	_, err := tx.Exec(query, id, data.PanelType, data.SizeInches, data.ResolutionPixels, data.Protection, data.AspectRatio, pq.Array(data.HDR), data.RefreshRate, data.Brightness.Typical, data.Brightness.Hbm, pq.Array(data.OtherFeatures))
 	if err != nil {
