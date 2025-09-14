@@ -102,7 +102,7 @@ func (psr *ProductSpecsRepo) getPhoneDetail(prodid int) (models.PhoneDetail, err
 	if prodid == 0 {
 		return models.PhoneDetail{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT current_os,upgradable_to,chipset,cpu,gpu,dimensions,weight,build,sim_info,network_technology,network_speed,g2, g3, g4, g5,gps,nfc,radio,wlan,bluetooth,usb,card_slot FROM phone_details WHERE id = $1 AND deleted_at IS NULL`
+	query := `SELECT current_os,upgradable_to,chipset,cpu,gpu,dimensions,weight,build,sim_info,network_technology,network_speed,g2, g3, g4, g5,gps,nfc,radio,wlan,bluetooth,usb,card_slot FROM phone_details WHERE product_id = $1 AND deleted_at IS NULL`
 	var detail models.PhoneDetail
 
 	err := psr.db.Get(&detail, query, prodid)
