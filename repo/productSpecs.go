@@ -118,7 +118,7 @@ func (psr *ProductSpecsRepo) getBattery(prodid int) (models.Battery, error) {
 	}
 	query := `SELECT technology,capacity FROM battery WHERE product_id = $1`
 
-	err := psr.db.QueryRowx(query, prodid).Scan(&battery)
+	err := psr.db.Get(&battery, query, prodid)
 	if err != nil {
 		return models.Battery{}, err
 	}
