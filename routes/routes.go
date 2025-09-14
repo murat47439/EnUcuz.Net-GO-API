@@ -51,6 +51,9 @@ func SetupRoutes(
 				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
 				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
 			})
+			admin.Route("/insert-date", func(r chi.Router) {
+				r.Post("/", controller.AdminProductController.InsertData)
+			})
 			admin.Route("/reviews", func(rev chi.Router) {
 				rev.Put("/", controller.AdminReviewController.ReviewStatusUpdate)
 			})

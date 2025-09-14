@@ -31,7 +31,7 @@ type ProductDetail struct {
 	Sound     Sound        `json:"sound" db:"sound_specs"`
 	Comms     Comms        `json:"comms" db:"comms_specs"`
 	Features  Features     `json:"features" db:"feature_specs"`
-	Colors    []string     `json:"colors" db:"colors"`
+	Colors    []string     `json:"colors_tr" db:"colors"`
 	Models    []string     `json:"models" db:"models"`
 	Cameras   Cameras      `json:"cameras" db:"cameras"`
 	CreatedAt sql.NullTime `json:"created_at,omitempty" db:"created_at"`
@@ -40,15 +40,21 @@ type ProductDetail struct {
 }
 
 type Battery struct {
-	Type     string   `json:"type" db:"type"`
-	Charging []string `json:"charging" db:"charging"`
+	Technology      string            `json:"technology" db:"technology"`
+	Capacity        string            `json:"capacity" db:"capacity"`
+	ChargingDetails []ChargingDetails `json:"charging" db:"charging"`
 }
-
+type ChargingDetails struct {
+	Type        string `json:"type" db:"type"`
+	Description string `json:"description" db:"description"`
+	Power       string `json:"power,omitempty" db:"power"`
+}
 type Platform struct {
-	OS      string `json:"os" db:"os"`
-	Chipset string `json:"chipset" db:"chipset"`
-	CPU     string `json:"cpu" db:"cpu"`
-	GPU     string `json:"gpu" db:"gpu"`
+	CurrentOS    string `json:"current_os" db:"current_os"`
+	UpgradableOS string `json:"upgradable_to,omitempty" db:"upgradable_to"`
+	Chipset      string `json:"chipset" db:"chipset"`
+	CPU          string `json:"cpu" db:"cpu"`
+	GPU          string `json:"gpu" db:"gpu"`
 }
 
 type Network struct {
@@ -61,10 +67,20 @@ type Network struct {
 }
 
 type Display struct {
-	Type       string `json:"type" db:"type"`
-	Size       string `json:"size" db:"size"`
-	Resolution string `json:"resolution" db:"resolution"`
-	Protection string `json:"protection" db:"protection"`
+	PanelType        string     `json:"panelType" db:"type"`
+	SizeInches       string     `json:"size_inches" db:"size"`
+	OtherFeatures    []string   `json:"other_features" db:"other_features"`
+	HDR              []string   `json:"hdrSupport" db:"hdr"`
+	RefreshRate      string     `json:"refreshRate" db:"refresh_rate"`
+	Brightness       Brightness `json:"brightness"`
+	ResolutionPixels string     `json:"resolution_pixels" db:"resolution"`
+	Protection       string     `json:"protection" db:"protection"`
+	AspectRatio      string     `json:"aspect_ratio" db:"aspect_ratio"`
+}
+
+type Brightness struct {
+	Typical *string `json:"typical" db:"brightness_typical"`
+	Hbm     *string `json:"hbm" db:"brightness_hbm"`
 }
 
 type Launch struct {
@@ -81,12 +97,18 @@ type Body struct {
 }
 
 type Memory struct {
-	CardSlot string `json:"cardSlot" db:"card_slot"`
-	Internal string `json:"internal" db:"internal"`
+	CardSlot        string          `json:"cardSlot" db:"card_slot"`
+	InternalOptions []MemoryVariant `json:"internal_options"`
+}
+
+type MemoryVariant struct {
+	Storage string `json:"storage"`
+	RAM     string `json:"ram"`
 }
 
 type Sound struct {
-	Loudspeaker string `json:"loudspeaker" db:"loudspeaker"`
+	Loudspeaker string `json:"has_loudspeaker" db:"loudspeaker"`
+	Features    string `json:"loudspeaker_features" db:"features"`
 }
 
 type Comms struct {
@@ -99,7 +121,7 @@ type Comms struct {
 }
 
 type Features struct {
-	Sensors string `json:"sensors" db:"sensors"`
+	Sensors []string `json:"sensors_tr" db:"sensors"`
 }
 
 type Cameras struct {
@@ -108,8 +130,23 @@ type Cameras struct {
 }
 
 type Camera struct {
-	Type        string   `json:"type" db:"type"`
-	CameraSpecs []string `json:"cameraSpecs" db:"camera_specs"`
-	Features    []string `json:"features" db:"features"`
-	Video       []string `json:"video" db:"video"`
+	Lenses   []Lens          `json:"lenses"`
+	Features []CameraFeature `json:"features"`
+	Video    []CameraFeature `json:"video"`
+}
+
+type CameraFeature struct {
+	ID   int    `json:"id"`
+	Spec string `json:"spec"`
+}
+type Lens struct {
+	ID            int      `json:"id" db:"id"`
+	Type          string   `json:"type,omitempty" db:"type"`                 // Örn: "Derinlik" — bazı lenslerde yok
+	Megapixels    string   `json:"megapixels,omitempty" db:"megapixels"`     // Örn: "48 MP"
+	Aperture      string   `json:"aperture,omitempty" db:"aperture"`         // Örn: "f/1.8"
+	FocalLength   string   `json:"focal_length,omitempty" db:"focal_length"` // Örn: "24mm"
+	SensorSize    string   `json:"sensor_size,omitempty" db:"sensor_size"`   // Örn: "1/1.28\""
+	PixelSize     string   `json:"pixel_size,omitempty" db:"pixel_size"`     // Örn: "1.22µm"
+	Zoom          string   `json:"zoom,omitempty" db:"zoom"`                 // Örn: "5x optical zoom"
+	OtherFeatures []string `json:"other_features,omitempty" db:"other_features"`
 }

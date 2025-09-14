@@ -80,3 +80,12 @@ func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.ProductDetail,
 	}
 	return result, nil
 }
+
+func (ds *ProductService) InsertData(data []models.ProductDetail) error {
+	err := ds.ProductRepo.InsertData(data)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

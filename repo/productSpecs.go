@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 )
 
 type ProductSpecsRepo struct {
@@ -154,12 +153,12 @@ func (psr *ProductSpecsRepo) getBattery(prodid int) (models.Battery, error) {
 	if prodid == 0 {
 		return models.Battery{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT type,charging FROM battery_specs WHERE product_id = $1`
+	// query := `SELECT type,charging FROM battery_specs WHERE product_id = $1`
 
-	err := psr.db.QueryRowx(query, prodid).Scan(&battery.Type, pq.Array(&battery.Charging))
-	if err != nil {
-		return models.Battery{}, err
-	}
+	// err := psr.db.QueryRowx(query, prodid).Scan(&battery.Type, pq.Array(&battery.Charging))
+	// if err != nil {
+	// 	return models.Battery{}, err
+	// }
 	return battery, nil
 }
 func (psr *ProductSpecsRepo) getPlatform(prodid int) (models.Platform, error) {
@@ -306,21 +305,21 @@ func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		var role string
-		var cam models.Camera
-		err := rows.Scan(&role, &cam.Type, pq.Array(&cam.CameraSpecs), pq.Array(&cam.Features), pq.Array(&cam.Video))
-		if err != nil {
-			return cameras, err
-		}
+	// for rows.Next() {
+	// 	var role string
+	// 	var cam models.Camera
+	// 	err := rows.Scan(&role, &cam.Type, pq.Array(&cam.CameraSpecs), pq.Array(&cam.Features), pq.Array(&cam.Video))
+	// 	if err != nil {
+	// 		return cameras, err
+	// 	}
 
-		switch role {
-		case "MainCamera":
-			cameras.MainCamera = cam
-		case "SelfieCamera":
-			cameras.SelfieCamera = cam
-		}
-	}
+	// 	switch role {
+	// 	case "MainCamera":
+	// 		cameras.MainCamera = cam
+	// 	case "SelfieCamera":
+	// 		cameras.SelfieCamera = cam
+	// 	}
+	// }
 
 	return cameras, nil
 }
