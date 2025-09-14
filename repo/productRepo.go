@@ -218,7 +218,7 @@ func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx 
 	return nil
 }
 func (pr *ProductRepo) InsertFeatures(data models.Features, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO sensors(product_id,sensors) VALUES($1,$2)`
+	query := `INSERT INTO sensors(product_id,features) VALUES($1,$2)`
 
 	_, err := tx.Exec(query, id, pq.Array(data.Sensors))
 	if err != nil {
