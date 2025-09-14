@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"time"
 )
 
 type Product struct {
@@ -85,9 +84,9 @@ type Brightness struct {
 }
 
 type Launch struct {
-	Announced time.Time `json:"announced" db:"announced"`
-	Released  time.Time `json:"released" db:"released"`
-	Status    string    `json:"status" db:"status"`
+	Announced string `json:"announced" db:"announced"`
+	Released  string `json:"released" db:"released"`
+	Status    string `json:"status" db:"status"`
 }
 
 type Body struct {
