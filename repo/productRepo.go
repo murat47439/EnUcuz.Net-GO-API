@@ -57,9 +57,25 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 
 }
 
-func (pr *ProductRepo) AddProduct(data models.ProductDetail, tx *sqlx.Tx) error {
+func (pr *ProductRepo) AddProduct(data models.ProductDetail) error {
 
-	err := pr.InsertBrands(data.Brand, tx)
+	tx, err := pr.db.Beginx()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			if commitErr := tx.Commit(); commitErr != nil {
+				err = fmt.Errorf("tx commit error: %w", commitErr)
+			}
+		}
+	}()
+	err = pr.InsertBrands(data.Brand, tx)
 	if err != nil {
 		return err
 	}
@@ -404,34 +420,4 @@ func (pr *ProductRepo) CompareProduct(prodid1, prodid2 int) ([]models.ProductDet
 
 	prods = append(prods, *prod1, *prod2)
 	return prods, nil
-}
-func (pr *ProductRepo) InsertData(data []models.ProductDetail) error {
-	if data == nil {
-		return fmt.Errorf("Invalid data")
-	}
-	tx, err := pr.db.Beginx()
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if p := recover(); p != nil {
-			_ = tx.Rollback()
-			panic(p)
-		} else if err != nil {
-			_ = tx.Rollback()
-		} else {
-			if commitErr := tx.Commit(); commitErr != nil {
-				err = fmt.Errorf("tx commit error: %w", commitErr)
-			}
-		}
-	}()
-	for _, dat := range data {
-		config.Logger.Printf("GELDİS")
-		if err := pr.AddProduct(dat, tx); err != nil {
-			return fmt.Errorf("failed to insert product %d: %w", dat.ID, err)
-		}
-	}
-
-	return nil
-
 }

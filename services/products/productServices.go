@@ -17,7 +17,11 @@ func (ps *ProductService) AddProduct(product models.ProductDetail) (bool, error)
 	if product.Name == "" || product.Models == nil {
 		return false, fmt.Errorf("Invalid data")
 	}
+	err := ps.ProductRepo.AddProduct(product)
 
+	if err != nil {
+		return false, fmt.Errorf("Error : %w", err.Error())
+	}
 	return true, nil
 }
 func (ps *ProductService) UpdateProduct(product models.Product) (*models.Product, error) {
@@ -75,13 +79,4 @@ func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.ProductDetail,
 		return []models.ProductDetail{}, nil
 	}
 	return result, nil
-}
-
-func (ds *ProductService) InsertData(data []models.ProductDetail) error {
-	err := ds.ProductRepo.InsertData(data)
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
