@@ -66,16 +66,16 @@ type ChargingDetails struct {
 	Power       string `json:"power,omitempty" db:"power"`
 }
 type Display struct {
-	Type              string   `json:"type" db:"type"`
-	Size              string   `json:"size" db:"size"`
-	Resolution        string   `json:"resolution" db:"resolution"`
-	AspectRatio       string   `json:"aspect_ratio" db:"aspect_ratio"`
-	HDR               []string `json:"hdr" db:"hdr"`
-	RefreshRate       string   `json:"refreshRate" db:"refresh_rate"`
-	PPI               []string `json:"ppi" db:"ppi"`
-	BrightnessTypical string   `json:"brightness_typical" db:"brightness_typical"`
-	BrightnessHbm     string   `json:"brightness_hbm" db:"brightness_hbm"`
-	Protection        string   `json:"protection" db:"protection"`
+	Type              string `json:"type" db:"type"`
+	Size              string `json:"size" db:"size"`
+	Resolution        string `json:"resolution" db:"resolution"`
+	AspectRatio       string `json:"aspect_ratio" db:"aspect_ratio"`
+	HDR               string `json:"hdr" db:"hdr"`
+	RefreshRate       string `json:"refreshRate" db:"refresh_rate"`
+	PPI               string `json:"ppi" db:"ppi"`
+	BrightnessTypical string `json:"brightness_typical" db:"brightness_typical"`
+	BrightnessHbm     string `json:"brightness_hbm" db:"brightness_hbm"`
+	Protection        string `json:"protection" db:"protection"`
 }
 
 type Memory struct {
@@ -89,7 +89,7 @@ type Sound struct {
 }
 
 type Sensors struct {
-	Sensors []string `json:"sensors" db:"features"`
+	Sensors string `json:"sensors" db:"features"`
 }
 
 type Cameras struct {
