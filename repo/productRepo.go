@@ -12,14 +12,18 @@ import (
 )
 
 type ProductRepo struct {
-	db  *sqlx.DB
-	psr *ProductSpecsRepo
+	db    *sqlx.DB
+	psr   *ProductSpecsRepo
+	brand *BrandsRepo
+	cat   *CategoriesRepo
 }
 
-func NewProductRepo(db *sqlx.DB, psr *ProductSpecsRepo) *ProductRepo {
+func NewProductRepo(db *sqlx.DB, psr *ProductSpecsRepo, brand *BrandsRepo, cat *CategoriesRepo) *ProductRepo {
 	return &ProductRepo{
-		db:  db,
-		psr: psr}
+		db:    db,
+		psr:   psr,
+		brand: brand,
+		cat:   cat}
 }
 func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
 
@@ -75,89 +79,89 @@ func (pr *ProductRepo) AddProduct(data models.ProductDetail) error {
 			}
 		}
 	}()
-	err = pr.InsertBrands(data.Brand, tx)
+	id, err := pr.InsertBrands(data.Product.Brand, tx)
 	if err != nil {
 		return err
 	}
-	query := `INSERT INTO products(id,name,category_id,brand_id,launch_announced,launch_released, launch_status) VALUES($1,$2,$3, $4, $5, $6, $7)`
-
-	_, err = tx.Exec(query, data.ID, data.Name, 3719, data.Brand.ID, data.Launch.Announced, data.Launch.Released, data.Launch.Status)
+	query := `INSERT INTO products(name,category_id,brand_id,launch_announced,launch_released, launch_status) VALUES($1,$2,$3, $4, $5, $6) RETURNING id`
+	var prodID int
+	err = tx.QueryRowx(query, data.Product.Name, 3719, id, data.Product.Announced, data.Product.Released, data.Product.Status).Scan(&prodID)
 	if err != nil {
 		return err
 	}
 	query = `
-INSERT INTO phone_details(
-    product_id, current_os, upgradable_to, chipset, cpu, gpu,
-    body_dimensions, body_weight, body_build, sim_info,
-    network_technology, network_speed, network_2g, network_3g, network_4g, network_5g,
-    gps, nfc, radio, wlan, bluetooth, usb, card_slot
-)
-VALUES (
-    $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23
-)
-`
+		INSERT INTO phone_details(
+			product_id, current_os, upgradable_to, chipset, cpu, gpu,
+			dimensions, weight, build, sim_info,
+			network_technology, network_speed, g2, g3, g4, g5,
+			gps, nfc, radio, wlan, bluetooth, usb, card_slot
+		)
+		VALUES (
+			$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23
+		)
+		`
 	_, err = tx.Exec(
 		query,
-		data.ID,
-		data.Platform.CurrentOS,
-		data.Platform.UpgradableOS,
-		data.Platform.Chipset,
-		data.Platform.CPU,
-		data.Platform.GPU,
-		data.Body.Dimensions,
-		data.Body.Weight,
-		data.Body.Build,
-		data.Body.SIM,
-		data.Network.Technology,
-		data.Network.Speed,
-		data.Network.G2,
-		data.Network.G3,
-		data.Network.G4,
-		data.Network.G5,
-		data.Comms.Positioning,
-		data.Comms.NFC,
-		data.Comms.Radio,
-		data.Comms.WLAN,
-		data.Comms.Bluetooth,
-		data.Comms.USB,
-		data.Memory.CardSlot,
+		prodID,
+		data.PhoneDetail.CurrentOS,
+		data.PhoneDetail.UpgradableOS,
+		data.PhoneDetail.Chipset,
+		data.PhoneDetail.CPU,
+		data.PhoneDetail.GPU,
+		data.PhoneDetail.Dimensions,
+		data.PhoneDetail.Weight,
+		data.PhoneDetail.Build,
+		data.PhoneDetail.SimInfo,
+		data.PhoneDetail.NetTechnology,
+		data.PhoneDetail.NetSpeed,
+		data.PhoneDetail.G2,
+		data.PhoneDetail.G3,
+		data.PhoneDetail.G4,
+		data.PhoneDetail.G5,
+		data.PhoneDetail.GPS,
+		data.PhoneDetail.NFC,
+		data.PhoneDetail.Radio,
+		data.PhoneDetail.Wlan,
+		data.PhoneDetail.Bluetooth,
+		data.PhoneDetail.USB,
+		data.PhoneDetail.CardSlot,
 	)
 	if err != nil {
 		return fmt.Errorf("insert phone_details error: %v", err)
 	}
-	err = pr.InsertBattery(data.Battery, data.ID, tx)
+	err = pr.InsertBattery(data.Battery, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertDisplay(data.Display, data.ID, tx)
+	err = pr.InsertDisplay(data.Display, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertMemory(data.Memory, data.ID, tx)
+	err = pr.InsertMemory(data.Memory, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertSound(data.Sound, data.ID, tx)
+	err = pr.InsertSound(data.Sound, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertFeatures(data.Features, data.ID, tx)
+	err = pr.InsertSensors(data.Sensors, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertCamera(data.Cameras.MainCamera, data.ID, "MainCamera", tx)
+	err = pr.InsertCamera(data.Cameras.MainCamera, prodID, "MainCamera", tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertCamera(data.Cameras.SelfieCamera, data.ID, "SelfieCamera", tx)
+	err = pr.InsertCamera(data.Cameras.SelfieCamera, prodID, "SelfieCamera", tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertColor(data.Colors, data.ID, tx)
+	err = pr.InsertColor(data.Colors, prodID, tx)
 	if err != nil {
 		return err
 	}
-	err = pr.InsertModels(data.Models, data.ID, tx)
+	err = pr.InsertModels(data.Models, prodID, tx)
 	if err != nil {
 		return err
 	}
@@ -217,7 +221,7 @@ func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx 
 	}
 	return nil
 }
-func (pr *ProductRepo) InsertFeatures(data models.Features, id int, tx *sqlx.Tx) error {
+func (pr *ProductRepo) InsertSensors(data models.Sensors, id int, tx *sqlx.Tx) error {
 	query := `INSERT INTO sensors(product_id,features) VALUES($1,$2)`
 
 	_, err := tx.Exec(query, id, pq.Array(data.Sensors))
@@ -235,9 +239,9 @@ func (pr *ProductRepo) InsertSound(data models.Sound, id int, tx *sqlx.Tx) error
 	}
 	return nil
 }
-func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) error {
+func (pr *ProductRepo) InsertMemory(data []models.Memory, id int, tx *sqlx.Tx) error {
 	query := `INSERT INTO memory_options(product_id,storage,ram) VALUES($1, $2,$3)`
-	for _, dat := range data.InternalOptions {
+	for _, dat := range data {
 		_, err := tx.Exec(query, id, dat.Storage, dat.RAM)
 		if err != nil {
 			return err
@@ -246,58 +250,54 @@ func (pr *ProductRepo) InsertMemory(data models.Memory, id int, tx *sqlx.Tx) err
 	return nil
 }
 func (pr *ProductRepo) InsertDisplay(data models.Display, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO display(product_id,type,size,resolution,protection,aspect_ratio,hdr,refresh_rate, brightness_typical,brightness_hbm,other_features) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
+	query := `INSERT INTO display(product_id,type,size,resolution,protection,aspect_ratio,hdr,refresh_rate, brightness_typical,brightness_hbm,ppi) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
 
-	_, err := tx.Exec(query, id, data.PanelType, data.SizeInches, data.ResolutionPixels, data.Protection, data.AspectRatio, pq.Array(data.HDR), data.RefreshRate, data.Brightness.Typical, data.Brightness.Hbm, pq.Array(data.OtherFeatures))
+	_, err := tx.Exec(query, id, data.Type, data.Size, data.Resolution, data.Protection, data.AspectRatio, pq.Array(data.HDR), data.RefreshRate, data.BrightnessTypical, data.BrightnessHbm, pq.Array(data.PPI))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 func (pr *ProductRepo) InsertBattery(data models.Battery, id int, tx *sqlx.Tx) error {
-	query := `INSERT INTO battery(product_id,technology , capacity) VALUES($1,$2,$3) RETURNING id`
+	query := `INSERT INTO battery(product_id,technology , capacity) VALUES($1,$2,$3)`
 
-	var bid int
-	err := tx.QueryRowx(query, id, data.Technology, data.Capacity).Scan(&bid)
+	_, err := tx.Exec(query, id, data.Technology, data.Capacity)
 	if err != nil {
 		return err
-	}
-	for _, dat := range data.ChargingDetails {
-		query = `INSERT INTO battery_detail(battery_id, type, description, power) VALUES($1,$2,$3,$4)`
-
-		_, err = tx.Exec(query, bid, dat.Type, dat.Description, dat.Power)
-		if err != nil {
-			return fmt.Errorf("Charging detail error : %v", err)
-		}
 	}
 	return nil
 }
-func (pr *ProductRepo) InsertBrands(data *models.Brand, tx *sqlx.Tx) error {
-	exists, err := pr.ExistsData(data.ID, tx)
-
+func (pr *ProductRepo) InsertBrands(data string, tx *sqlx.Tx) (int, error) {
+	exists, err := pr.ExistsData(data, tx)
+	var id int
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if exists {
-		return nil
+		query := `SELECT id FROM brands WHERE name = $1 AND deleted_at IS NULL`
+		err = tx.QueryRowx(query, data).Scan(&id)
+		if err != nil {
+			return 0, err
+		}
+		return id, nil
 	}
-	query := `INSERT INTO brands (id,name,created_at) VALUES ($1, $2, NOW())`
+	query := `INSERT INTO brands (name,created_at) VALUES ($1, NOW()) RETURNING id`
 
-	_, err = tx.Exec(query, data.ID, data.Name)
+	err = tx.QueryRowx(query, data).Scan(&id)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 
 }
-func (pr *ProductRepo) ExistsData(id int, tx *sqlx.Tx) (bool, error) {
-	if id == 0 {
+func (pr *ProductRepo) ExistsData(name string, tx *sqlx.Tx) (bool, error) {
+	if name == "" {
 		return false, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT EXISTS(SELECT 1 FROM brands WHERE id = $1)`
+	query := `SELECT EXISTS(SELECT 1 FROM brands WHERE name = $1 AND deleted_at IS NULL)`
 	var exists bool
-	err := tx.QueryRow(query, id).Scan(&exists)
+	err := tx.QueryRow(query, name).Scan(&exists)
 
 	if err != nil {
 		return false, err
@@ -339,7 +339,19 @@ func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, erro
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %w", err)
 	}
-	productDetail, err := pr.psr.GetProductDetail(&product)
+
+	brand, err := pr.brand.GetBrand(product.BrandID)
+	if err != nil {
+		return nil, err
+	}
+	cat, err := pr.cat.GetCategory(product.CategoryId)
+	if err != nil {
+		return nil, err
+	}
+	product.Category = cat.Name
+	product.Brand = brand.Name
+
+	productDetail, err := pr.psr.GetProductDetail(product)
 
 	if err != nil {
 		return nil, err

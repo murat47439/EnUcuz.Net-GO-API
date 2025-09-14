@@ -13,11 +13,11 @@ type ProductService struct {
 func NewProductService(repo *repo.ProductRepo) *ProductService {
 	return &ProductService{ProductRepo: repo}
 }
-func (ps *ProductService) AddProduct(product models.ProductDetail) (bool, error) {
-	if product.Name == "" || product.Models == nil {
+func (ps *ProductService) AddProduct(data models.ProductDetail) (bool, error) {
+	if data.Product.Name == "" {
 		return false, fmt.Errorf("Invalid data")
 	}
-	err := ps.ProductRepo.AddProduct(product)
+	err := ps.ProductRepo.AddProduct(data)
 
 	if err != nil {
 		return false, fmt.Errorf("Error : %w", err.Error())

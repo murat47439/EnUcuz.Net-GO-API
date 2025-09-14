@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"Store-Dio/config"
 	"Store-Dio/models"
 	"fmt"
 	"sync"
@@ -10,69 +9,43 @@ import (
 )
 
 type ProductSpecsRepo struct {
-	db       *sqlx.DB
-	brand    *BrandsRepo
-	category *CategoriesRepo
+	db *sqlx.DB
 }
 
-func NewProductSpecsRepo(db *sqlx.DB, brand *BrandsRepo, category *CategoriesRepo) *ProductSpecsRepo {
+func NewProductSpecsRepo(db *sqlx.DB) *ProductSpecsRepo {
 	return &ProductSpecsRepo{
-		db:       db,
-		brand:    brand,
-		category: category,
+		db: db,
 	}
 }
-func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.ProductDetail, error) {
+func (psr *ProductSpecsRepo) GetProductDetail(data models.Product) (*models.ProductDetail, error) {
 	if data.ID == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
 
-	brand, err := psr.brand.GetBrand(data.Brand)
-
-	if err != nil {
-		return nil, fmt.Errorf("Brand error : %w", err)
-	}
-
-	category, err := psr.category.GetCategory(data.CategoryId)
-
-	if err != nil {
-		return nil, fmt.Errorf("Category error : %w", err)
-	}
-
 	var productDetail models.ProductDetail
 	var wg sync.WaitGroup
-
-	// WaitGroup sayısı: 14 alan
-	wg.Add(13)
+	wg.Add(9)
 
 	// Değişkenler ve hata tutucular
+	var phoneDetail models.PhoneDetail
 	var battery models.Battery
-	var platform models.Platform
-	var network models.Network
 	var display models.Display
-	var launch models.Launch
-	var body models.Body
-	var memory models.Memory
+	var memory []models.Memory
 	var sound models.Sound
-	var comms models.Comms
-	var features models.Features
+	var sensors models.Sensors
 	var colors []string
 	var modelsArr []string
 	var cameras models.Cameras
 
-	var batteryErr, platformErr, networkErr, displayErr, launchErr, bodyErr, memoryErr, soundErr, commsErr, featuresErr, colorsErr, modelsErr, camerasErr error
+	var phoneDetailErr, batteryErr, displayErr, memoryErr, soundErr, sensorErr, colorsErr, modelsErr, camerasErr error
 
 	// Paralel goroutine’ler
+	go func() { defer wg.Done(); phoneDetail, phoneDetailErr = psr.getPhoneDetail(data.ID) }()
 	go func() { defer wg.Done(); battery, batteryErr = psr.getBattery(data.ID) }()
-	go func() { defer wg.Done(); platform, platformErr = psr.getPlatform(data.ID) }()
-	go func() { defer wg.Done(); network, networkErr = psr.getNetwork(data.ID) }()
 	go func() { defer wg.Done(); display, displayErr = psr.getDisplay(data.ID) }()
-	go func() { defer wg.Done(); launch, launchErr = psr.getLaunch(data.ID) }()
-	go func() { defer wg.Done(); body, bodyErr = psr.getBody(data.ID) }()
 	go func() { defer wg.Done(); memory, memoryErr = psr.getMemory(data.ID) }()
 	go func() { defer wg.Done(); sound, soundErr = psr.getSound(data.ID) }()
-	go func() { defer wg.Done(); comms, commsErr = psr.getComms(data.ID) }()
-	go func() { defer wg.Done(); features, featuresErr = psr.getFeatures(data.ID) }()
+	go func() { defer wg.Done(); sensors, sensorErr = psr.getSensors(data.ID) }()
 	go func() { defer wg.Done(); colors, colorsErr = psr.getColors(data.ID) }()
 	go func() { defer wg.Done(); modelsArr, modelsErr = psr.getModels(data.ID) }()
 	go func() { defer wg.Done(); cameras, camerasErr = psr.getCameras(data.ID) }()
@@ -83,23 +56,14 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 	wg.Wait()
 
 	// Hataları kontrol et
+	if phoneDetailErr != nil {
+		return nil, phoneDetailErr
+	}
 	if batteryErr != nil {
 		return nil, batteryErr
 	}
-	if platformErr != nil {
-		return nil, platformErr
-	}
-	if networkErr != nil {
-		return nil, networkErr
-	}
 	if displayErr != nil {
 		return nil, displayErr
-	}
-	if launchErr != nil {
-		return nil, launchErr
-	}
-	if bodyErr != nil {
-		return nil, bodyErr
 	}
 	if memoryErr != nil {
 		return nil, memoryErr
@@ -107,11 +71,8 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 	if soundErr != nil {
 		return nil, soundErr
 	}
-	if commsErr != nil {
-		return nil, commsErr
-	}
-	if featuresErr != nil {
-		return nil, featuresErr
+	if sensorErr != nil {
+		return nil, sensorErr
 	}
 	if colorsErr != nil {
 		return nil, colorsErr
@@ -124,77 +85,51 @@ func (psr *ProductSpecsRepo) GetProductDetail(data *models.Product) (*models.Pro
 	}
 
 	// Tüm verileri ata
-	productDetail.ID = data.ID
-	productDetail.Name = data.Name
-	productDetail.ImageUrl = data.ImageUrl
-	productDetail.Brand = brand
-	productDetail.Category = category
+	productDetail.Product = data
+	productDetail.PhoneDetail = phoneDetail
 	productDetail.Battery = battery
-	productDetail.Platform = platform
-	productDetail.Network = network
 	productDetail.Display = display
-	productDetail.Launch = launch
-	productDetail.Body = body
 	productDetail.Memory = memory
 	productDetail.Sound = sound
-	productDetail.Comms = comms
-	productDetail.Features = features
+	productDetail.Sensors = sensors
 	productDetail.Colors = colors
 	productDetail.Models = modelsArr
 	productDetail.Cameras = cameras
-	productDetail.CreatedAt = data.CreatedAt
-	productDetail.UpdatedAt = data.UpdatedAt
-	config.Logger.Printf("GET PRODUCT DETAİL DÖNDÜ")
 
 	return &productDetail, nil
+}
+func (psr *ProductSpecsRepo) getPhoneDetail(prodid int) (models.PhoneDetail, error) {
+	if prodid == 0 {
+		return models.PhoneDetail{}, fmt.Errorf("Invalid data")
+	}
+	query := `SELECT current_os,upgradable_to,chipset,cpu,gpu,dimensions,weight,build,sim_info,network_technology,network_speed,g2, g3, g4, g5,gps,nfc,radio,wlan,bluetooth,usb,card_slot FROM phone_details WHERE id = $1 AND deleted_at IS NULL`
+	var detail models.PhoneDetail
+
+	err := psr.db.Get(&detail, query, prodid)
+	if err != nil {
+		return models.PhoneDetail{}, err
+	}
+	return detail, nil
 }
 func (psr *ProductSpecsRepo) getBattery(prodid int) (models.Battery, error) {
 	var battery models.Battery
 	if prodid == 0 {
 		return models.Battery{}, fmt.Errorf("Invalid data")
 	}
-	// query := `SELECT type,charging FROM battery_specs WHERE product_id = $1`
+	query := `SELECT technology,capacity FROM battery WHERE product_id = $1`
 
-	// err := psr.db.QueryRowx(query, prodid).Scan(&battery.Type, pq.Array(&battery.Charging))
-	// if err != nil {
-	// 	return models.Battery{}, err
-	// }
+	err := psr.db.QueryRowx(query, prodid).Scan(&battery.Technology, battery.Capacity)
+	if err != nil {
+		return models.Battery{}, err
+	}
 	return battery, nil
-}
-func (psr *ProductSpecsRepo) getPlatform(prodid int) (models.Platform, error) {
-	var platform models.Platform
-	if prodid == 0 {
-		return models.Platform{}, fmt.Errorf("Invalid data")
-	}
-	query := `SELECT os, chipset,cpu,gpu FROM platform_specs WHERE product_id = $1`
-
-	err := psr.db.Get(&platform, query, prodid)
-
-	if err != nil {
-		return models.Platform{}, err
-	}
-	return platform, nil
-}
-func (psr *ProductSpecsRepo) getNetwork(prodid int) (models.Network, error) {
-	var network models.Network
-	if prodid == 0 {
-		return models.Network{}, fmt.Errorf("Invalid data")
-	}
-	query := `SELECT technology, speed,g2,g3, g4, g5 FROM network_specs WHERE product_id = $1`
-
-	err := psr.db.Get(&network, query, prodid)
-
-	if err != nil {
-		return models.Network{}, err
-	}
-	return network, nil
 }
 func (psr *ProductSpecsRepo) getDisplay(prodid int) (models.Display, error) {
 	var display models.Display
 	if prodid == 0 {
 		return models.Display{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT type, size,resolution,protection FROM display_specs WHERE product_id = $1`
+	query := `SELECT type, size,resolution,protection,aspect_ratio,hdr,refresh_rate,brightness_typical,brightness_hbm,ppi FROM display WHERE product_id = $1`
 
 	err := psr.db.Get(&display, query, prodid)
 
@@ -203,45 +138,17 @@ func (psr *ProductSpecsRepo) getDisplay(prodid int) (models.Display, error) {
 	}
 	return display, nil
 }
-func (psr *ProductSpecsRepo) getLaunch(prodid int) (models.Launch, error) {
-	var launch models.Launch
+func (psr *ProductSpecsRepo) getMemory(prodid int) ([]models.Memory, error) {
+	var memory []models.Memory
 	if prodid == 0 {
-		return models.Launch{}, fmt.Errorf("Invalid data")
+		return []models.Memory{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT announced, released,status FROM launch_specs WHERE product_id = $1`
+	query := `SELECT  storage,ram FROM memory_options WHERE product_id = $1`
 
-	err := psr.db.Get(&launch, query, prodid)
+	err := psr.db.Select(&memory, query, prodid)
 
 	if err != nil {
-		return models.Launch{}, err
-	}
-	return launch, nil
-}
-func (psr *ProductSpecsRepo) getBody(prodid int) (models.Body, error) {
-	var body models.Body
-	if prodid == 0 {
-		return models.Body{}, fmt.Errorf("Invalid data")
-	}
-	query := `SELECT dimensions, weight,build, sim FROM body_specs WHERE product_id = $1`
-
-	err := psr.db.Get(&body, query, prodid)
-
-	if err != nil {
-		return models.Body{}, err
-	}
-	return body, nil
-}
-func (psr *ProductSpecsRepo) getMemory(prodid int) (models.Memory, error) {
-	var memory models.Memory
-	if prodid == 0 {
-		return models.Memory{}, fmt.Errorf("Invalid data")
-	}
-	query := `SELECT card_slot, internal FROM memory_specs WHERE product_id = $1`
-
-	err := psr.db.Get(&memory, query, prodid)
-
-	if err != nil {
-		return models.Memory{}, err
+		return []models.Memory{}, err
 	}
 	return memory, nil
 }
@@ -250,7 +157,7 @@ func (psr *ProductSpecsRepo) getSound(prodid int) (models.Sound, error) {
 	if prodid == 0 {
 		return models.Sound{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT loudspeaker FROM sound_specs WHERE product_id = $1`
+	query := `SELECT loudspeaker,features FROM sound_specs WHERE product_id = $1`
 
 	err := psr.db.Get(&sound, query, prodid)
 
@@ -259,99 +166,86 @@ func (psr *ProductSpecsRepo) getSound(prodid int) (models.Sound, error) {
 	}
 	return sound, nil
 }
-func (psr *ProductSpecsRepo) getComms(prodid int) (models.Comms, error) {
-	var comms models.Comms
+func (psr *ProductSpecsRepo) getSensors(prodid int) (models.Sensors, error) {
+	var sensors models.Sensors
 	if prodid == 0 {
-		return models.Comms{}, fmt.Errorf("Invalid data")
+		return models.Sensors{}, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT wlan, bluetooth,positioning,nfc,radio,usb FROM comms_specs WHERE product_id = $1`
+	query := `SELECT features FROM sensors WHERE product_id = $1`
 
-	err := psr.db.Get(&comms, query, prodid)
+	err := psr.db.Get(&sensors, query, prodid)
 
 	if err != nil {
-		return models.Comms{}, err
+		return models.Sensors{}, err
 	}
-	return comms, nil
-}
-func (psr *ProductSpecsRepo) getFeatures(prodid int) (models.Features, error) {
-	var features models.Features
-	if prodid == 0 {
-		return models.Features{}, fmt.Errorf("Invalid data")
-	}
-	query := `SELECT sensors FROM feature_specs WHERE product_id = $1`
-
-	err := psr.db.Get(&features, query, prodid)
-
-	if err != nil {
-		return models.Features{}, err
-	}
-	return features, nil
+	return sensors, nil
 }
 func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
-	var cameras models.Cameras
-	if prodid == 0 {
-		return cameras, fmt.Errorf("Invalid data")
-	}
+	// cameras tablosundan slice çek
+	cameraRows := []struct {
+		ID   int    `db:"id"`
+		Type string `db:"type"`
+	}{}
 
-	query := `
-        SELECT camera_role, camera_type, camera_specs, features, video
-        FROM cameras
-        WHERE product_id = $1
-    `
-
-	rows, err := psr.db.Queryx(query, prodid)
+	err := psr.db.Select(&cameraRows, "SELECT id, type FROM cameras WHERE product_id=$1", prodid)
 	if err != nil {
-		return cameras, err
+		return models.Cameras{}, err
 	}
-	defer rows.Close()
 
-	// for rows.Next() {
-	// 	var role string
-	// 	var cam models.Camera
-	// 	err := rows.Scan(&role, &cam.Type, pq.Array(&cam.CameraSpecs), pq.Array(&cam.Features), pq.Array(&cam.Video))
-	// 	if err != nil {
-	// 		return cameras, err
-	// 	}
+	// range ile dön
+	var cams models.Cameras
+	for _, c := range cameraRows {
+		var cam models.Camera
 
-	// 	switch role {
-	// 	case "MainCamera":
-	// 		cameras.MainCamera = cam
-	// 	case "SelfieCamera":
-	// 		cameras.SelfieCamera = cam
-	// 	}
-	// }
+		// Lenses
+		err = psr.db.Select(&cam.Lenses, `
+		SELECT megapixels, aperture, focal_length, sensor_size, type, pixel_size, other_features, zoom 
+		FROM camera_lenses WHERE camera_id=$1`, c.ID)
+		if err != nil {
+			return cams, err
+		}
 
-	return cameras, nil
+		// Features
+		err = psr.db.Select(&cam.Features, `
+		SELECT features as spec FROM camera_features WHERE camera_id=$1`, c.ID)
+		if err != nil {
+			return cams, err
+		}
+
+		// Video
+		err = psr.db.Select(&cam.Video, `
+		SELECT video_spec as video FROM camera_video WHERE camera_id=$1`, c.ID)
+		if err != nil {
+			return cams, err
+		}
+
+		// Kamerayı struct içine ata
+		if c.Type == "MainCamera" {
+			cams.MainCamera = cam
+		} else if c.Type == "SelfieCamera" {
+			cams.SelfieCamera = cam
+		}
+	}
+
+	return cams, nil
+
 }
 func (psr *ProductSpecsRepo) getColors(prodid int) ([]string, error) {
-	var colors []string
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
 
-	query := `
-        SELECT color
-        FROM product_colors
-        WHERE product_id = $1
-    `
+	var colors []string
+	query := `SELECT color FROM colors WHERE product_id = $1`
 
-	rows, err := psr.db.Queryx(query, prodid)
+	err := psr.db.Select(&colors, query, prodid)
 	if err != nil {
 		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var color string
-		err := rows.Scan(&color)
-		if err != nil {
-			return nil, err
-		}
-		colors = append(colors, color)
 	}
 
 	return colors, nil
 }
+
 func (psr *ProductSpecsRepo) getModels(prodid int) ([]string, error) {
 	var models []string
 	if prodid == 0 {
@@ -360,7 +254,7 @@ func (psr *ProductSpecsRepo) getModels(prodid int) ([]string, error) {
 
 	query := `
         SELECT model
-        FROM product_models
+        FROM models
         WHERE product_id = $1
     `
 
