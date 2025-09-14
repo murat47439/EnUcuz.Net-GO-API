@@ -207,7 +207,7 @@ func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
 
 		// Features
 		err = psr.db.Select(&cam.Features, `
-		SELECT features as spec FROM camera_features WHERE camera_id=$1`, c.ID)
+		SELECT feature FROM camera_features WHERE camera_id=$1`, c.ID)
 		if err != nil {
 			return cams, err
 		}
