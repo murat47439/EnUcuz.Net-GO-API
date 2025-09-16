@@ -12,9 +12,9 @@ type Product struct {
 	ImageUrl   *string      `json:"image_url" db:"image_url"`
 	CategoryId int          `json:"category_id" db:"category_id"`
 	Category   string       `json:"category_name" db:"category_name"`
-	Released   string       `json:"released,omitempty" db:"released"`
-	Announced  string       `json:"announced,omitempty" db:"announced"`
-	Status     string       `json:"status,omitempty" db:"status"`
+	Released   *string      `json:"released,omitempty" db:"released"`
+	Announced  *string      `json:"announced,omitempty" db:"announced"`
+	Status     *string      `json:"status,omitempty" db:"status"`
 	DeletedAt  sql.NullTime `json:"-" db:"deleted_at"`
 }
 
@@ -56,40 +56,40 @@ type PhoneDetail struct {
 }
 
 type Battery struct {
-	Technology      string            `json:"technology" db:"technology"`
-	Capacity        string            `json:"capacity" db:"capacity"`
+	Technology      *string           `json:"technology" db:"technology"`
+	Capacity        *string           `json:"capacity" db:"capacity"`
 	ChargingDetails []ChargingDetails `json:"charging" db:"charging"`
 }
 type ChargingDetails struct {
-	Type        string `json:"type" db:"type"`
-	Description string `json:"description" db:"description"`
-	Power       string `json:"power,omitempty" db:"power"`
+	Type        *string `json:"type" db:"type"`
+	Description *string `json:"description" db:"description"`
+	Power       *string `json:"power,omitempty" db:"power"`
 }
 type Display struct {
-	Type              string         `json:"type" db:"type"`
-	Size              string         `json:"size" db:"size"`
-	Resolution        string         `json:"resolution" db:"resolution"`
-	AspectRatio       string         `json:"aspect_ratio" db:"aspect_ratio"`
-	HDR               string         `json:"hdr" db:"hdr"`
-	RefreshRate       string         `json:"refreshRate" db:"refresh_rate"`
-	PPI               string         `json:"ppi" db:"ppi"`
+	Type              *string        `json:"type" db:"type"`
+	Size              *string        `json:"size" db:"size"`
+	Resolution        *string        `json:"resolution" db:"resolution"`
+	AspectRatio       *string        `json:"aspect_ratio" db:"aspect_ratio"`
+	HDR               *string        `json:"hdr" db:"hdr"`
+	RefreshRate       *string        `json:"refreshRate" db:"refresh_rate"`
+	PPI               *string        `json:"ppi" db:"ppi"`
 	BrightnessTypical sql.NullString `json:"brightness_typical" db:"brightness_typical"`
 	BrightnessHbm     sql.NullString `json:"brightness_hbm" db:"brightness_hbm"`
-	Protection        string         `json:"protection" db:"protection"`
+	Protection        *string        `json:"protection" db:"protection"`
 }
 
 type Memory struct {
-	Storage string `json:"storage" db:"storage"`
-	RAM     string `json:"ram" db:"ram"`
+	Storage *string `json:"storage" db:"storage"`
+	RAM     *string `json:"ram" db:"ram"`
 }
 
 type Sound struct {
-	Loudspeaker string `json:"loudspeaker" db:"loudspeaker"`
-	Features    string `json:"features" db:"features"`
+	Loudspeaker *string `json:"loudspeaker" db:"loudspeaker"`
+	Features    *string `json:"features" db:"features"`
 }
 
 type Sensors struct {
-	Sensors string `json:"sensors" db:"features"`
+	Sensors *string `json:"sensors" db:"features"`
 }
 
 type Cameras struct {
@@ -103,18 +103,18 @@ type Camera struct {
 	Video    []CameraVideo   `json:"video"`
 }
 type CameraVideo struct {
-	Spec string `json:"video" db:"video_spec"`
+	Spec *string `json:"video" db:"video_spec"`
 }
 type CameraFeature struct {
-	Spec string `json:"spec" db:"feature"`
+	Spec *string `json:"spec" db:"feature"`
 }
 type Lens struct {
-	Type          string `json:"type,omitempty" db:"type"`                 // Örn: "Derinlik" — bazı lenslerde yok
-	Megapixels    string `json:"megapixels,omitempty" db:"megapixels"`     // Örn: "48 MP"
-	Aperture      string `json:"aperture,omitempty" db:"aperture"`         // Örn: "f/1.8"
-	FocalLength   string `json:"focal_length,omitempty" db:"focal_length"` // Örn: "24mm"
-	SensorSize    string `json:"sensor_size,omitempty" db:"sensor_size"`   // Örn: "1/1.28\""
-	PixelSize     string `json:"pixel_size,omitempty" db:"pixel_size"`     // Örn: "1.22µm"
-	Zoom          string `json:"zoom,omitempty" db:"zoom"`                 // Örn: "5x optical zoom"
-	OtherFeatures string `json:"other_features,omitempty" db:"other_features"`
+	Type          *string `json:"type,omitempty" db:"type"`                 // Örn: "Derinlik" — bazı lenslerde yok
+	Megapixels    *string `json:"megapixels,omitempty" db:"megapixels"`     // Örn: "48 MP"
+	Aperture      *string `json:"aperture,omitempty" db:"aperture"`         // Örn: "f/1.8"
+	FocalLength   *string `json:"focal_length,omitempty" db:"focal_length"` // Örn: "24mm"
+	SensorSize    *string `json:"sensor_size,omitempty" db:"sensor_size"`   // Örn: "1/1.28\""
+	PixelSize     *string `json:"pixel_size,omitempty" db:"pixel_size"`     // Örn: "1.22µm"
+	Zoom          *string `json:"zoom,omitempty" db:"zoom"`                 // Örn: "5x optical zoom"
+	OtherFeatures *string `json:"other_features,omitempty" db:"other_features"`
 }
