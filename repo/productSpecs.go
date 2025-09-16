@@ -199,7 +199,7 @@ func (psr *ProductSpecsRepo) getCameras(prodid int) (models.Cameras, error) {
 
 		// Lenses
 		err = psr.db.Select(&cam.Lenses, `
-		SELECT megapixels, aperture, focal_length, sensor_size, type, pixel_size, other_features, zoom 
+		SELECT megapixels, aperture, focal_length, sensor_size, pixel_size, other_features, zoom 
 		FROM camera_lenses WHERE camera_id=$1`, c.ID)
 		if err != nil {
 			return cams, err
