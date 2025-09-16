@@ -198,9 +198,9 @@ func (pr *ProductRepo) InsertCamera(data models.Camera, id int, role string, tx 
 	if err != nil {
 		return err
 	}
-	query = `INSERT INTO camera_lenses(camera_id, megapixels,aperture,focal_length, sensor_size, type, pixel_size,other_features,zoom) VALUES($1,$2,$3,$4,$5,$6, $7, $8, $9)`
+	query = `INSERT INTO camera_lenses(camera_id, megapixels,aperture,focal_length, sensor_size, pixel_size,other_features,zoom) VALUES($1,$2,$3,$4,$5,$6, $7, $8, $9)`
 	for _, dat := range data.Lenses {
-		_, err = tx.Exec(query, cid, dat.Megapixels, dat.Aperture, dat.FocalLength, dat.SensorSize, dat.Type, dat.PixelSize, pq.Array(dat.OtherFeatures), dat.Zoom)
+		_, err = tx.Exec(query, cid, dat.Megapixels, dat.Aperture, dat.FocalLength, dat.SensorSize, dat.PixelSize, pq.Array(dat.OtherFeatures), dat.Zoom)
 		if err != nil {
 			return err
 		}

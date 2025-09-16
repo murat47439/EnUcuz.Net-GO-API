@@ -111,7 +111,6 @@ type CameraFeature struct {
 	Spec *string `json:"spec" db:"feature"`
 }
 type Lens struct {
-	Type          *string `json:"type,omitempty" db:"type"`                 // Örn: "Derinlik" — bazı lenslerde yok
 	Megapixels    *string `json:"megapixels,omitempty" db:"megapixels"`     // Örn: "48 MP"
 	Aperture      *string `json:"aperture,omitempty" db:"aperture"`         // Örn: "f/1.8"
 	FocalLength   *string `json:"focal_length,omitempty" db:"focal_length"` // Örn: "24mm"
