@@ -2,6 +2,8 @@ package models
 
 import (
 	"database/sql"
+
+	"github.com/lib/pq"
 )
 
 type Product struct {
@@ -89,7 +91,7 @@ type Sound struct {
 }
 
 type Sensors struct {
-	Sensors *[]string `json:"sensors" db:"features"`
+	Sensors pq.StringArray `json:"sensors" db:"features"`
 }
 
 type Cameras struct {
