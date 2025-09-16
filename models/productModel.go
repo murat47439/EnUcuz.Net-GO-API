@@ -89,7 +89,7 @@ type Sound struct {
 }
 
 type Sensors struct {
-	Sensors *string `json:"sensors" db:"features"`
+	Sensors *[]string `json:"sensors" db:"features"`
 }
 
 type Cameras struct {
