@@ -36,6 +36,23 @@ func SetupRoutes(
 			auth.Get("/reviews", controller.UserReviewController.GetUserReviews)
 
 		})
+		r.Route("/attribute", func(at chi.Router) {
+			at.Use(um.OnlyAdmin)
+			at.Post("/", controller.AdminAttributeController.AddAttribute)
+			at.Get("/", controller.AdminAttributeController.GetAttributes)
+			at.Delete("/{id}", controller.AdminAttributeController.DeleteAttribute)
+			at.Route("/c", func(cat chi.Router) {
+				cat.Post("/", controller.AdminAttributeController.AddCatAttribute)
+				cat.Get("/{id}", controller.AdminAttributeController.GetCatAttributes)
+				cat.Delete("/{id}", controller.AdminAttributeController.DeleteCatAttribute)
+			})
+
+			at.Route("/p", func(prod chi.Router) {
+				prod.Post("/", controller.AdminAttributeController.AddProdAttribute)
+				prod.Get("/{id}", controller.AdminAttributeController.GetProdAttributes)
+				prod.Delete("/{id}", controller.AdminAttributeController.DeleteProdAttribute)
+			})
+		})
 		r.Route("/refresh", func(ref chi.Router) {
 			ref.Post("/", controller.UserController.GetAccess)
 			ref.Group(func(logout chi.Router) {

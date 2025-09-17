@@ -11,6 +11,7 @@ type Controller struct {
 	AdminCategoriesController *admin.CategoriesController
 	AdminProductController    *admin.ProductController
 	AdminReviewController     *admin.ReviewController
+	AdminAttributeController  *admin.AttributeController
 
 	UserProductController    *user.ProductController
 	UserController           *user.UserController
@@ -25,6 +26,7 @@ func NewController(service *services.Service) *Controller {
 	adminCategoriesController := admin.NewCategoriesController(service.CategoriesService)
 	adminProductController := admin.NewProductController(service.ProductsService)
 	adminReviewController := admin.NewReviewController(service.ReviewsService)
+	adminAttributeController := admin.NewAttributeController(service.AttributeService)
 
 	userProductController := user.NewProductController(service.ProductsService)
 	userBrandsController := user.NewUBrandController(service.BrandsService)
@@ -38,6 +40,7 @@ func NewController(service *services.Service) *Controller {
 		AdminCategoriesController: adminCategoriesController,
 		AdminProductController:    adminProductController,
 		AdminReviewController:     adminReviewController,
+		AdminAttributeController:  adminAttributeController,
 
 		UserProductController:    userProductController,
 		UserController:           userController,

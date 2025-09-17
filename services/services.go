@@ -2,6 +2,7 @@ package services
 
 import (
 	"Store-Dio/repo"
+	"Store-Dio/services/attributes"
 	"Store-Dio/services/brands"
 	"Store-Dio/services/categories"
 	"Store-Dio/services/favories"
@@ -17,6 +18,7 @@ type Service struct {
 	UsersService      *users.UserService
 	FavoriesService   *favories.FavoriesService
 	ReviewsService    *reviews.ReviewService
+	AttributeService  *attributes.AttributeService
 }
 
 func NewService(repo *repo.Repo) *Service {
@@ -27,6 +29,7 @@ func NewService(repo *repo.Repo) *Service {
 	usersService := users.NewUserService(repo.UserRepo)
 	favoriesService := favories.NewFavoriesService(repo.FavoriesRepo)
 	reviewsService := reviews.NewReviewService(repo.ReviewsRepo)
+	attributeService := attributes.NewAttributeService(repo.AttributeRepo, repo.ProductRepo)
 
 	return &Service{
 
@@ -36,5 +39,6 @@ func NewService(repo *repo.Repo) *Service {
 		UsersService:      usersService,
 		FavoriesService:   favoriesService,
 		ReviewsService:    reviewsService,
+		AttributeService:  attributeService,
 	}
 }
