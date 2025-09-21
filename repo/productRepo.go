@@ -3,9 +3,9 @@ package repo
 import (
 	"Store-Dio/config"
 	"Store-Dio/models"
+	"context"
 	"database/sql"
 	"fmt"
-	"sync"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -57,34 +57,13 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 	return exists, nil
 
 }
-
-func (pr *ProductRepo) AddProduct(data models.ProductDetail) error {
+func (pr *ProductRepo) AddProduct(ctx context.Context, data models.Product, tx *sqlx.Tx) error {
+	query := `INSERT INTO products(name,description,stock,image_url,category_id,created_at,brand_id,seller_id) VALUES($1,$2,$3,$4,$5,NOW(),$6,$7)`
+	_, err := tx.ExecContext(ctx, query, data.Name, data.Description, data.Stock, data.ImageUrl, data.CategoryId, data.BrandID, data.SellerID)
+	if err != nil {
+		return fmt.Errorf("Database error %w", err)
+	}
 	return nil
-}
-
-func (pr *ProductRepo) InsertBrands(data string, tx *sqlx.Tx) (int, error) {
-	exists, err := pr.ExistsData(data, tx)
-	var id int
-	if err != nil {
-		return 0, err
-	}
-	if exists {
-		query := `SELECT id FROM brands WHERE name = $1 AND deleted_at IS NULL`
-		err = tx.QueryRowx(query, data).Scan(&id)
-		if err != nil {
-			return 0, err
-		}
-		return id, nil
-	}
-	query := `INSERT INTO brands (name,created_at) VALUES ($1, NOW()) RETURNING id`
-
-	err = tx.QueryRowx(query, data).Scan(&id)
-
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
-
 }
 func (pr *ProductRepo) ExistsData(name string, tx *sqlx.Tx) (bool, error) {
 	if name == "" {
@@ -99,10 +78,21 @@ func (pr *ProductRepo) ExistsData(name string, tx *sqlx.Tx) (bool, error) {
 	}
 	return exists, nil
 }
-func (pr *ProductRepo) UpdateProduct(product *models.Product) (bool, error) {
-	return true, nil
+func (pr *ProductRepo) UpdateProduct(ctx context.Context, product *models.Product) error {
+	query := `UPDATE products SET name = $1, description = $2,stock = $3 WHERE id = $4 AND deleted_at IS NULL`
+
+	res, err := pr.db.ExecContext(ctx, query, product.Name, product.Description, product.Stock, product.ID)
+	if err != nil {
+		return fmt.Errorf("Database error : %w", err)
+	}
+	rows, _ := res.RowsAffected()
+	if rows == 0 {
+		return fmt.Errorf("Product Not Found")
+	}
+	return nil
+
 }
-func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
+func (pr *ProductRepo) GetProduct(ctx context.Context, prodid int) (*models.Product, error) {
 	var product models.Product
 	if prodid == 0 {
 		return nil, fmt.Errorf("Invalid data")
@@ -111,7 +101,7 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = pr.db.Get(&product, "SELECT * FROM products WHERE id = $1 AND deleted_at IS NULL", prodid)
+	err = pr.db.GetContext(ctx, &product, "SELECT * FROM products WHERE id = $1 AND deleted_at IS NULL", prodid)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -121,9 +111,6 @@ func (pr *ProductRepo) GetProduct(prodid int) (*models.Product, error) {
 	}
 
 	return &product, nil
-}
-func (pr *ProductRepo) GetProductDetail(prodid int) (*models.ProductDetail, error) {
-	return nil, nil
 }
 func (pr *ProductRepo) GetProducts(page int, search string) ([]*models.Product, error) {
 	var products []*models.Product
@@ -170,33 +157,12 @@ func (pr *ProductRepo) DeleteProduct(data *models.Product) error {
 			err = tx.Commit()
 		}
 	}()
-	query := `UPDATE products SET deleted_at = NOW() WHERE id = $1`
+	query := `UPDATE products SET deleted_at = NOW() WHERE id = $1 AND seller_id = $2`
 
-	_, err = tx.Exec(query, data.ID)
+	_, err = tx.Exec(query, data.ID, data.SellerID)
 
 	if err != nil {
 		return fmt.Errorf("Database error : ", err.Error())
 	}
 	return nil
-}
-func (pr *ProductRepo) CompareProduct(prodid1, prodid2 int) ([]models.ProductDetail, error) {
-	if prodid1 == 0 || prodid2 == 0 {
-		return nil, fmt.Errorf("Invalid data")
-	}
-	var prods []models.ProductDetail
-	var wg sync.WaitGroup
-	var prod1, prod2 *models.ProductDetail
-	var err1, err2 error
-
-	wg.Add(2)
-	go func() { defer wg.Done(); prod1, err1 = pr.GetProductDetail(prodid1) }()
-	go func() { defer wg.Done(); prod2, err2 = pr.GetProductDetail(prodid2) }()
-	wg.Wait()
-
-	if err1 != nil || err2 != nil {
-		return nil, fmt.Errorf("Hata1: %v, Hata2: %v", err1, err2)
-	}
-
-	prods = append(prods, *prod1, *prod2)
-	return prods, nil
 }

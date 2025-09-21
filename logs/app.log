@@ -126,3 +126,24 @@ APP_LOG: 2025/09/17 22:39:58 config.go:18: REFRESH_TOKEN_SECRET not set in envir
 APP_LOG: 2025/09/17 22:39:58 main.go:24: Application started successfully.
 APP_LOG: 2025/09/17 22:40:05 productRepo.go:38: Geldi true
 APP_LOG: 2025/09/17 22:45:54 productRepo.go:38: Geldi false
+APP_LOG: 2025/09/18 21:31:40 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/18 21:31:40 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/18 21:31:40 main.go:24: Application started successfully.
+APP_LOG: 2025/09/18 21:45:56 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/18 21:45:56 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/18 21:45:56 main.go:24: Application started successfully.
+APP_LOG: 2025/09/21 18:24:12 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/21 18:24:12 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/21 18:24:12 main.go:24: Application started successfully.
+APP_LOG: 2025/09/21 18:24:17 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/21 18:25:41 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/21 18:25:41 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/21 18:25:42 main.go:24: Application started successfully.
+APP_LOG: 2025/09/21 18:25:45 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/21 18:25:47 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/21 18:26:26 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/21 18:26:26 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/21 18:26:26 main.go:24: Application started successfully.
+APP_LOG: 2025/09/21 18:26:30 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/21 18:30:04 productRepo.go:38: Geldi false
+APP_LOG: 2025/09/21 18:30:08 productRepo.go:38: Geldi true

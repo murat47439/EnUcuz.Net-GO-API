@@ -1,43 +1,92 @@
 package products
 
 import (
+	"Store-Dio/internal/db"
 	"Store-Dio/models"
 	"Store-Dio/repo"
+	"context"
 	"fmt"
 )
 
 type ProductService struct {
-	ProductRepo *repo.ProductRepo
+	ProductRepo   *repo.ProductRepo
+	AttributeRepo *repo.AttributeRepo
+	db            db.TxStarter
 }
 
-func NewProductService(repo *repo.ProductRepo) *ProductService {
-	return &ProductService{ProductRepo: repo}
+func NewProductService(repo *repo.ProductRepo, arepo *repo.AttributeRepo, db db.TxStarter) *ProductService {
+	return &ProductService{ProductRepo: repo,
+		AttributeRepo: arepo, db: db}
 }
-func (ps *ProductService) AddProduct(data models.ProductDetail) (bool, error) {
-	if data.Product.Name == "" {
+func (ps *ProductService) AddProduct(ctx context.Context, data models.Product) (bool, error) {
+	if data.Name == "" || data.SellerID == 0 {
 		return false, fmt.Errorf("Invalid data")
 	}
-	err := ps.ProductRepo.AddProduct(data)
+	tx, err := ps.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return false, fmt.Errorf("TX Error : %w", err)
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	err = ps.ProductRepo.AddProduct(ctx, data, tx)
 
 	if err != nil {
 		return false, fmt.Errorf("Error : %w", err.Error())
 	}
 	return true, nil
 }
-func (ps *ProductService) UpdateProduct(product models.Product) (*models.Product, error) {
-	return nil, fmt.Errorf("The service is unavailable")
+func (ps *ProductService) UpdateProduct(ctx context.Context, product models.Product, user_id int) (*models.Product, error) {
+	exists, err := ps.ProductRepo.CheckProduct(product.ID)
+	switch {
+	case err != nil:
+		return nil, err
+	case !exists:
+		return nil, fmt.Errorf("Product Not Found")
+	case product.SellerID != user_id:
+		return nil, fmt.Errorf("👍")
+	}
+	err = ps.ProductRepo.UpdateProduct(ctx, &product)
+	if err != nil {
+		return nil, err
+	}
+	return &product, nil
 
 }
-func (ps *ProductService) DeleteProduct(id int) error {
+func (ps *ProductService) UpdateProductForAdmin(ctx context.Context, product models.Product) (*models.Product, error) {
+	exists, err := ps.ProductRepo.CheckProduct(product.ID)
+	switch {
+	case err != nil:
+		return nil, err
+	case !exists:
+		return nil, fmt.Errorf("Product Not Found")
+	}
+	err = ps.ProductRepo.UpdateProduct(ctx, &product)
+	if err != nil {
+		return nil, err
+	}
+	return &product, nil
+
+}
+func (ps *ProductService) DeleteProduct(ctx context.Context, id, user_id int) error {
 	if id == 0 {
 		return fmt.Errorf("Invalid data")
 	}
-	data, err := ps.ProductRepo.GetProduct(id)
+	data, err := ps.ProductRepo.GetProduct(ctx, id)
 
 	if err != nil {
 		return err
 	}
-
+	if data.SellerID != user_id {
+		return fmt.Errorf("👍")
+	}
 	err = ps.ProductRepo.DeleteProduct(data)
 
 	if err != nil {
@@ -45,17 +94,37 @@ func (ps *ProductService) DeleteProduct(id int) error {
 	}
 	return nil
 }
-func (ps *ProductService) GetProduct(id int) (*models.ProductDetail, error) {
+func (ps *ProductService) DeleteProductForAdmin(ctx context.Context, id int) error {
 	if id == 0 {
-		return nil, fmt.Errorf("Invalid data")
+		return fmt.Errorf("Invalid data")
 	}
-	product, err := ps.ProductRepo.GetProductDetail(id)
+	data, err := ps.ProductRepo.GetProduct(ctx, id)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
+	err = ps.ProductRepo.DeleteProduct(data)
 
-	return product, nil
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (ps *ProductService) GetProduct(ctx context.Context, id int) (*models.Product, []*models.ProductAttribute, error) {
+	if id == 0 {
+		return nil, nil, fmt.Errorf("Invalid data")
+	}
+	product, err := ps.ProductRepo.GetProduct(ctx, id)
+
+	if err != nil {
+		return nil, nil, err
+	}
+	attributes, err := ps.AttributeRepo.GetProdAttributes(ctx, id)
+
+	if err != nil {
+		return nil, nil, err
+	}
+	return product, attributes, nil
 }
 func (ps *ProductService) GetProducts(page int, search string) ([]*models.Product, error) {
 	if page < 1 {
@@ -70,13 +139,14 @@ func (ps *ProductService) GetProducts(page int, search string) ([]*models.Produc
 
 	return products, nil
 }
-func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.ProductDetail, error) {
-	if id1 == 0 || id2 == 0 {
-		return []models.ProductDetail{}, fmt.Errorf("Invalid data")
-	}
-	result, err := ps.ProductRepo.CompareProduct(id1, id2)
-	if err != nil {
-		return []models.ProductDetail{}, nil
-	}
-	return result, nil
-}
+
+// func (ps *ProductService) CompareProducts(id1, id2 int) ([]models.Product, error) {
+// 	if id1 == 0 || id2 == 0 {
+// 		return nil, fmt.Errorf("Invalid data")
+// 	}
+// 	result, err := ps.ProductRepo.CompareProduct(id1, id2)
+// 	if err != nil {
+// 		return nil, nil
+// 	}
+// 	return result, nil
+// }

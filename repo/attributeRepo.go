@@ -53,10 +53,10 @@ func (ar *AttributeRepo) AddCatAttribute(ctx context.Context, data *models.Categ
 	}
 	return model, nil
 }
-func (ar *AttributeRepo) AddProdAttribute(ctx context.Context, data *models.NewProdAttribute) (*models.ProductAttribute, error) {
+func (ar *AttributeRepo) AddProdAttribute(ctx context.Context, data *models.NewProdAttribute, tx *sqlx.Tx) (*models.ProductAttribute, error) {
 	query := `INSERT INTO product_attributes(attribute_id,product_id,value) VALUES ($1,$2,$3) RETURNING attribute_id,product_id,value`
 	var result models.ProductAttribute
-	err := ar.db.GetContext(ctx, &result, query, data.CategoryAttribute.AttributeID, data.Product.ID, data.Value)
+	err := tx.GetContext(ctx, &result, query, data.CategoryAttribute.AttributeID, data.Product.ID, data.Value)
 	if err != nil {
 		return nil, fmt.Errorf("Database error")
 	}

@@ -33,7 +33,7 @@ func NewApp(db *sqlx.DB) *App {
 
 	repo := repo.NewRepo(db)
 
-	service := services.NewService(repo)
+	service := services.NewService(repo, db)
 
 	controllers := controllers.NewController(service)
 

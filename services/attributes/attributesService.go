@@ -1,6 +1,7 @@
 package attributes
 
 import (
+	"Store-Dio/internal/db"
 	"Store-Dio/models"
 	"Store-Dio/repo"
 	"context"
@@ -10,12 +11,14 @@ import (
 type AttributeService struct {
 	AttributeRepo *repo.AttributeRepo
 	ProductRepo   *repo.ProductRepo
+	db            db.TxStarter
 }
 
-func NewAttributeService(attribtueRepo *repo.AttributeRepo, product *repo.ProductRepo) *AttributeService {
+func NewAttributeService(db db.TxStarter, attribtueRepo *repo.AttributeRepo, product *repo.ProductRepo) *AttributeService {
 	return &AttributeService{
 		AttributeRepo: attribtueRepo,
 		ProductRepo:   product,
+		db:            db,
 	}
 }
 
@@ -59,6 +62,10 @@ func (as *AttributeService) AddProdAttribute(ctx context.Context, data *models.N
 	case data.Product.CategoryId != data.CategoryAttribute.CategoryID:
 		return nil, fmt.Errorf("Product does not belong to the given category")
 	}
+	tx, err := as.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("TX ERROR : %w", err)
+	}
 	exists, err := as.ProductRepo.CheckProduct(data.Product.ID)
 	if err != nil {
 		return nil, err
@@ -73,7 +80,7 @@ func (as *AttributeService) AddProdAttribute(ctx context.Context, data *models.N
 	if exists {
 		return nil, fmt.Errorf("Attribute already exists")
 	}
-	result, err := as.AttributeRepo.AddProdAttribute(ctx, data)
+	result, err := as.AttributeRepo.AddProdAttribute(ctx, data, tx)
 	if err != nil {
 		return nil, err
 	}

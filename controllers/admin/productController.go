@@ -3,11 +3,13 @@ package admin
 import (
 	"Store-Dio/models"
 	"Store-Dio/services/products"
+	"context"
 	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -25,6 +27,9 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	var product models.Product
 
 	err = json.NewDecoder(r.Body).Decode(&product)
@@ -33,7 +38,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	updproduct, err := pc.ProductService.UpdateProduct(product)
+	updproduct, err := pc.ProductService.UpdateProductForAdmin(ctx, product)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
@@ -44,25 +49,6 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		"message": "Successfully",
 	})
 }
-func (pc *ProductController) AddProduct(w http.ResponseWriter, r *http.Request) {
-	var product models.ProductDetail
-
-	err := json.NewDecoder(r.Body).Decode(&product)
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
-		return
-	}
-
-	_, err = pc.ProductService.AddProduct(product)
-
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Successfully",
-	})
-}
 func (pc *ProductController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 
@@ -70,7 +56,10 @@ func (pc *ProductController) DeleteProduct(w http.ResponseWriter, r *http.Reques
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
-	err = pc.ProductService.DeleteProduct(id)
+	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	err = pc.ProductService.DeleteProductForAdmin(ctx, id)
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return

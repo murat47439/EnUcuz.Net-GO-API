@@ -64,7 +64,6 @@ func SetupRoutes(
 		r.Route("/admin", func(admin chi.Router) {
 			admin.Use(um.OnlyAdmin)
 			admin.Route("/products", func(prod chi.Router) {
-				prod.Post("/", controller.AdminProductController.AddProduct)
 				prod.Put("/{id}", controller.AdminProductController.UpdateProduct)
 				prod.Delete("/{id}", controller.AdminProductController.DeleteProduct)
 			})
@@ -87,10 +86,16 @@ func SetupRoutes(
 
 		})
 		r.Route("/products", func(product chi.Router) {
+			product.Route("/transactions", func(prod chi.Router) {
+				prod.Use(um.AuthMiddleware)
+				prod.Post("/", controller.UserProductController.AddProduct)
+				prod.Put("/{id}", controller.UserProductController.UpdateProduct)
+				prod.Delete("/{id}", controller.UserProductController.DeleteProduct)
+			})
 			product.Get("/", controller.UserProductController.GetProducts)
 			product.Get("/{id}", controller.UserProductController.GetProduct)
 			product.Get("/{id}/reviews", controller.UserReviewController.GetReviews)
-			product.Get("/compare/{one}/{two}", controller.UserProductController.CompareProducts)
+			// product.Get("/compare/{one}/{two}", controller.UserProductController.CompareProducts)
 		})
 		r.Route("/reviews", func(review chi.Router) {
 			review.Group(func(r chi.Router) {
