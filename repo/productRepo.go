@@ -101,7 +101,12 @@ func (pr *ProductRepo) GetProduct(ctx context.Context, prodid int) (*models.Prod
 	if err != nil {
 		return nil, err
 	}
-	err = pr.db.GetContext(ctx, &product, "SELECT * FROM products WHERE id = $1 AND deleted_at IS NULL", prodid)
+	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name FROM products p 
+	LEFT JOIN brands b ON p.brand_id = b.id 
+	LEFT JOIN categories c ON p.category_id = c.id
+	LEFT JOIN users u ON p.seller_id = u.id
+	WHERE p.id = $1 AND p.deleted_at IS NULL`
+	err = pr.db.GetContext(ctx, &product, query, prodid)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -112,13 +117,17 @@ func (pr *ProductRepo) GetProduct(ctx context.Context, prodid int) (*models.Prod
 
 	return &product, nil
 }
-func (pr *ProductRepo) GetProducts(page int, search string) ([]*models.Product, error) {
+func (pr *ProductRepo) GetProducts(ctx context.Context, page int, search string) ([]*models.Product, error) {
 	var products []*models.Product
-	offset := (page - 1) * 50
+	offset := (page - 1) * 52
 	limit := 52
-	query := `SELECT * FROM products WHERE name ILIKE $1 AND deleted_at IS NULL  LIMIT $2 OFFSET $3`
+	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name FROM products p 
+	LEFT JOIN brands b ON p.brand_id = b.id 
+	LEFT JOIN categories c ON p.category_id = c.id
+	LEFT JOIN users u ON p.seller_id = u.id
+	WHERE p.name ILIKE $1 AND p.deleted_at IS NULL  LIMIT $2 OFFSET $3`
 
-	rows, err := pr.db.Queryx(query, "%"+search+"%", limit, offset) // DB: *sqlx.DB
+	rows, err := pr.db.QueryxContext(ctx, query, "%"+search+"%", limit, offset)
 
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %s" + err.Error())

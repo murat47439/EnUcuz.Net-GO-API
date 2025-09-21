@@ -29,6 +29,7 @@ func (bc *BrandsController) AddBrand(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 
 	brand, err := bc.BrandsService.AddBrand(data)
 
@@ -51,6 +52,7 @@ func (bc *BrandsController) UpdateBrand(w http.ResponseWriter, r *http.Request) 
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	_, err = bc.BrandsService.UpdateBrand(data)
 
 	if err != nil {

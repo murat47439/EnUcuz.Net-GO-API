@@ -31,6 +31,7 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	defer r.Body.Close()
 
 	_, err = uc.UserService.CreateUser(user)
 
@@ -57,6 +58,7 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid Data")
 		return
 	}
+	defer r.Body.Close()
 
 	accessToken, refreshToken, err := uc.UserService.Login(user)
 
@@ -168,6 +170,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	if role != 1 {
 		if userID != data.ID {
 			RespondWithError(w, http.StatusBadRequest, "Error")

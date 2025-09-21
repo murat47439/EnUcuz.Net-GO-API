@@ -19,6 +19,7 @@ type Controller struct {
 	UserCategoriesController *user.UCategoriesController
 	UserFavoriesControllr    *user.FavoriesController
 	UserReviewController     *user.ReviewController
+	UserChatController       *user.ChatController
 }
 
 func NewController(service *services.Service) *Controller {
@@ -34,6 +35,7 @@ func NewController(service *services.Service) *Controller {
 	userController := user.NewUserController(service.UsersService)
 	userFavoritesController := user.NewFavoriesController(service.FavoriesService)
 	userReviewController := user.NewReviewController(service.ReviewsService)
+	userChatController := user.NewChatController(service.ChatService)
 
 	return &Controller{
 		AdminbrandsController:     adminBrandsController,
@@ -48,5 +50,6 @@ func NewController(service *services.Service) *Controller {
 		UserCategoriesController: userCategoriesController,
 		UserFavoriesControllr:    userFavoritesController,
 		UserReviewController:     userReviewController,
+		UserChatController:       userChatController,
 	}
 }

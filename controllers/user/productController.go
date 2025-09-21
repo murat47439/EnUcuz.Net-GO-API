@@ -65,6 +65,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 
 	updproduct, err := pc.ProductService.UpdateProduct(ctx, product, userID)
 
@@ -93,7 +94,7 @@ func (pc *ProductController) AddProduct(w http.ResponseWriter, r *http.Request) 
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
-
+	defer r.Body.Close()
 	_, err = pc.ProductService.AddProduct(ctx, product)
 
 	if err != nil {
@@ -134,11 +135,14 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		page = 1
 	}
+	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	search := query.Get("search")
 	if search == "undefined" {
 		search = ""
 	}
-	products, err := pc.ProductService.GetProducts(page, search)
+	products, err := pc.ProductService.GetProducts(ctx, page, search)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Error : %s"+err.Error())

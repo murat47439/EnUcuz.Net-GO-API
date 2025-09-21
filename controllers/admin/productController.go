@@ -37,6 +37,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 
 	updproduct, err := pc.ProductService.UpdateProductForAdmin(ctx, product)
 

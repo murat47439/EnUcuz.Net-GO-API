@@ -13,6 +13,7 @@ type Repo struct {
 	FavoriesRepo   *FavoriesRepo
 	ReviewsRepo    *ReviewsRepo
 	AttributeRepo  *AttributeRepo
+	ChatRepo       *ChatRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
@@ -24,7 +25,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 	favoriesRepo := NewFavoriesRepo(db)
 	reviewsRepo := NewReviewRepo(db)
 	attributeRepo := NewAttributeRepo(db)
-
+	chatRepo := NewChatRepo(db)
 	return &Repo{
 		db: db,
 
@@ -35,5 +36,6 @@ func NewRepo(db *sqlx.DB) *Repo {
 		FavoriesRepo:   favoriesRepo,
 		ReviewsRepo:    reviewsRepo,
 		AttributeRepo:  attributeRepo,
+		ChatRepo:       chatRepo,
 	}
 }

@@ -39,6 +39,7 @@ func (fc *FavoriesController) AddFavori(w http.ResponseWriter, r *http.Request) 
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	err = fc.FavoriesServices.AddFavori(product, userID)
 
 	if err != nil {

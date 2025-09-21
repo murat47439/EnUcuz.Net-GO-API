@@ -27,6 +27,7 @@ func (cc *CategoriesController) AddCategory(w http.ResponseWriter, r *http.Reque
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 
 	data, err := cc.CategoriesService.AddCategory(category)
 
@@ -49,6 +50,7 @@ func (cc *CategoriesController) UpdateCategory(w http.ResponseWriter, r *http.Re
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	err = cc.CategoriesService.UpdateCategory(category)
 
 	if err != nil {

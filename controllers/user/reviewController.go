@@ -35,6 +35,7 @@ func (rc *ReviewController) AddReview(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	review.UserID = userID
 	err = rc.ReviewService.AddReview(review)
 
@@ -61,6 +62,7 @@ func (rc *ReviewController) UpdateReview(w http.ResponseWriter, r *http.Request)
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	review.UserID = userID
 	err = rc.ReviewService.UpdateReview(review)
 

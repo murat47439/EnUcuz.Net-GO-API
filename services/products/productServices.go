@@ -126,12 +126,12 @@ func (ps *ProductService) GetProduct(ctx context.Context, id int) (*models.Produ
 	}
 	return product, attributes, nil
 }
-func (ps *ProductService) GetProducts(page int, search string) ([]*models.Product, error) {
+func (ps *ProductService) GetProducts(ctx context.Context, page int, search string) ([]*models.Product, error) {
 	if page < 1 {
 		page = 1
 	}
 
-	products, err := ps.ProductRepo.GetProducts(page, search)
+	products, err := ps.ProductRepo.GetProducts(ctx, page, search)
 
 	if err != nil {
 		return nil, fmt.Errorf("Error : %s" + err.Error())

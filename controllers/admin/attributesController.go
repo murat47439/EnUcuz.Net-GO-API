@@ -29,6 +29,7 @@ func (ac *AttributeController) AddAttribute(w http.ResponseWriter, r *http.Reque
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -50,6 +51,7 @@ func (ac *AttributeController) AddCatAttribute(w http.ResponseWriter, r *http.Re
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -71,6 +73,7 @@ func (ac *AttributeController) AddProdAttribute(w http.ResponseWriter, r *http.R
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()

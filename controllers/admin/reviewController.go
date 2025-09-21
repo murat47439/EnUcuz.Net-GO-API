@@ -25,6 +25,7 @@ func (rc *ReviewController) ReviewStatusUpdate(w http.ResponseWriter, r *http.Re
 		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
+	defer r.Body.Close()
 	err = rc.ReviewService.ReviewStatusUpdate(review)
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, err.Error())
