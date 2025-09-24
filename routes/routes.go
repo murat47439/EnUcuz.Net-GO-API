@@ -115,7 +115,15 @@ func SetupRoutes(
 			cat.Get("/{id}", controller.UserCategoriesController.GetCategory)
 
 		})
+		r.Route("/chats", func(chat chi.Router) {
+			chat.Use(um.AuthMiddleware)
+			chat.Post("/", controller.UserChatController.NewChat)
+			chat.Post("/message", controller.UserChatController.NewMessage)
+			chat.Get("/check/{id}", controller.UserChatController.CheckChat)
+			chat.Get("/", controller.UserChatController.GetChats)
+			chat.Get("/{id}", controller.UserChatController.GetChat)
 
+		})
 		r.Route("/favourites", func(fav chi.Router) {
 			fav.Group(func(fav chi.Router) {
 				fav.Use(um.AuthMiddleware)
