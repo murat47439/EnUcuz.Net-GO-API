@@ -165,3 +165,189 @@ APP_LOG: 2025/09/21 18:52:20 main.go:24: Application started successfully.
 APP_LOG: 2025/09/21 19:05:25 config.go:13: JWT_SECRET not set in environment
 APP_LOG: 2025/09/21 19:05:25 config.go:18: REFRESH_TOKEN_SECRET not set in environment
 APP_LOG: 2025/09/21 19:05:25 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:38:09 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:09 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:34 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:34 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:34 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:38:50 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:50 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:38:50 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:42:26 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:42:26 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:42:26 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:48:51 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:48:51 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:48:51 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:49:42 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:49:42 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:49:42 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:50:11 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:50:11 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:50:11 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:54:26 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:54:26 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:54:26 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:57:06 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:57:06 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:57:06 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:57:37 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:57:38 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:57:38 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:58:46 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:58:46 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:58:46 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:59:32 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 21:59:32 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 21:59:32 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 21:59:37 chatRepo.go:111: GELDİ
+APP_LOG: 2025/09/24 22:00:18 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 22:00:18 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 22:00:18 main.go:24: Application started successfully.
+APP_LOG: 2025/09/24 22:01:39 chatRepo.go:118: geldi
+APP_LOG: 2025/09/24 22:01:41 chatRepo.go:118: geldi
+APP_LOG: 2025/09/24 22:01:42 chatRepo.go:118: geldi
+APP_LOG: 2025/09/24 22:02:02 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/24 22:02:02 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/24 22:02:02 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 17:57:32 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 17:57:32 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 17:57:32 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 17:58:43 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 17:58:43 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 17:58:43 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 17:59:13 productRepo.go:38: Geldi false
+APP_LOG: 2025/09/25 17:59:15 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:14:41 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 19:14:41 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 19:14:41 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 19:14:45 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:18:31 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 19:18:31 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 19:18:31 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 19:18:35 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:18:38 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:19:18 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:19:32 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:19:40 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 19:37:09 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 19:37:09 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 19:37:09 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 19:37:12 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:10:06 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:10:22 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:14:24 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:14:49 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:02 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:07 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:16 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:24 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:31 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:38 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:44 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:15:50 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:01 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:06 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:12 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:14 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:21 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:25 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:40 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:16:42 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:17:19 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:17:27 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:17:37 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:17:40 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:17:45 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:18:15 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:18:23 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:18:30 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:18:41 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:18:54 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:19:27 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:19:42 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:20:43 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:21:07 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:21:22 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:29:17 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:29:27 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:29:29 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:30:23 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:30:30 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:30:51 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:30:56 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:31:29 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:04 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:17 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:22 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:26 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:30 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:37 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:46 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:32:53 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:33:05 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:33:50 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:34:11 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:34:19 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:34:22 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:34:35 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:34:42 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:35:37 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:36:15 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:39:17 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:39:35 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:03 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:11 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:16 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:23 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:35 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:40:46 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:41:08 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:41:15 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:41:31 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:43:02 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:43:24 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:43:26 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:45:36 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:47:06 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:48:41 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:48:49 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:49:14 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:49:16 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 20:50:30 productRepo.go:38: Geldi true
+APP_LOG: 2025/09/25 22:10:44 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/25 22:10:44 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/25 22:10:44 main.go:24: Application started successfully.
+APP_LOG: 2025/09/25 22:12:36 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:12:50 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:13:13 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:13:19 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:13:38 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:07 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:16 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:21 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:24 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:35 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:14:50 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:16:56 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:17:03 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:17:07 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:17:57 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:17:59 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:00 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:01 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:12 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:14 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:17 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:18 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:19 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:24 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:27 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:18:31 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:19:58 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:22:52 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:22:57 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:22:59 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/25 22:23:00 productRepo.go:39: Geldi true

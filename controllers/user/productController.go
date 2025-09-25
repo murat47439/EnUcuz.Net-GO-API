@@ -135,6 +135,15 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		page = 1
 	}
+	brand_id, err := strconv.Atoi(query.Get("brand"))
+	if err != nil {
+		brand_id = 0
+	}
+
+	category_id, err := strconv.Atoi(query.Get("category"))
+	if err != nil {
+		category_id = 0
+	}
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -142,7 +151,7 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 	if search == "undefined" {
 		search = ""
 	}
-	products, err := pc.ProductService.GetProducts(ctx, page, search)
+	products, err := pc.ProductService.GetProducts(ctx, page, brand_id, category_id, search)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Error : %s"+err.Error())

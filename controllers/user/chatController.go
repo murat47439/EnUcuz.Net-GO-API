@@ -110,7 +110,7 @@ func (cc *ChatController) GetChat(w http.ResponseWriter, r *http.Request) {
 	}
 	chatID, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid Chat")
+		RespondWithError(w, http.StatusBadRequest, "Invalid data")
 		return
 	}
 	ctx := r.Context()

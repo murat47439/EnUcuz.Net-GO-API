@@ -51,6 +51,13 @@ func (cs *ChatService) NewChat(ctx context.Context, data *models.Chat, message s
 			_ = tx.Rollback()
 		}
 	}()
+	exists, err := cs.ChatRepo.CheckChatByProd(ctx, data.Sender, data.ProductID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if exists {
+		return nil, nil, fmt.Errorf("Chat already exists")
+	}
 	result, err := cs.ChatRepo.NewChat(ctx, data, tx)
 	if err != nil {
 		return nil, nil, err

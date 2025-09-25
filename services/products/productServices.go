@@ -19,7 +19,7 @@ func NewProductService(repo *repo.ProductRepo, arepo *repo.AttributeRepo, db db.
 		AttributeRepo: arepo, db: db}
 }
 func (ps *ProductService) AddProduct(ctx context.Context, data models.Product) (bool, error) {
-	if data.Name == "" || data.SellerID == 0 {
+	if data.Name == "" || data.SellerID == 0 || data.Price == 0 {
 		return false, fmt.Errorf("Invalid data")
 	}
 	tx, err := ps.db.BeginTxx(ctx, nil)
@@ -126,12 +126,13 @@ func (ps *ProductService) GetProduct(ctx context.Context, id int) (*models.Produ
 	}
 	return product, attributes, nil
 }
-func (ps *ProductService) GetProducts(ctx context.Context, page int, search string) ([]*models.Product, error) {
-	if page < 1 {
+func (ps *ProductService) GetProducts(ctx context.Context, page, brand_id, category_id int, search string) ([]*models.Product, error) {
+	switch {
+	case page < 1:
 		page = 1
 	}
 
-	products, err := ps.ProductRepo.GetProducts(ctx, page, search)
+	products, err := ps.ProductRepo.GetProducts(ctx, page, brand_id, category_id, search)
 
 	if err != nil {
 		return nil, fmt.Errorf("Error : %s" + err.Error())

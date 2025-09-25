@@ -204,7 +204,7 @@ func (uc *UserController) GetAccess(w http.ResponseWriter, r *http.Request) {
 	refreshToken := cookie.Value
 	accessToken, refreshToken, err := uc.UserService.RefreshAccessToken(refreshToken)
 	if err != nil {
-		RespondWithError(w, http.StatusUnauthorized, err.Error())
+		RespondWithError(w, http.StatusUnauthorized, "Token expired")
 		return
 	}
 

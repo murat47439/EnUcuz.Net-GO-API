@@ -98,20 +98,23 @@ func (cr *ChatRepo) GetChats(ctx context.Context, user_id int, page int) ([]*mod
 }
 func (cr *ChatRepo) GetChat(ctx context.Context, chat_id int) ([]*models.Message, error) {
 	var data []*models.Message
-	query := `SELECT * FROM chat_messages 
-	WHERE chat_id = $1 
-	ORDER BY created_at ASC`
+	query := `SELECT id, chat_id, sender, content, created_at 
+			FROM chat_messages
+			WHERE chat_id = $1
+			ORDER BY created_at ASC`
 
 	rows, err := cr.db.QueryxContext(ctx, query, chat_id)
 	if err != nil {
 		return nil, fmt.Errorf("Database error %w", err)
 	}
+
 	for rows.Next() {
 		var m models.Message
 
 		if err := rows.StructScan(&m); err != nil {
 			return nil, fmt.Errorf("Scan error : %w", err)
 		}
+
 		data = append(data, &m)
 	}
 	if err := rows.Err(); err != nil {

@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -58,8 +59,8 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 
 }
 func (pr *ProductRepo) AddProduct(ctx context.Context, data models.Product, tx *sqlx.Tx) error {
-	query := `INSERT INTO products(name,description,stock,image_url,category_id,created_at,brand_id,seller_id) VALUES($1,$2,$3,$4,$5,NOW(),$6,$7)`
-	_, err := tx.ExecContext(ctx, query, data.Name, data.Description, data.Stock, data.ImageUrl, data.CategoryId, data.BrandID, data.SellerID)
+	query := `INSERT INTO products(name,description,stock,price,image_url,category_id,created_at,brand_id,seller_id) VALUES($1,$2,$3,$4,$5,NOW(),$6,$7)`
+	_, err := tx.ExecContext(ctx, query, data.Name, data.Description, data.Stock, data.Price, data.ImageUrl, data.CategoryId, data.BrandID, data.SellerID)
 	if err != nil {
 		return fmt.Errorf("Database error %w", err)
 	}
@@ -79,9 +80,9 @@ func (pr *ProductRepo) ExistsData(name string, tx *sqlx.Tx) (bool, error) {
 	return exists, nil
 }
 func (pr *ProductRepo) UpdateProduct(ctx context.Context, product *models.Product) error {
-	query := `UPDATE products SET name = $1, description = $2,stock = $3 WHERE id = $4 AND deleted_at IS NULL`
+	query := `UPDATE products SET name = $1, description = $2,stock = $3, price = $4 WHERE id = $5 AND deleted_at IS NULL`
 
-	res, err := pr.db.ExecContext(ctx, query, product.Name, product.Description, product.Stock, product.ID)
+	res, err := pr.db.ExecContext(ctx, query, product.Name, product.Description, product.Stock, product.Price, product.ID)
 	if err != nil {
 		return fmt.Errorf("Database error : %w", err)
 	}
@@ -101,7 +102,7 @@ func (pr *ProductRepo) GetProduct(ctx context.Context, prodid int) (*models.Prod
 	if err != nil {
 		return nil, err
 	}
-	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name FROM products p 
+	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name, u.phone AS seller_phone FROM products p 
 	LEFT JOIN brands b ON p.brand_id = b.id 
 	LEFT JOIN categories c ON p.category_id = c.id
 	LEFT JOIN users u ON p.seller_id = u.id
@@ -114,20 +115,40 @@ func (pr *ProductRepo) GetProduct(ctx context.Context, prodid int) (*models.Prod
 		}
 		return nil, err
 	}
+	product.Price = product.Price / 100
 
 	return &product, nil
 }
-func (pr *ProductRepo) GetProducts(ctx context.Context, page int, search string) ([]*models.Product, error) {
+func (pr *ProductRepo) GetProducts(ctx context.Context, page, brand_id, category_id int, search string) ([]*models.Product, error) {
 	var products []*models.Product
 	offset := (page - 1) * 52
 	limit := 52
-	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name FROM products p 
+	query := `SELECT p.*, b.name AS brand_name, c.name AS category_name, u.name AS seller_name, u.phone AS seller_phone FROM products p 
 	LEFT JOIN brands b ON p.brand_id = b.id 
 	LEFT JOIN categories c ON p.category_id = c.id
 	LEFT JOIN users u ON p.seller_id = u.id
-	WHERE p.name ILIKE $1 AND p.deleted_at IS NULL  LIMIT $2 OFFSET $3`
+	WHERE p.deleted_at IS NULL `
+	args := []interface{}{}
+	argIdx := 1
 
-	rows, err := pr.db.QueryxContext(ctx, query, "%"+search+"%", limit, offset)
+	switch {
+	case search != "":
+		query += ` AND p.name ILIKE $` + strconv.Itoa(argIdx)
+		args = append(args, "%"+search+"%")
+		argIdx++
+	case category_id > 0:
+		query += " AND p.category_id = $" + strconv.Itoa(argIdx)
+		args = append(args, category_id)
+		argIdx++
+	case brand_id > 0:
+		query += " AND p.brand_id = $" + strconv.Itoa(argIdx)
+		args = append(args, brand_id)
+		argIdx++
+	}
+	query += " LIMIT $" + strconv.Itoa(argIdx) + " OFFSET $" + strconv.Itoa(argIdx+1)
+	args = append(args, limit, offset)
+
+	rows, err := pr.db.QueryxContext(ctx, query, args...)
 
 	if err != nil {
 		return nil, fmt.Errorf("Database error : %s" + err.Error())
