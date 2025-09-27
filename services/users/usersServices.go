@@ -37,20 +37,20 @@ func (s *UserService) CreateUser(user models.User) (models.User, error) {
 
 	return user, nil
 }
-func (s *UserService) Login(user models.User) (string, string, error) {
+func (s *UserService) Login(user models.User) (string, string, *models.User, error) {
 
 	userdata, err := s.UserRepo.Login(user.Email, user.Password)
 
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 	accessToken, refreshToken, err := s.UserRepo.NewTokens(userdata.ID, userdata.Role)
 
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
-	return accessToken, refreshToken, nil
+	return accessToken, refreshToken, userdata, nil
 
 }
 func (s *UserService) Logout(token string, user_id int) (bool, error) {

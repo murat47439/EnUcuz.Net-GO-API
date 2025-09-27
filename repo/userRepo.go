@@ -72,7 +72,7 @@ func (ur *UserRepo) Login(email string, password string) (*models.User, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("User not found")
+			return nil, fmt.Errorf("Kullanıcı bulunamadı")
 		}
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (ur *UserRepo) Login(email string, password string) (*models.User, error) {
 	err = utils.CheckPasswordHash(password, user.Password)
 
 	if err != nil {
-		return nil, fmt.Errorf("Password not correct")
+		return nil, fmt.Errorf("Şifre yanlış.")
 	}
 	user.Password = ""
 

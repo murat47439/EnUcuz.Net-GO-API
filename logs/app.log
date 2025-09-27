@@ -351,3 +351,83 @@ APP_LOG: 2025/09/25 22:22:52 productRepo.go:39: Geldi true
 APP_LOG: 2025/09/25 22:22:57 productRepo.go:39: Geldi true
 APP_LOG: 2025/09/25 22:22:59 productRepo.go:39: Geldi true
 APP_LOG: 2025/09/25 22:23:00 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:40:13 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/26 17:40:14 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/26 17:41:30 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/26 17:41:30 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/26 17:41:30 main.go:24: Application started successfully.
+APP_LOG: 2025/09/26 17:42:44 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:42:46 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:42:48 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:42:54 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:43:39 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:43:41 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:43:43 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:43:46 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:45:15 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:45:17 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:45:21 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:46:20 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:46:23 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:47:39 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:48:51 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:49:52 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:01 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:39 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:39 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:51:39 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:01 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:01 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:01 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:14 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:14 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:14 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:21 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:21 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:21 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:25 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:25 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:25 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:41 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:41 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:52:41 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:06 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:06 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:06 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:08 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:53:53 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:54:03 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 17:54:11 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/26 19:08:25 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/09/26 19:10:09 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/26 19:10:09 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/26 19:10:09 main.go:24: Application started successfully.
+APP_LOG: 2025/09/26 19:10:26 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/09/26 19:10:27 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/09/26 19:11:16 password.go:22: Unsuccesful ChechPasswordHash
+APP_LOG: 2025/09/26 19:19:47 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/26 19:19:47 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/26 19:19:47 main.go:24: Application started successfully.
+APP_LOG: 2025/09/27 20:15:35 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/09/27 20:15:35 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/09/27 20:15:35 main.go:24: Application started successfully.
+APP_LOG: 2025/09/27 20:16:31 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/27 20:27:02 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/27 21:06:03 productRepo.go:39: Geldi true
+APP_LOG: 2025/09/27 21:34:56 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:19 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:21 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:22 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:23 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:24 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:24 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:24 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:37:24 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:38:13 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 21:40:46 usersController.go:39: Failed to create user:  Email already exists
+APP_LOG: 2025/09/27 22:10:37 productRepo.go:39: Geldi true

@@ -60,10 +60,10 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	accessToken, refreshToken, err := uc.UserService.Login(user)
+	accessToken, refreshToken, userdata, err := uc.UserService.Login(user)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Login error"+err.Error())
+		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
@@ -85,8 +85,9 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	RespondWithJSON(w, http.StatusAccepted, map[string]string{
+	RespondWithJSON(w, http.StatusAccepted, map[string]interface{}{
 		"message": "Succesfully",
+		"user":    userdata,
 	})
 }
 func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
