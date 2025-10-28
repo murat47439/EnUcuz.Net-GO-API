@@ -120,3 +120,8 @@ APP_LOG: 2025/10/28 20:27:24 productRepo.go:60:  true
 APP_LOG: 2025/10/28 20:27:24 controllers.go:21: Success response: 200
 APP_LOG: 2025/10/28 20:27:30 controllers.go:21: Success response: 200
 APP_LOG: 2025/10/28 20:27:30 controllers.go:21: Success response: 200
+APP_LOG: 2025/10/28 21:39:33 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/10/28 21:39:33 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/10/28 21:40:09 config.go:13: JWT_SECRET not set in environment
+APP_LOG: 2025/10/28 21:40:09 config.go:18: REFRESH_TOKEN_SECRET not set in environment
+APP_LOG: 2025/10/28 21:40:11 main.go:24: Application started successfully.
