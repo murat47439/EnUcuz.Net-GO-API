@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/services/brands"
 	"net/http"
 	"strconv"
@@ -19,26 +20,30 @@ func NewUBrandController(service *brands.BrandsService) *UBrandController {
 }
 
 func (uc *UBrandController) GetBrand(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	config.Logger.Printf("GetBrand request started")
 
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		config.Logger.Printf("GetBrand error: Invalid ID parameter - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz marka ID'si")
 		return
 	}
 
 	brand, err := uc.BrandsService.GetBrand(id)
-
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("GetBrand service error: %v", err)
+		RespondWithError(w, http.StatusNotFound, "Marka bulunamadı")
 		return
 	}
 
+	config.Logger.Printf("GetBrand success: Brand ID %d retrieved", id)
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Brand": brand,
+		"brand": brand,
 	})
-
 }
 func (uc *UBrandController) GetBrands(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("GetBrands request started")
+
 	query := r.URL.Query()
 	page, err := strconv.Atoi(query.Get("page"))
 	if err != nil {
@@ -48,14 +53,22 @@ func (uc *UBrandController) GetBrands(w http.ResponseWriter, r *http.Request) {
 	if search == "undefined" {
 		search = ""
 	}
-	brands, err := uc.BrandsService.GetBrands(page, search)
 
+	config.Logger.Printf("GetBrands parameters: page=%d, search='%s'", page, search)
+
+	brands, err := uc.BrandsService.GetBrands(page, search)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("GetBrands service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Markalar yüklenirken hata oluştu")
 		return
 	}
 
+	config.Logger.Printf("GetBrands success: %d brands retrieved", len(brands))
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Brands": brands,
+		"brands": brands,
+		"pagination": map[string]interface{}{
+			"page":   page,
+			"search": search,
+		},
 	})
 }

@@ -3,16 +3,19 @@ package favories
 import (
 	"Store-Dio/models"
 	"Store-Dio/repo"
+	"context"
 	"fmt"
 )
 
 type FavoriesService struct {
 	FavoriesRepo *repo.FavoriesRepo
+	ProductRepo  *repo.ProductRepo
 }
 
-func NewFavoriesService(repo *repo.FavoriesRepo) *FavoriesService {
+func NewFavoriesService(repo *repo.FavoriesRepo, productRepo *repo.ProductRepo) *FavoriesService {
 	return &FavoriesService{
 		FavoriesRepo: repo,
+		ProductRepo:  productRepo,
 	}
 }
 
@@ -39,12 +42,11 @@ func (fs *FavoriesService) RemoveFavori(id int, user_id int) error {
 	}
 	return nil
 }
-func (fs *FavoriesService) GetFavourites(page int, user_id int) ([]*models.Favori, error) {
+func (fs *FavoriesService) GetFavourites(ctx context.Context, page int, user_id int) ([]*models.Product, error) {
 	if user_id == 0 {
 		return nil, fmt.Errorf("Invalid data")
 	}
 	favourites, err := fs.FavoriesRepo.GetFavourites(page, user_id)
-
 	if err != nil {
 		return nil, err
 	}

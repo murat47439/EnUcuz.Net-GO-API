@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/middleware"
 	"Store-Dio/models"
 	"Store-Dio/services/products"
@@ -79,30 +80,39 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 	})
 }
 func (pc *ProductController) AddProduct(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("AddProduct request started")
+
 	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		config.Logger.Printf("AddProduct error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
-	var product models.Product
+
+	var product models.NewProduct
 	product.SellerID = userID
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
+
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		config.Logger.Printf("AddProduct error: Invalid request data - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz veri formatı")
 		return
 	}
 	defer r.Body.Close()
-	_, err = pc.ProductService.AddProduct(ctx, product)
 
+	_, err = pc.ProductService.AddProduct(ctx, product)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("AddProduct service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Ürün eklenirken hata oluştu")
 		return
 	}
-	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Successfully",
+
+	config.Logger.Printf("AddProduct success: Product added by user %d", userID)
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"message": "Ürün başarıyla eklendi",
 	})
 }
 func (pc *ProductController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
@@ -160,6 +170,28 @@ func (pc *ProductController) GetProducts(w http.ResponseWriter, r *http.Request)
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message":  "Successfully",
+		"Products": products,
+	})
+}
+func (pc *ProductController) GetUserProducts(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
+	if !ok {
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil {
+		page = 1
+	}
+	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	products, err := pc.ProductService.GetUserProducts(ctx, userID, page)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"Products": products,
 	})
 }

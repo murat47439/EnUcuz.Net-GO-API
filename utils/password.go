@@ -19,7 +19,7 @@ func CheckPasswordHash(password, hash string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 
 	if err != nil {
-		config.Logger.Printf("Unsuccesful ChechPasswordHash")
+		config.Logger.Printf("Unsuccesful CheckPasswordHash")
 		return err
 	}
 	return nil

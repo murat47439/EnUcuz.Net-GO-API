@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/services/categories"
 	"net/http"
 	"strconv"
@@ -18,24 +19,30 @@ func NewUCategoriesController(service *categories.CategoriesService) *UCategorie
 	}
 }
 func (uc *UCategoriesController) GetCategory(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	config.Logger.Printf("GetCategory request started")
 
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid ID")
+		config.Logger.Printf("GetCategory error: Invalid ID parameter - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz kategori ID'si")
 		return
 	}
 
 	category, err := uc.CategoriesService.GetCategory(id)
-
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("GetCategory service error: %v", err)
+		RespondWithError(w, http.StatusNotFound, "Kategori bulunamadı")
 		return
 	}
+
+	config.Logger.Printf("GetCategory success: Category ID %d retrieved", id)
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Category": category,
+		"category": category,
 	})
 }
 func (uc *UCategoriesController) GetCategories(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("GetCategories request started")
+
 	query := r.URL.Query()
 	page, err := strconv.Atoi(query.Get("page"))
 	if err != nil {
@@ -45,13 +52,22 @@ func (uc *UCategoriesController) GetCategories(w http.ResponseWriter, r *http.Re
 	if search == "undefined" {
 		search = ""
 	}
-	categories, err := uc.CategoriesService.GetCategories(page, search)
 
+	config.Logger.Printf("GetCategories parameters: page=%d, search='%s'", page, search)
+
+	categories, err := uc.CategoriesService.GetCategories(page, search)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("GetCategories service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Kategoriler yüklenirken hata oluştu")
 		return
 	}
+
+	config.Logger.Printf("GetCategories success: %d categories retrieved", len(categories))
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Categories": categories,
+		"categories": categories,
+		"pagination": map[string]interface{}{
+			"page":   page,
+			"search": search,
+		},
 	})
 }

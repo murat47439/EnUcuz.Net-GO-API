@@ -79,7 +79,7 @@ func (fr *FavoriesRepo) RemoveFavori(fav *models.Favori) error {
 		return fmt.Errorf("Favori not found")
 	}
 
-	query := `UPDATE wishlist SET deleted_at = NOW() WHERE id = $1 `
+	query := `UPDATE wishlist SET deleted_at = NOW() WHERE product_id = $1 `
 
 	_, err = tx.Exec(query, fav.ID)
 
@@ -93,7 +93,7 @@ func (fr *FavoriesRepo) CheckFavori(id int, user_id int, tx *sqlx.Tx) (bool, err
 	if id == 0 || user_id == 0 {
 		return false, fmt.Errorf("Invalid data")
 	}
-	query := `SELECT EXISTS(SELECT 1 FROM wishlist WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL)`
+	query := `SELECT EXISTS(SELECT 1 FROM wishlist WHERE product_id = $1 AND user_id = $2 AND deleted_at IS NULL)`
 
 	var exists bool
 
@@ -104,13 +104,13 @@ func (fr *FavoriesRepo) CheckFavori(id int, user_id int, tx *sqlx.Tx) (bool, err
 	}
 	return exists, nil
 }
-func (fr *FavoriesRepo) GetFavourites(page int, user_id int) ([]*models.Favori, error) {
-	var favourites []*models.Favori
+func (fr *FavoriesRepo) GetFavourites(page int, user_id int) ([]*models.Product, error) {
+	var favourites []*models.Product
 	if page < 1 {
 		page = 1
 	}
 	offset := (page - 1) * 50
-	query := `SELECT * FROM wishlist WHERE user_id = $1 AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+	query := `SELECT p.* FROM products p INNER JOIN wishlist w ON p.id = w.product_id WHERE w.user_id = $1 AND w.deleted_at IS NULL LIMIT $2 OFFSET $3`
 
 	rows, err := fr.db.Queryx(query, user_id, 50, offset)
 
@@ -121,11 +121,11 @@ func (fr *FavoriesRepo) GetFavourites(page int, user_id int) ([]*models.Favori, 
 		return nil, fmt.Errorf("Database error : %s", err.Error())
 	}
 	for rows.Next() {
-		var fav models.Favori
-		if err = rows.StructScan(&fav); err != nil {
+		var prod models.Product
+		if err = rows.StructScan(&prod); err != nil {
 			return nil, fmt.Errorf("Rows error : %s", err.Error())
 		}
-		favourites = append(favourites, &fav)
+		favourites = append(favourites, &prod)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("Rows error : %s", err.Error())

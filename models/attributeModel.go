@@ -27,8 +27,3 @@ type ProductAttribute struct {
 	Value         string       `json:"value" db:"value"`
 	DeletedAt     sql.NullTime `json:"-" db:"deleted_at"`
 }
-type NewProdAttribute struct {
-	Product           Product           `json:"product"`
-	CategoryAttribute CategoryAttribute `json:"category_attribute"`
-	Value             string            `json:"value"`
-}

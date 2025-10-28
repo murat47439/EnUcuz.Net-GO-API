@@ -34,30 +34,35 @@ func SetupRoutes(
 			auth.Get("/", controller.UserController.GetUserData)
 			auth.Put("/update", controller.UserController.Update)
 			auth.Get("/reviews", controller.UserReviewController.GetUserReviews)
-
+			auth.Get("/products", controller.UserProductController.GetUserProducts)
 		})
 		r.Route("/attribute", func(at chi.Router) {
-			at.Use(um.OnlyAdmin)
-			at.Post("/", controller.AdminAttributeController.AddAttribute)
-			at.Get("/", controller.AdminAttributeController.GetAttributes)
-			at.Delete("/{id}", controller.AdminAttributeController.DeleteAttribute)
-			at.Route("/c", func(cat chi.Router) {
-				cat.Post("/", controller.AdminAttributeController.AddCatAttribute)
-				cat.Get("/{id}", controller.AdminAttributeController.GetCatAttributes)
-				cat.Delete("/{id}", controller.AdminAttributeController.DeleteCatAttribute)
+			at.Group(func(ad chi.Router) {
+				ad.Use(um.OnlyAdmin)
+				ad.Post("/", controller.AdminAttributeController.AddAttribute)
+				ad.Delete("/{id}", controller.AdminAttributeController.DeleteAttribute)
+				ad.Route("/admin/p", func(prod chi.Router) {
+					prod.Post("/", controller.AdminAttributeController.AddProdAttribute)
+					prod.Delete("/{id}", controller.AdminAttributeController.DeleteProdAttribute)
+				})
+				ad.Route("/admin/c", func(cat chi.Router) {
+					cat.Post("/", controller.AdminAttributeController.AddCatAttribute)
+					cat.Delete("/{id}", controller.AdminAttributeController.DeleteCatAttribute)
+				})
 			})
-
+			at.Get("/", controller.AdminAttributeController.GetAttributes)
 			at.Route("/p", func(prod chi.Router) {
-				prod.Post("/", controller.AdminAttributeController.AddProdAttribute)
 				prod.Get("/{id}", controller.AdminAttributeController.GetProdAttributes)
-				prod.Delete("/{id}", controller.AdminAttributeController.DeleteProdAttribute)
+			})
+			at.Route("/c", func(cat chi.Router) {
+				cat.Get("/{id}", controller.AdminAttributeController.GetCatAttributes)
 			})
 		})
 		r.Route("/refresh", func(ref chi.Router) {
 			ref.Post("/", controller.UserController.GetAccess)
 			ref.Group(func(logout chi.Router) {
 				logout.Use(um.AuthMiddleware)
-				logout.Post("/logout", controller.UserController.Logout)
+				logout.Get("/logout", controller.UserController.Logout)
 			})
 
 		})

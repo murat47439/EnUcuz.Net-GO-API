@@ -33,7 +33,7 @@ func NewService(repo *repo.Repo, db *sqlx.DB) *Service {
 	categoriesService := categories.NewCategoriesService(repo.CategoriesRepo)
 	productsService := products.NewProductService(repo.ProductRepo, repo.AttributeRepo, db)
 	usersService := users.NewUserService(repo.UserRepo)
-	favoriesService := favories.NewFavoriesService(repo.FavoriesRepo)
+	favoriesService := favories.NewFavoriesService(repo.FavoriesRepo, repo.ProductRepo)
 	reviewsService := reviews.NewReviewService(repo.ReviewsRepo)
 	attributeService := attributes.NewAttributeService(db, repo.AttributeRepo, repo.ProductRepo)
 	chatService := chat.NewChatService(repo.ChatRepo, db)

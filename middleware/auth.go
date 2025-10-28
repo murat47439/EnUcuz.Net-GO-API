@@ -61,7 +61,7 @@ func (um *UserMiddleware) AuthMiddleware(next http.Handler) http.Handler {
 			cookie, err := r.Cookie("access_token")
 
 			if err != nil {
-				http.Error(w, "No data", http.StatusNotFound)
+				http.Error(w, "No data", http.StatusUnauthorized)
 				return
 			}
 			tokenString := cookie.Value

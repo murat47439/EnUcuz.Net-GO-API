@@ -18,7 +18,14 @@ func NewProductService(repo *repo.ProductRepo, arepo *repo.AttributeRepo, db db.
 	return &ProductService{ProductRepo: repo,
 		AttributeRepo: arepo, db: db}
 }
-func (ps *ProductService) AddProduct(ctx context.Context, data models.Product) (bool, error) {
+func (ps *ProductService) GetUserProducts(ctx context.Context, userID int, page int) ([]*models.Product, error) {
+	products, err := ps.ProductRepo.GetUserProducts(ctx, userID, page)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+func (ps *ProductService) AddProduct(ctx context.Context, data models.NewProduct) (bool, error) {
 	if data.Name == "" || data.SellerID == 0 || data.Price == 0 {
 		return false, fmt.Errorf("Invalid data")
 	}
@@ -36,11 +43,18 @@ func (ps *ProductService) AddProduct(ctx context.Context, data models.Product) (
 			err = tx.Commit()
 		}
 	}()
-	err = ps.ProductRepo.AddProduct(ctx, data, tx)
-
+	prodID, err := ps.ProductRepo.AddProduct(ctx, data, tx)
 	if err != nil {
 		return false, fmt.Errorf("Error : %w", err.Error())
 	}
+	data.ID = prodID
+	if len(data.Features) > 0 && data.Features[0].Key.Value != 0 {
+		err = ps.AttributeRepo.AddProdAttributes(ctx, data.Features, data.ID, tx)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return true, nil
 }
 func (ps *ProductService) UpdateProduct(ctx context.Context, product models.Product, user_id int) (*models.Product, error) {
@@ -135,7 +149,7 @@ func (ps *ProductService) GetProducts(ctx context.Context, page, brand_id, categ
 	products, err := ps.ProductRepo.GetProducts(ctx, page, brand_id, category_id, search)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error : %s" + err.Error())
+		return nil, err
 	}
 
 	return products, nil

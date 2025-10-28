@@ -23,6 +23,27 @@ func NewProductRepo(db *sqlx.DB, brand *BrandsRepo, cat *CategoriesRepo) *Produc
 		brand: brand,
 		cat:   cat}
 }
+func (pr *ProductRepo) GetUserProducts(ctx context.Context, userID int, page int) ([]*models.Product, error) {
+	var products []*models.Product
+	offset := (page - 1) * 50
+	query := `SELECT * FROM products WHERE seller_id = $1 AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+	rows, err := pr.db.QueryxContext(ctx, query, userID, 50, offset)
+	if err != nil {
+		return nil, fmt.Errorf("Database error : %s", err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var p models.Product
+		if err := rows.StructScan(&p); err != nil {
+			return nil, fmt.Errorf("Rows error : %s", err.Error())
+		}
+		products = append(products, &p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("Rows error : %s", err.Error())
+	}
+	return products, nil
+}
 func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
 
 	var exists bool
@@ -36,7 +57,7 @@ func (pr *ProductRepo) CheckProduct(prodid int) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	config.Logger.Printf("Geldi %v", exists)
+	config.Logger.Printf(" %v", exists)
 
 	return exists, nil
 
@@ -58,13 +79,14 @@ func (pr *ProductRepo) CheckProductByName(name, imageUrl string) (bool, error) {
 	return exists, nil
 
 }
-func (pr *ProductRepo) AddProduct(ctx context.Context, data models.Product, tx *sqlx.Tx) error {
-	query := `INSERT INTO products(name,description,stock,price,image_url,category_id,created_at,brand_id,seller_id) VALUES($1,$2,$3,$4,$5,NOW(),$6,$7)`
-	_, err := tx.ExecContext(ctx, query, data.Name, data.Description, data.Stock, data.Price, data.ImageUrl, data.CategoryId, data.BrandID, data.SellerID)
+func (pr *ProductRepo) AddProduct(ctx context.Context, data models.NewProduct, tx *sqlx.Tx) (int, error) {
+	query := `INSERT INTO products(name,description,stock,price,image_url,category_id,created_at,brand_id,seller_id) VALUES($1,$2,$3,$4,$5,$6,NOW(),$7,$8) RETURNING id`
+	var id int
+	err := tx.QueryRowContext(ctx, query, data.Name, data.Description, data.Stock, (data.Price * 100), data.ImageURL, data.CategoryID, data.BrandID, data.SellerID).Scan(&id)
 	if err != nil {
-		return fmt.Errorf("Database error %w", err)
+		return 0, fmt.Errorf("Database error %w", err)
 	}
-	return nil
+	return id, nil
 }
 func (pr *ProductRepo) ExistsData(name string, tx *sqlx.Tx) (bool, error) {
 	if name == "" {

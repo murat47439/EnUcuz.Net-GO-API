@@ -44,18 +44,22 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Succesfully",
+	config.Logger.Printf("CreateUser success: User created")
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"message": "Kullanıcı başarıyla oluşturuldu",
 	})
 }
 
 func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("Login request started")
+
 	var user models.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid Data")
+		config.Logger.Printf("Login error: Invalid request data - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz veri formatı")
 		return
 	}
 	defer r.Body.Close()
@@ -63,7 +67,8 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	accessToken, refreshToken, userdata, err := uc.UserService.Login(user)
 
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("Login service error: %v", err)
+		RespondWithError(w, http.StatusUnauthorized, "Giriş bilgileri hatalı")
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
@@ -85,17 +90,19 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
+	config.Logger.Printf("Login success: User %d logged in", userdata.ID)
 	RespondWithJSON(w, http.StatusAccepted, map[string]interface{}{
-		"message": "Succesfully",
+		"message": "Giriş başarılı",
 		"user":    userdata,
 	})
 }
 func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("Logout request started")
 
 	userID, _, ok := GetUserIDFromContext(r)
-
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		config.Logger.Printf("Logout error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
 
@@ -107,15 +114,15 @@ func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
 	token := cookie.Value
 
 	_, err = uc.UserService.Logout(token, userID)
-
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("Logout service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Çıkış yapılırken hata oluştu")
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
-		Path:     "",
+		Path:     "/api/refresh",
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
 		Secure:   true,
@@ -124,70 +131,76 @@ func (uc *UserController) Logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
 		Value:    "",
-		Path:     "",
+		Path:     "/api",
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Succesfully",
+	config.Logger.Printf("Logout success: User %d logged out", userID)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "Çıkış başarılı",
 	})
 
 }
 func (uc *UserController) GetUserData(w http.ResponseWriter, r *http.Request) {
-	userID, _, ok := GetUserIDFromContext(r)
+	config.Logger.Printf("GetUserData request started")
 
+	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		config.Logger.Printf("GetUserData error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
 
 	user, err := uc.UserService.GetUserDataByID(userID)
-
 	if err != nil {
-		RespondWithError(w, http.StatusNotFound, err.Error())
+		config.Logger.Printf("GetUserData service error: %v", err)
+		RespondWithError(w, http.StatusNotFound, "Kullanıcı bulunamadı")
 		return
 	}
 
+	config.Logger.Printf("GetUserData success: User data retrieved for user %d", userID)
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Successfully",
-		"User":    user,
+		"user": user,
 	})
 }
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	userID, role, ok := GetUserIDFromContext(r)
+	config.Logger.Printf("Update request started")
 
+	userID, role, ok := GetUserIDFromContext(r)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		config.Logger.Printf("Update error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
+
 	var data *models.User
-
 	err := json.NewDecoder(r.Body).Decode(&data)
-
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		config.Logger.Printf("Update error: Invalid request data - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz veri formatı")
 		return
 	}
 	defer r.Body.Close()
-	if role != 1 {
-		if userID != data.ID {
-			RespondWithError(w, http.StatusBadRequest, "Error")
-			return
-		}
+
+	if role != 1 && data.ID != userID {
+		config.Logger.Printf("Update error: User %d trying to update user %d", userID, data.ID)
+		RespondWithError(w, http.StatusForbidden, "Bu kullanıcıyı güncelleme yetkiniz yok")
+		return
 	}
 
 	user, err := uc.UserService.Update(data)
-
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("Update service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Kullanıcı güncellenirken hata oluştu")
 		return
 	}
+
+	config.Logger.Printf("Update success: User %d updated", user.ID)
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "Successfully",
-		"User": map[string]interface{}{
+		"user": map[string]interface{}{
 			"id":      user.ID,
 			"name":    user.Name,
 			"surname": user.Surname,
@@ -197,15 +210,20 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	})
 }
 func (uc *UserController) GetAccess(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("GetAccess request started")
+
 	cookie, err := r.Cookie("refresh_token")
 	if err != nil {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorizated")
+		config.Logger.Printf("GetAccess error: No refresh token cookie")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
+
 	refreshToken := cookie.Value
 	accessToken, refreshToken, err := uc.UserService.RefreshAccessToken(refreshToken)
 	if err != nil {
-		RespondWithError(w, http.StatusUnauthorized, "Token expired")
+		config.Logger.Printf("GetAccess service error: %v", err)
+		RespondWithError(w, http.StatusUnauthorized, "Token süresi dolmuş")
 		return
 	}
 
@@ -228,7 +246,8 @@ func (uc *UserController) GetAccess(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Successfully",
+	config.Logger.Printf("GetAccess success: Access token refreshed")
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "Token başarıyla yenilendi",
 	})
 }

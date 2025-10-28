@@ -53,15 +53,35 @@ func (ar *AttributeRepo) AddCatAttribute(ctx context.Context, data *models.Categ
 	}
 	return model, nil
 }
-func (ar *AttributeRepo) AddProdAttribute(ctx context.Context, data *models.NewProdAttribute, tx *sqlx.Tx) (*models.ProductAttribute, error) {
+func (ar *AttributeRepo) AddProdAttribute(ctx context.Context, data *models.ProductAttribute, tx *sqlx.Tx) (*models.ProductAttribute, error) {
 	query := `INSERT INTO product_attributes(attribute_id,product_id,value) VALUES ($1,$2,$3) RETURNING attribute_id,product_id,value`
 	var result models.ProductAttribute
-	err := tx.GetContext(ctx, &result, query, data.CategoryAttribute.AttributeID, data.Product.ID, data.Value)
+	err := tx.GetContext(ctx, &result, query, data.AttributeID, data.ProductID, data.Value)
 	if err != nil {
 		return nil, fmt.Errorf("Database error")
 	}
 	return &result, nil
 
+}
+func (ar *AttributeRepo) AddProdAttributes(ctx context.Context, data []models.Feature, prodID int, tx *sqlx.Tx) error {
+	if prodID == 0 || len(data) == 0 {
+		return fmt.Errorf("Invalid data")
+	}
+
+	values := make([]string, 0, len(data))
+	args := make([]interface{}, 0, len(data)*3)
+
+	for i, f := range data {
+		base := i * 3
+		values = append(values, fmt.Sprintf("($%d, $%d, $%d)", base+1, base+2, base+3))
+		args = append(args, prodID, f.Key.Value, f.Value)
+	}
+	query := fmt.Sprintf(
+		"INSERT INTO product_attributes (product_id, attribute_id, value) VALUES %s",
+		strings.Join(values, ","),
+	)
+	_, err := tx.ExecContext(ctx, query, args...)
+	return err
 }
 func (ar *AttributeRepo) GetProdAttributes(ctx context.Context, prodID int) ([]*models.ProductAttribute, error) {
 	if prodID == 0 {

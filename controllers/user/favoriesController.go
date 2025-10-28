@@ -1,12 +1,15 @@
 package user
 
 import (
+	"Store-Dio/config"
 	"Store-Dio/middleware"
 	"Store-Dio/models"
 	"Store-Dio/services/favories"
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -27,79 +30,97 @@ func GetUserIDFromContext(r *http.Request) (int, int, bool) {
 	return userID, userRole, ok
 }
 func (fc *FavoriesController) AddFavori(w http.ResponseWriter, r *http.Request) {
+	config.Logger.Printf("AddFavori request started")
+
 	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		config.Logger.Printf("AddFavori error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
-	var product *models.Product
 
+	var product *models.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid data")
+		config.Logger.Printf("AddFavori error: Invalid request data - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz veri formatı")
 		return
 	}
 	defer r.Body.Close()
-	err = fc.FavoriesServices.AddFavori(product, userID)
 
+	err = fc.FavoriesServices.AddFavori(product, userID)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		config.Logger.Printf("AddFavori service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Successfully",
-	})
 
+	config.Logger.Printf("AddFavori success: Product %d added to favorites for user %d", product.ID, userID)
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"message": "Ürün favorilere eklendi",
+	})
 }
 func (fc *FavoriesController) RemoveFavori(w http.ResponseWriter, r *http.Request) {
-	userID, _, ok := GetUserIDFromContext(r)
+	config.Logger.Printf("RemoveFavori request started")
 
+	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		config.Logger.Printf("RemoveFavori error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
 
 	fav, err := strconv.Atoi(chi.URLParam(r, "id"))
-
 	if err != nil {
-		RespondWithError(w, http.StatusNotFound, "Invalid data")
+		config.Logger.Printf("RemoveFavori error: Invalid favorite ID - %v", err)
+		RespondWithError(w, http.StatusBadRequest, "Geçersiz favori ID'si")
 		return
 	}
 
 	err = fc.FavoriesServices.RemoveFavori(fav, userID)
-
 	if err != nil {
-		RespondWithError(w, http.StatusNotFound, err.Error())
+		config.Logger.Printf("RemoveFavori service error: %v", err)
+		RespondWithError(w, http.StatusNotFound, "Favori bulunamadı veya silinemedi")
 		return
 	}
-	RespondWithJSON(w, http.StatusOK, map[string]string{
-		"message": "Successfully",
-	})
 
+	config.Logger.Printf("RemoveFavori success: Favorite %d removed for user %d", fav, userID)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "Ürün favorilerden kaldırıldı",
+	})
 }
 func (fc *FavoriesController) GetFavourites(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
+	config.Logger.Printf("GetFavourites request started")
 
 	userID, _, ok := GetUserIDFromContext(r)
 	if !ok {
-		RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		config.Logger.Printf("GetFavourites error: Unauthorized access")
+		RespondWithError(w, http.StatusUnauthorized, "Yetkisiz erişim")
 		return
 	}
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
 
+	query := r.URL.Query()
 	page, err := strconv.Atoi(query.Get("page"))
 	if err != nil {
 		page = 1
 	}
 
-	data, err := fc.FavoriesServices.GetFavourites(page, userID)
+	config.Logger.Printf("GetFavourites parameters: userID=%d, page=%d", userID, page)
 
+	data, err := fc.FavoriesServices.GetFavourites(ctx, page, userID)
 	if err != nil {
-		RespondWithError(w, http.StatusNotFound, err.Error())
+		config.Logger.Printf("GetFavourites service error: %v", err)
+		RespondWithError(w, http.StatusInternalServerError, "Favoriler yüklenirken hata oluştu")
 		return
 	}
-	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"message":    "Successfully",
-		"Favourites": data,
-	})
 
+	config.Logger.Printf("GetFavourites success: %d favorites retrieved for user %d", len(data), userID)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"products": data,
+		"pagination": map[string]interface{}{
+			"page": page,
+		},
+	})
 }
