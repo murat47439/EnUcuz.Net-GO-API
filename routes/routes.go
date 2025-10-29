@@ -17,7 +17,7 @@ func SetupRoutes(
 ) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://enucuz-net.onrender.com"},
+		AllowedOrigins:   []string{"http://localhost:3000", "https://www.enucuz.net.tr", "en-ucuz-net-git-main-murats-projects-c4a123ca.vercel.app", "en-ucuz-gq2u79gta-murats-projects-c4a123ca.vercel.app", "en-ucuz-net.vercel.app", "en-ucuz-net-murats-projects-c4a123ca.vercel.app"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
