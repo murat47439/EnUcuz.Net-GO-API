@@ -40,8 +40,8 @@ func (pc *ProductController) GetProduct(w http.ResponseWriter, r *http.Request) 
 	}
 
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Product":   product,
-		"Attribute": attributes,
+		"product":   product,
+		"attribute": attributes,
 	})
 
 }
@@ -75,7 +75,7 @@ func (pc *ProductController) UpdateProduct(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"Product": updproduct,
+		"product": updproduct,
 		"message": "Successfully",
 	})
 }
